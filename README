@@ -1,0 +1,45 @@
+An interoperable (Charm++ with MPI) version of sorting library based on
+histogram sorting. The sorting library was originally written by Edgar
+Solomonik. Interoperability in Charm++ and related libraries are 
+developed and maintained by Nikhil Jain.
+
+*********************Contents in this directory*********************************
+
+sortinglib - directory that contains the sorting library in Charm++. Ideally,
+user should only have to view sortinglib/sortinglib.h that contains the
+interface to the library.
+
+testsorting.cpp - an example MPI code demonstrating how to use the sorting library.
+
+Makefile - to compile the test code and the library. Key things to note-
+
+Charm++ has to be built on top of MPI (specified in Makefile.in).
+The sorting lib has to be compiled using charmc (automatically done as part of make).
+MPI code can be compiled as per user's choice.
+Final linking has to be performed using charmc.
+
+*********************Interface to sorting library*******************************
+
+Declaration of the interface function (in sortinglib/sortinglib.h) is:
+
+void HistSorting(int input_elems, kv_pair<uint64_t, data_value>* dataIn, 
+                int * output_elems, kv_pair<uint64_t, data_value>** dataOut);
+
+kv_pair is a simple templated struct that contains a 64 bit unsigned key for sorting, 
+and associated data (if any) in template parameter class data_value. By default, as
+defined in sortinglib/sortinglib.h, it is empty.
+
+Four parameters are passed to HistSorting call - 
+
+1. int input_elems - local number of elements on an MPI rank.
+2. kv_pair * dataIn - array of local elements to be sorted.
+3. int * output_elems - pointer to local number of elements after sorting on
+this rank.
+4. kv_pair ** dataIn - pointer to array of local elements after sorting (library
+allocates this memory).
+
+
+
+
+
+
