@@ -17,11 +17,11 @@
 template <class key, class value>
 class kv_pair {
   public:
-    key myKey;
-    value myVal;
+    key k;
+    value v;
 
     /*inline*/ bool operator< (const kv_pair<key, value>& other) const{
-      return myKey < other.myKey;
+      return k < other.k;
     }    
 };
 
@@ -154,7 +154,6 @@ void registerSortingLib() {
 /* REG: message data_msg<key,value >;
 */
   CMessage_data_msg<key,value >::__register("data_msg<key,value >", sizeof(data_msg<key,value >),(CkPackFnPtr) data_msg<key,value >::pack,(CkUnpackFnPtr) data_msg<key,value >::unpack);
-
 }
 
 //template <class key, class value>

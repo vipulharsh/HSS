@@ -14,7 +14,7 @@ Sorter(CkMigrateMessage *msg){}
 
 template<key, value>
 Sorter(const CkArrayID &bucketArr, int _nBuckets, key min, key max, tuning_params par) : 
-                        nBuckets(_nBuckets), minKey(min), maxKey(max){
+                 buckets(bucketArr), nBuckets(_nBuckets), minKey(min), maxKey(max){
     VERBOSEPRINTF("Setting up sort. From Constructor\n");
     params = new tuning_params();
     *params = par;
@@ -31,20 +31,21 @@ void Begin(){
     if(firstUse){
         lastProbe = new key[params->probe_max+1];
         scratch = new key[params->probe_max+1];
-        finalSplitters = new key[nBuckets+2];
+        finalSplitters = new key[nBuckets+2]; //required size is nBuckets+2
         achieved = new bool[nBuckets+2];
     }
 
-    lastProbeSize = nBuckets; //to be tuned     
     if(firstUse || !params->reuse_probe_results){
-        buckets.firstProbe(true, minKey, maxKey, lastProbeSize);
-        key step = (maxKey - minKey)/nBuckets;
+        lastProbeSize = nBuckets+1; //to be tuned     
+        buckets.firstProbe(minKey, maxKey, lastProbeSize);
+        key step = (maxKey - minKey)/(lastProbeSize-1);
         for(int i=0, s=step, i<lastProbeSize-1; i++, s+=step)
             lastProbe[i] = minKey + s;
         lastProbe[lastProbeSize-1] = maxKey;
     }
     else{
-        buckets.firstProbe(false, minKey, maxKey, lastProbeSize);
+		lastProbeSize = nBuckets;    
+        buckets.firstLocalProbe(lastProbeSize);
         memcopy(lastProbe, finalSplitters, nBuckets * sizeof(key));
     }
 
@@ -53,9 +54,9 @@ void Begin(){
     //Don't use memset for non-inbuilt types
 
     memset(achieved+1, nBuckets, false);
-    achieved[0] = achieved[nBuckets+1] = true;
+    achieved[0] = achieved[nBuckets] = true;
     finalSplitters[0] = minKey;    
-    finalSplitters[nBuckets+1] = maxKey;
+    finalSplitters[nBuckets] = maxKey;
     achievedSplitters = 2;
 }
 
@@ -78,6 +79,12 @@ void Sorter<key, value>::Histogram(CkReductionMsg *msg){
     numProbes++;
     uint64_t* histCounts = (uint64_t*)msg->getData();
     int lenhist = (int)msg->getSize()/sizeof(uint64_t);
+    
+    //store cumulative counts
+    for(int i=1; i<lenhist; i++)
+		histCounts[i] += histCounts[i-1]; 
+    
+    
     CkAssert(lenhist == lastProbeSize);
     
     if(numProbes <= 1)
@@ -85,7 +92,7 @@ void Sorter<key, value>::Histogram(CkReductionMsg *msg){
 
     int p = 0; //currProbe
     int s = 1; //currSplitter
-    vector<int> bRanges; //holds index of the left end of a range to be brodcasted
+    vector<std::pair<key, int> > newachv; //splitters that were achieved in this round
     
     while(s < nBuckets){
         if(achieved[s])
@@ -95,22 +102,19 @@ void Sorter<key, value>::Histogram(CkReductionMsg *msg){
             p++;
         if(checkGoal(s, histCounts[p]) == 0){ //achieved
             achievedSplitters++;
-            finalSplitters[s] = p;
-            achieved[s] = true; 
-            if(achieved[s])
-                bRanges.push_back(s-1);
-            if(achieved[s+1])
-                bRanges.push_back(s);
+            finalSplitters[s] = lastProbe[p];
+            achieved[s] = true;
+            newachv.push_back(std::pair<key, int>(lastProbe[p], s));
         }
         s++;                        
     }    
-    nextProbes(bRanges);
+   nextProbes(newachv);
 }
 
 
 
 template <class key, class value>
-void Sorter<key, value>::nextProbes(vector<int> &broadcastRanges){
+void Sorter<key, value>::nextProbes(vector<std::pair<key, int> > &newachv){
     int p = 0;
     int s = 1;
     key last = 0;
@@ -124,36 +128,37 @@ void Sorter<key, value>::nextProbes(vector<int> &broadcastRanges){
             continue;           
         }
                 
-        key next =  histCounts[p];
-        if(achieved[s])
-            next = std::min(next, finalSplitters[s]);             
+        key next =  lastProbe[p];
+        p++;         
+        if(achieved[s] && (finalSplitters[s] < lastProbe[p])){
+            next = finalSplitters[s];
+            s++;
+		}		             
         
         //what if every splitter has been achieved : ensure works correctly
-        int probes = (unresolved * params->probe_max)/(nBuckets + 3 - achievedSplitters);
+        int probes = (unresolved * params->probe_max)/(nBuckets + 2 - achievedSplitters);
         for(int i=0; i<probes; i++)
             scratch[scratchInd++] = lastSplitter + (next-last)/(probes + 1);
         
         last = next;        
-        unresolved = 0;         
+        unresolved = 0;   
    }
-
-
    scratch[scratchInd++] = maxKey;
+   
    //swap lastProbe and scratch
    key *temp = lastProbe;
    lastProbe = scratch;
    scratch = temp;
    lastProbeSize = scratchInd;
    
-   int r = broadCastRanges.size();
-   probeMessage<key, value> *pm = new (lastProbeSize, 2*r, r) probeMessage<key, value>;
+   int r = newachv.size();
+   probeMessage<key> *pm = new (lastProbeSize, r, r) probeMessage<key, value>;
    pm->probeSize = lastProbeSize;
-   pm->numRanges = r;
-   memcopy(pm->probe, lastProbe, nBuckets * sizeof(key));
+   pm->num_newachv = r;
+   memcopy(pm->probe, lastProbe, lastProbeSize * sizeof(key));
    for(int i=0; i<r; i++){
-       pm->resolvedRanges[i] = broadCastRanges[i];
-       pm->rangeBoundaries[2*i] = finalSplitters[broadCastRanges[i]];
-       pm->rangeBoundaries[2*i + 1] = finalSplitters[broadCastRanges[i]+1];
+	   pm->newachv_key[i] = newachv[i].first;
+       pm->newachv_id[i] = newachv[i].second;
    }
    buckets.histCountProbes(pm);
 }

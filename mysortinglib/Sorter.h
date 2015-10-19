@@ -2,14 +2,14 @@
 #define __SORTER_H__
 
 
-template <class key, class value>
-class probeMessage : public CMessage_probeMessage<key, value> {
+template <class key>
+class probeMessage : public CMessage_probeMessage<key> {
   public:
     key* probe;
     int probeSize;
-    key* rangeBoundaries;
-    int* resolvedRanges;
-    int numRanges;
+    key* newachv_key;
+    int* newachv_id;
+    int num_newachv;
 };
 
 
@@ -40,6 +40,7 @@ class Sorter : public CBase_Sorter<key, value>  {
     double c1, c2;
 
     int checkGoal(int splitterInd, int histCount);
+    void nextProbes(vector<std::pair<key, int> > &newachv);
 
   public:
 
