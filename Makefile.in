@@ -1,4 +1,4 @@
-CHARMDIR ?= $(HOME)/Desktop/charm/charm-mpi-darwin/mpi-darwin-x86_64
+CHARMDIR ?= $(HOME)/Desktop/charm/charm-mpi-with-linux/charm/mpi-linux-x86_64
 OPTS = -O3 -lstdc++
 CHARMC=$(CHARMDIR)/bin/charmc $(OPTS) -tracemode projections
 

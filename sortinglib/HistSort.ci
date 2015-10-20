@@ -12,46 +12,33 @@ module HistSort{
     entry void final_dsum(CkReductionMsg*);
   };
 
-  template <class key, class value>
-    message first_probe {
-      key splitter_guesses[];
-    };
-
   template <class key>
-    message next_probe {
-      key splitter_guesses[];
-      charm_resolved_range<key> send_info[];
+    message probeMessage {
+      key probe[];
+      key newachv_key[];
+      int newachv_id[];
     };
 
-  template <class key, class value>
-    message data_msg {
-      kv_pair<key, value> pairs[];
-    };
-  
   template <class key, class value> chare Sorter {
     entry Sorter();
-    entry Sorter(const CkArrayID &bucketArr, int num_chares, key min, key max);
     entry Sorter(const CkArrayID &bucketArr, int num_chares, key min, key max, tuning_params par);
     entry void Begin();
-    entry void Begin(tuning_params par);
+    //!meaning of [expedited]
     entry [expedited] void Histogram(CkReductionMsg *msg);
     entry void Done(CkReductionMsg *msg);
     entry void SanityCheck(CkReductionMsg *msg);
   };
 
   template <class key, class value> array [1D] Bucket {
-    entry Bucket(CProxy_Main<key, value> main_proxy, key min, key max);
-    entry void StepSort();
-    entry void CleanSplitters();
-    entry void SetCallback(const CkCallback &cb);
+    entry Bucket(key _min, key _max);	  
+    //entry void SetCallback(const CkCallback &cb);
     entry void SetData();
-    entry void SetData(data_msg<key, value> *init_data);
-    entry void CountFirstProbe(first_probe<key, value>* msg);
-    entry [expedited] void CountProbe(next_probe<key> *pb);
-    entry void SendPortion(int k, int npd);
-    entry [expedited] void SendAll(next_probe<key> *pb);
-    entry void Load(data_msg<key, value>* msg);
-    entry void Load();
+    entry void firstProbe(CProxy_Sorter<key, value> _sorter_proxy, key firstkey, key lastkey, int probesize);
+    entry void firstLocalProbe(int lastProbeSize);
+    entry void histCountProbes(probeMessage<key> *pm);
+  	//!expedited? entry [expedited] void CountProbe(next_probe<key> *pb);
+    //entry void Load(data_msg<key, value>* msg);
+    //entry void Load();
   };
 };
 

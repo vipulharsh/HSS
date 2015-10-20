@@ -42,7 +42,7 @@ int main(int argc, char **argv){
     //num_elems = num_elems*(1+newid);
     dataIn = new kv_pair<uint64_t, int>[num_elems];
     for (int i = 0; i < num_elems; i++){
-      dataIn[i].myKey = (numpes - peid)*1000 + (num_elems - i);
+      dataIn[i].k = (numpes - peid)*1000 + (num_elems - i);
     }
     DEBUG(printf("In elems on %d are %d\n",peid, num_elems);)
     MPI_Barrier(newComm); //for timer
@@ -67,7 +67,7 @@ int main(int argc, char **argv){
     //num_elems = num_elems*(newid);
     dataIn = new kv_pair<uint64_t, int>[num_elems];
     for (int i = 0; i < num_elems; i++){
-      dataIn[i].myKey = peid % 10 + 1;
+      dataIn[i].k = peid % 10 + 1;
     }
     DEBUG(printf("In elems on %d are %d\n",peid, num_elems);)
     MPI_Barrier(newComm); //for timer

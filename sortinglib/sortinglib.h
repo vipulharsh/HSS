@@ -6,9 +6,9 @@
 #include <list>
 #include <algorithm>
 #include <vector>
+#include <cstring>
 #include <algorithm>
 #include "mpi-interoperate.h"
-
 #include "defs.h"
 
 //#define DEBUG 1
@@ -17,11 +17,11 @@
 template <class key, class value>
 class kv_pair {
   public:
-    key myKey;
-    value myVal;
+    key k;
+    value v;
 
     /*inline*/ bool operator< (const kv_pair<key, value>& other) const{
-      return myKey < other.myKey;
+      return k < other.k;
     }    
 };
 
@@ -41,15 +41,10 @@ void registerSortingLib();
 template <class key, class value>
 void HistSorting(int input_elems_, kv_pair<key, value>* dataIn_, int * output_elems_, kv_pair<key, value>** dataOut_) {
   registerSortingLib<key, value>();
-  
-
   dataIn = (void*)dataIn_;
   dataOut = (void**)dataOut_;
   in_elems = input_elems_;
   out_elems = output_elems_;
-  
-
-  
   if(CkMyPe() == 0) {
 #if DEBUG
     CkPrintf("[%d] Histogram Sorting on %d at %.3lf MB\n",CkMyPe(),CkNumPes(),CmiMemoryUsage()/(1024.0*1024));
@@ -69,7 +64,7 @@ class Main : public CBase_Main<key, value> {
     //chare array proxies
     CProxy_Sorter<key, value> sorter;
     CProxy_Bucket<key, value> bucket_arr;
-  
+    tuning_params pars; 
   public:
     //main constructor
     Main (int num_buckets_) {
@@ -77,8 +72,21 @@ class Main : public CBase_Main<key, value> {
       num_buckets = num_buckets_;
       // Create the sorting entities
       CkArrayOptions opts(num_buckets);
-      bucket_arr = CProxy_Bucket<key, value>::ckNew(this->thisProxy, 0, UINT64_MAX, opts);
-      sorter = CProxy_Sorter<key, value>::ckNew(bucket_arr, num_buckets, 0, UINT64_MAX);
+      bucket_arr = CProxy_Bucket<key, value>::ckNew(0, UINT64_MAX, opts);
+      
+      pars.probe_size = num_buckets - 1;
+      pars.probe_max = 64;
+      pars.hist_thresh = 5;
+      pars.splice_thresh = 1024;
+      //try a variety of communication stages
+      if (num_buckets <= 256)
+        pars.eager_send = num_buckets;
+      else
+        pars.eager_send = num_buckets/16; //need to play with this
+
+      pars.reuse_probe_results = true;
+  
+      sorter = CProxy_Sorter<key, value>::ckNew(bucket_arr, num_buckets, 0, UINT64_MAX, pars);
     }
     //migration constructor
     Main (CkMigrateMessage *m) { }
@@ -110,20 +118,7 @@ class Main : public CBase_Main<key, value> {
 template <class key, class value>
 void Main<key, value>::DataReady() {
   bucket_arr.SetData();
-  tuning_params pars;
-  pars.probe_size = num_buckets - 1;
-  pars.probe_max = 64;
-  pars.hist_thresh = 5;
-  pars.splice_thresh = 1024;
-  //try a variety of communication stages
-  if (num_buckets <= 256)
-    pars.eager_send = num_buckets;
-  else
-    pars.eager_send = num_buckets/16; //need to play with this
-
-  pars.reuse_probe_results = true;
-  printf("DataReady\n");
-  sorter.Begin(pars);  
+  sorter.Begin();  
 }
 
 #define CK_TEMPLATES_ONLY
@@ -149,18 +144,9 @@ void registerSortingLib() {
 */
   CkIndex_Bucket<key,value >::__register("Bucket<key,value >", sizeof(Bucket<key,value >));
 
-/* REG: message first_probe<key,value >;
-*/
-  CMessage_first_probe<key,value >::__register("first_probe<key,value >", sizeof(first_probe<key,value >),(CkPackFnPtr) first_probe<key,value >::pack,(CkUnpackFnPtr) first_probe<key,value >::unpack);
-
 /* REG: message next_probe<key >;
 */
-  CMessage_next_probe<key >::__register("next_probe<key >", sizeof(next_probe<key >),(CkPackFnPtr) next_probe<key >::pack,(CkUnpackFnPtr) next_probe<key >::unpack);
-
-/* REG: message data_msg<key,value >;
-*/
-  CMessage_data_msg<key,value >::__register("data_msg<key,value >", sizeof(data_msg<key,value >),(CkPackFnPtr) data_msg<key,value >::pack,(CkUnpackFnPtr) data_msg<key,value >::unpack);
-
+  CMessage_probeMessage<key >::__register("probeMessage<key >", sizeof(probeMessage<key >),(CkPackFnPtr) probeMessage<key >::pack,(CkUnpackFnPtr) probeMessage<key >::unpack);
 }
 
 //template <class key, class value>
