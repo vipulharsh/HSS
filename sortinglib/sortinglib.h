@@ -49,7 +49,7 @@ void HistSorting(int input_elems_, kv_pair<key, value>* dataIn_, int * output_el
 #if DEBUG
     CkPrintf("[%d] Histogram Sorting on %d at %.3lf MB\n",CkMyPe(),CkNumPes(),CmiMemoryUsage()/(1024.0*1024));
 #endif
-    static CProxy_Main<key, value> mainProxy = CProxy_Main<key, value>::ckNew(CkNumPes());
+   static CProxy_Main<key, value> mainProxy = CProxy_Main<key, value>::ckNew(CkNumPes());
     mainProxy.DataReady();
   }
   StartCharmScheduler();
@@ -72,8 +72,6 @@ class Main : public CBase_Main<key, value> {
       num_buckets = num_buckets_;
       // Create the sorting entities
       CkArrayOptions opts(num_buckets);
-      bucket_arr = CProxy_Bucket<key, value>::ckNew(0, UINT64_MAX, opts);
-      
       pars.probe_size = num_buckets - 1;
       pars.probe_max = 64;
       pars.hist_thresh = 5;
@@ -86,6 +84,8 @@ class Main : public CBase_Main<key, value> {
 
       pars.reuse_probe_results = true;
   
+      bucket_arr = CProxy_Bucket<key, value>::ckNew(pars, 0, UINT64_MAX,  num_buckets, opts);
+      
       sorter = CProxy_Sorter<key, value>::ckNew(bucket_arr, num_buckets, 0, UINT64_MAX, pars);
     }
     //migration constructor

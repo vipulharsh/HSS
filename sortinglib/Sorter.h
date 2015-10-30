@@ -41,8 +41,9 @@ class Sorter : public CBase_Sorter<key, value>  {
     double c1, c2;
 
     int checkGoal(int splitterInd, int histCount);
-    void nextProbes(std::vector<std::pair<key, int> > &newachv, uint64_t* histCounts);
-
+    //void nextProbes(std::vector<std::pair<key, int> > &newachv, uint64_t* histCounts);
+    void nextProbes(std::vector<std::pair<key, int> > &newachv, int* histCounts);
+    
   public:
 
     void register_sum_uint64_t(void);

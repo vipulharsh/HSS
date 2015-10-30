@@ -38,7 +38,7 @@ class Bucket : public CBase_Bucket<key, value> {
    	void localProbe();
   public:
       Bucket(CkMigrateMessage *);
-	  Bucket(key _min, key _max);
+	  Bucket(tuning_params par, key _min, key _max, int nBuckets_);
 	  void SetData();
 	  void firstProbe(CProxy_Sorter<key, value> _sorter_proxy, key firstkey, key lastkey, int probesize);
 	  void firstLocalProbe(int lastProbeSize);

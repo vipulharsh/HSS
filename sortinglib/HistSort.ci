@@ -30,7 +30,7 @@ module HistSort{
   };
 
   template <class key, class value> array [1D] Bucket {
-    entry Bucket(key _min, key _max);	  
+    entry Bucket(tuning_params par, key _min, key _max, int nBuckets_);	  
     //entry void SetCallback(const CkCallback &cb);
     entry void SetData();
     entry void firstProbe(CProxy_Sorter<key, value> _sorter_proxy, key firstkey, key lastkey, int probesize);
