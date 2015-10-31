@@ -1,5 +1,6 @@
 CHARMDIR ?= $(HOME)/Desktop/charm/charm-mpi-with-linux/charm/mpi-linux-x86_64
-OPTS = -O3 -lstdc++ -g
+#Optimizations need to be enabled
+OPTS = -lstdc++ -g
 CHARMC=$(CHARMDIR)/bin/charmc $(OPTS) -tracemode projections
 
 MPI_LIBS=

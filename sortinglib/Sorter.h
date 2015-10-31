@@ -1,7 +1,7 @@
 #ifndef __SORTER_H__
 #define __SORTER_H__
 
-
+#include <map>
 
 template <class key>
 class probeMessage : public CMessage_probeMessage<key> {
@@ -23,6 +23,7 @@ class Sorter : public CBase_Sorter<key, value>  {
     int nElements;
 
     key* lastProbe;
+    std::map<key, uint64_t> allPreviousProbes;
     key* scratch;
     int lastProbeSize;
 
@@ -30,7 +31,7 @@ class Sorter : public CBase_Sorter<key, value>  {
     bool* achieved;
     int achievedSplitters;
 
-    key minKey, maxKey;
+    key minkey, maxkey;
     tuning_params *params;
     bool firstUse;
 
@@ -42,7 +43,7 @@ class Sorter : public CBase_Sorter<key, value>  {
 
     int checkGoal(int splitterInd, int histCount);
     //void nextProbes(std::vector<std::pair<key, int> > &newachv, uint64_t* histCounts);
-    void nextProbes(std::vector<std::pair<key, int> > &newachv, int* histCounts);
+    void nextProbes(std::vector<std::pair<key, int> > &newachv, int* histCounts, CkReductionMsg *msg);
     
   public:
 

@@ -27,12 +27,14 @@ Sorter<key, value>::Sorter(CkMigrateMessage *msg){}
 
 template<class key, class value>
 Sorter<key, value>::Sorter(const CkArrayID &bucketArr, int _nBuckets, key min, key max, tuning_params par) : 
-                 buckets(bucketArr), nBuckets(_nBuckets), minKey(min), maxKey(max){
+                 buckets(bucketArr), nBuckets(_nBuckets), minkey(min), maxkey(max){
     VERBOSEPRINTF("Setting up sort. From Constructor\n");
     params = new tuning_params();
     *params = par;
     firstUse = true;
     numProbes = 0;
+    ckout<<"CONS Params->probe_max: "<<params->probe_max<<endl;
+    ckout<<"CONS Params->probe_max: "<<params->temp_probe_max<<endl;
 }
 
 
@@ -42,28 +44,26 @@ void Sorter<key, value>::Begin(){
 
     c1 = CmiWallTimer();
 
-    ckout<<"comes here 1"<<endl;
-
-    ckout<<params->probe_max<<" "<<nBuckets<<" "<<minKey<<" "<<maxKey<<endl;
-
-
+    ckout<<"Sorter Constructor : "<<endl; 
+    ckout<<"Params->probe_max: "<<params->probe_max<<endl;
+    ckout<<"Params->probe_max: "<<params->temp_probe_max<<endl;
+    ckout<<"nBuckets: "<<nBuckets<<endl;;
+    ckout<<"minkey: "<<minkey<<", maxkey: "<<maxkey<<endl;
+    
     if(firstUse){
-        lastProbe = new key[params->probe_max+1];
-        scratch = new key[params->probe_max+1];
+        lastProbe = new key[params->temp_probe_max+1];
+        scratch = new key[params->temp_probe_max+1];
         finalSplitters = new key[nBuckets+2]; //required size is nBuckets+2
         achieved = new bool[nBuckets+2];
     }
 
-    ckout<<"comes here 2"<<endl;
-
-
     if(firstUse || !params->reuse_probe_results){
         lastProbeSize = nBuckets; //to be tuned     
-        buckets.firstProbe(this->thisProxy, minKey, maxKey, lastProbeSize);
-        key step = (maxKey - minKey)/lastProbeSize;
-        for(int i=0, s=step; i<lastProbeSize; i++, s+=step)
-            lastProbe[i] = minKey + s;
-        lastProbe[lastProbeSize-1] = maxKey;
+        buckets.firstProbe(this->thisProxy, minkey, maxkey, lastProbeSize);
+        key step = (maxkey - minkey + lastProbeSize-1)/lastProbeSize; 
+        for(int i=0; i<lastProbeSize; i++)
+            lastProbe[i] = minkey + ((i+1) * step);
+        lastProbe[lastProbeSize-1] = maxkey;
     }
     else{
         lastProbeSize = nBuckets;    
@@ -71,19 +71,17 @@ void Sorter<key, value>::Begin(){
         memcpy(lastProbe, finalSplitters, nBuckets * sizeof(key));
     }
 
-    ckout<<"comes here 3"<<endl;
-
-
     firstUse = false;
     
     //Don't use memset for non-inbuilt types
-
     memset(achieved+1, false, nBuckets);
     achieved[0] = achieved[nBuckets] = true;
-    finalSplitters[0] = minKey;    
-    finalSplitters[nBuckets] = maxKey;
+    finalSplitters[0] = minkey;    
+    finalSplitters[nBuckets] = maxkey;
     achievedSplitters = 2;
-    ckout<<"comes here 4"<<endl;
+    allPreviousProbes.clear();
+    //allPreviousProbes[minkey] = 0;
+    ckout<<"Exiting Sorter Constructor... "<<params->temp_probe_max<<endl;
 
 }
 
@@ -102,24 +100,27 @@ inline int Sorter<key, value>::checkGoal(int splitterInd, int histCount){
 
 template <class key, class value>
 void Sorter<key, value>::Histogram(CkReductionMsg *msg){
-    VERBOSEPRINTF("Doing Histogramming %lf seconds after start.\n", (CmiWallTimer()-c1));
-    
+    VERBOSEPRINTF("Doing Histogramming %lf seconds after start.\n", (CmiWallTimer()-c1));   
     ckout<<"Histogramming started"<<endl;
-    ckout<<lastProbeSize<<" ? "<<msg->getSize()<<endl;
-    
     numProbes++;
-    //uint64_t* histCounts = (uint64_t*)msg->getData();
-    //int lenhist = (int)msg->getSize()/sizeof(uint64_t);
     
+    ckout<<"Probe Number : ######### : "<<numProbes<<" "<<params->temp_probe_max<<" : "<<nElements<<endl;
+    //uint64_t* histCounts = (uint64_t*)msg->getData();
+    //int lenhist = (int)msg->getSize()/sizeof(uint64_t);   
     int* histCounts = (int*)msg->getData();        
     int lenhist = (int)msg->getSize()/sizeof(int);
-    
-    ckout<<lenhist<<" = "<<lastProbeSize<<" ? "<<msg->getSize()<<endl;
-    
+   
     //store cumulative counts
-    for(int i=1; i<lenhist; i++)
-		  histCounts[i] += histCounts[i-1]; 
+    for(int i=1; i<lenhist; i++){
+		  histCounts[i] += histCounts[i-1];
+    }
+  
     
+    for(int i=0; i<lastProbeSize; i++){
+      allPreviousProbes[lastProbe[i]] = histCounts[i];
+      //ckout<<lastProbe[i]<<" :-: "<<histCounts[i]<<endl;
+    }
+
     CkAssert(lenhist == lastProbeSize);
     
     if(numProbes <= 1)
@@ -129,6 +130,7 @@ void Sorter<key, value>::Histogram(CkReductionMsg *msg){
     int s = 1; //currSplitter
     std::vector<std::pair<key, int> > newachv; //splitters that were achieved in this round
     while(s < nBuckets){
+        //ckout<<s<<" : "<<p<<" : "<<histCounts[p]<<endl;
         if(!achieved[s]){
           //relative position of  histCounts[currProbe] w.r.t. currSplitter 
           while(checkGoal(s, histCounts[p]) < 0)
@@ -142,8 +144,8 @@ void Sorter<key, value>::Histogram(CkReductionMsg *msg){
         }
         s++;                        
     }    
-    ckout<<"2"<<endl;
-    nextProbes(newachv, histCounts);
+    
+    nextProbes(newachv, histCounts, msg);
    //delete msg
 }
 
@@ -151,37 +153,40 @@ void Sorter<key, value>::Histogram(CkReductionMsg *msg){
 
 template <class key, class value>
 //void Sorter<key, value>::nextProbes(std::vector<std::pair<key, int> > &newachv, uint64_t* histCounts){
-void Sorter<key, value>::nextProbes(std::vector<std::pair<key, int> > &newachv, int* histCounts){
-    int p = 0;
+void Sorter<key, value>::nextProbes(std::vector<std::pair<key, int> > &newachv, int* histCounts, CkReductionMsg *msg){
     int s = 1;
-    key last = 0;
-    int unresolved = 0;
+    key lastkey = minkey;
     int scratchInd = 0;
-    while(p < lastProbeSize && s<nBuckets){
-                
-        if(!achieved[s] && checkGoal(s, histCounts[p]) > 0){
-            s++;
-            unresolved++;
-            continue;           
+    int unresolved = 0;
+    
+    //ckout<<"Next Probes, UnachievedSplitters : "<<nBuckets+1 - achievedSplitters<<" "<<params->temp_probe_max<<endl;
+
+    typename std::map<key, uint64_t>::iterator it; 
+    for(it = allPreviousProbes.begin(); it != allPreviousProbes.end() && s<nBuckets; it++){
+      uint64_t histCount = it->second;
+      //ckout<<s<<" ./././ "<<" : "<< histCount<<" : "<<it->first<<" : "<<achieved[s]<<endl;
+      while(checkGoal(s, histCount) > 0){
+        if(!achieved[s]){
+          unresolved++;
         }
-                
-        key next =  lastProbe[p];
-        p++;         
-        if(achieved[s] && (finalSplitters[s] < lastProbe[p])){
-            next = finalSplitters[s];
-            s++;
-		    }		             
-        
-        //what if every splitter has been achieved : ensure works correctly
-        int probes = (unresolved * params->probe_max)/(nBuckets + 2 - achievedSplitters);
-        for(int i=0; i<probes; i++)
-            scratch[scratchInd++] = last + (next-last)/(probes + 1);
-        
-        last = next;        
-        unresolved = 0;   
-   }
-   scratch[scratchInd++] = maxKey;
-   
+        s++;
+      }
+      int probes = (unresolved * params->temp_probe_max)/(nBuckets + 2 - achievedSplitters);
+      key probeStep = (it->first-lastkey)/(probes + 1);
+      //ckout<<"#Probes for next round "<<probes<<" "<<unresolved<<" "<<s;
+      //ckout<<" "<<params->temp_probe_max<<" : "<<nBuckets<<" : "<<achievedSplitters<<endl;
+      for(int i=0; i<probes; i++){
+        scratch[scratchInd++] = lastkey + ((i+1)*probeStep);
+      }
+      lastkey = it->first;
+      unresolved = 0;
+    }
+
+   scratch[scratchInd++] = maxkey;   
+   //ckout<<"Probes are **************************: "<<scratchInd<<endl;
+   //for(int i=0; i<scratchInd; i++)
+   //   ckout<<scratch[i]<<endl;
+
    //swap lastProbe and scratch
    key *temp = lastProbe;
    lastProbe = scratch;
@@ -193,11 +198,18 @@ void Sorter<key, value>::nextProbes(std::vector<std::pair<key, int> > &newachv, 
    pm->probeSize = lastProbeSize;
    pm->num_newachv = r;
    memcpy(pm->probe, lastProbe, lastProbeSize * sizeof(key));
+   //ckout<<"r is :"<<r<<" lastprobeSize: "<<lastProbeSize<<endl;
    for(int i=0; i<r; i++){
 	   pm->newachv_key[i] = newachv[i].first;
      pm->newachv_id[i] = newachv[i].second;
    }
    buckets.histCountProbes(pm);
+   if(lastProbeSize==1)
+    for(int i=0; i<=nBuckets; i++)
+     ckout<<"Splitter "<<i<<": "<<finalSplitters[i]<<endl;
+   ckout<<"Sent !!"<<endl;
+
+   delete(msg);
 }
 
 

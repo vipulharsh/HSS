@@ -38,6 +38,8 @@ class tuning_params{
     ///whether to reuse the old converged probe when another iteration of sortin is needed on the same section
     bool reuse_probe_results;
 
+    int temp_probe_max;
+
     void pup(PUP::er &p) {
       p | probe_size; 
       p | probe_max;
@@ -45,8 +47,10 @@ class tuning_params{
       p | splice_thresh;
       p | eager_send;
       p | reuse_probe_results;
+      p | temp_probe_max;
     }
 
 };
+
 
 #endif

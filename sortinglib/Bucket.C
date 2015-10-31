@@ -15,16 +15,15 @@ Bucket<key, value>::Bucket(tuning_params par, key min, key max, int nuBuckets_):
   CkPrintf("Creating chare %d of bucket chare array\n", this->thisIndex);
   params = new tuning_params;
   *params = par;
-  lastProbe = new key[params->probe_max+1];
-  scratch = new kv_pair<key, value>[params->probe_max+1];
+  lastProbe = new key[params->temp_probe_max+1];
   finalSplitters = new key[nBuckets+2]; //required size is nBuckets+2
   achieved = new bool[nBuckets+2];
   
-  cumHist = new int[params->probe_max+1];
-  histCounts = new int[params->probe_max+1];
-  longhistCounts = new uint64_t[params->probe_max+1];
+  cumHist = new int[params->temp_probe_max+1];
+  histCounts = new int[params->temp_probe_max +1];
+  longhistCounts = new uint64_t[params->temp_probe_max +1];
   
-  indices = new int[params->probe_max * indexFactor + 1];
+  indices = new int[params->temp_probe_max * indexFactor + 1];
   Reset();
 }
 
@@ -51,6 +50,9 @@ void Bucket<key, value>::SetData(){
   numElem = in_elems;
   //CkAssert(num_elements > 0);
   bucket_data = (kv_pair<key, value>*)dataIn;
+  //!delete this later
+  scratch = new kv_pair<key, value>[numElem+1];
+  
   #if VERBOSE
   double sum = 0; int keysum = 0;
   for(int i = 0; i < numElem; i++) 
@@ -67,42 +69,45 @@ template <class key, class value>
 void Bucket<key, value>::firstProbe(CProxy_Sorter<key, value> _sorter_proxy, key firstkey, key lastkey, int probeSize){
 	sorter_proxy = _sorter_proxy;  
 	lastProbeSize = probeSize;	
-	memset(histCounts, 0, probeSize);	
-	key step = (lastkey - firstkey)/(probeSize);
+	memset(histCounts, 0, probeSize*sizeof(int));	
+	key step = (lastkey - firstkey + probeSize-1)/(probeSize);
 	
-	ckout<<lastkey<<" "<<firstkey<<" "<<probeSize<<" "<<numElem<<endl;
+	//ckout<<step<<" "<<lastkey<<" "<<firstkey<<" "<<probeSize<<" "<<numElem<<" "<<CkMyPe()<<endl;
 	
 	for(int i=0; i<numElem; i++)
-		histCounts[(bucket_data[i].k - firstkey)/step]++;
-		
+		histCounts[(bucket_data[i].k - firstkey)/step]++;		
 	
 	//use 64-bit in reduction since total histogram might surpass 32-bit limit
+	//ckout<<"Probe Size : "<<probeSize<<endl;
 	for (int i = 0; i < probeSize; i++){
 		longhistCounts[i] = histCounts[i];
-		ckout<<" --> "<<longhistCounts[i]<<endl;
 	}
 
 	
-	//ckout<<"Sending "<<probeSize<<" histcounts, bytes : "<<(probeSize)*sizeof(uint64_t)<<endl;
-	//this->contribute((probeSize)*sizeof(uint64_t), longhistCounts, sum_uint64_t_type, 
-	//	CkCallback(CkIndex_Sorter<key,value>::Histogram(NULL), sorter_proxy));
+	//!ckout<<"Sending "<<probeSize<<" histcounts, bytes : "<<(probeSize)*sizeof(uint64_t)<<endl;
+	//!this->contribute((probeSize)*sizeof(uint64_t), longhistCounts, sum_uint64_t_type, 
+	//!	CkCallback(CkIndex_Sorter<key,value>::Histogram(NULL), sorter_proxy));
 	this->contribute((probeSize)*sizeof(int), histCounts, CkReduction::sum_int, 
 		CkCallback(CkIndex_Sorter<key,value>::Histogram(NULL), sorter_proxy));
 	
 	cumHist[0] = 0;
+	
+	ckout<<probeSize<<endl;
 	for(int i=0; i<probeSize; i++){
 		cumHist[i+1] = histCounts[i] + cumHist[i];
+		//ckout<<" >> "<<cumHist[i+1]<<endl;
 	}
 	
 	mymin = maxkey;
 	mymax = minkey;
-	ckout<<" 3 "<<endl;
-
+	
 
 	for(int i=0; i<numElem; i++){
+		//ckout<<bucket_data[i].k<<endl;
 		if(bucket_data[i].k < mymin) mymin = bucket_data[i].k;
 		if(mymax < bucket_data[i].k) mymax = bucket_data[i].k;
 		int ind = (bucket_data[i].k - firstkey)/step;
+		//ckout<<bucket_data[i].k<<" : "<<ind<<" : "<<cumHist[ind]<<endl;
 		scratch[cumHist[ind]] = bucket_data[i];
 		cumHist[ind]++;
 	}
@@ -110,6 +115,10 @@ void Bucket<key, value>::firstProbe(CProxy_Sorter<key, value> _sorter_proxy, key
 	kv_pair<key, value> * temp = scratch;
 	scratch = bucket_data;
 	bucket_data = temp;
+
+	//for(int i=0; i<numElem; i++)
+	//	ckout<<bucket_data[i].k<<endl;
+
 	//stepsort?
 }
 
@@ -136,45 +145,68 @@ template <class key, class value>
 void Bucket<key, value>::localProbe(){
 	
 	//buildIndex
-	int numIndices = indexFactor * lastProbeSize + 1;
-	key indexStep = (mymax - mymin) / (numIndices-1);	
+	int numIndices = indexFactor * lastProbeSize;
+	key indexStep = (mymax - mymin + numIndices - 1) / numIndices;	
 	int prb = 0;
-	indices[0] = 0;
-	for(int ind=0; ind<numIndices-1; ind++){	
-		int a = (int) (lastProbe[prb] - mymin)/indexStep;
-		while(a <= ind){
+	//ckout<<"Bucket Info "<< indexStep<<" : "<<mymax<<" : "<<mymin<<" : "<<numIndices<<" "<<CkMyPe()<<endl;
+	for(int ind=0; ind<numIndices; ind++){	
+		//Something needs to be done about long long
+		while(((long long) (lastProbe[prb] - mymin)/indexStep) < ind){
 			prb++;
-			a = (int) (lastProbe[prb] - mymin)/indexStep;
 		}
-		indices[ind+1] = prb;		
+		indices[ind] = prb;
 	}
-		
-	memset(histCounts, 0, lastProbeSize);
+	//ckout<<" Step:  "<<indexStep<<" : "<<"Indices built :"<<numIndices<<" : "<<CkMyPe()<<endl;
+	//	for(int i=0; i<numIndices; i++)
+	//		ckout<<" : "<<indices[i]<<endl;
+
+	//for(int i=0; i<lastProbeSize; i++)
+	//	ckout<<lastProbe[i]<<" {}{}{}{}{}{} "<<CkMyPe()<<endl;
+	
+	
+	memset(histCounts, 0, lastProbeSize * sizeof(int));
+	
 	for(int i=0; i<numElem; i++){
 		int ind = indices[(bucket_data[i].k - mymin)/indexStep];
 		while(lastProbe[ind] < bucket_data[i].k)
 			ind++;
-		histCounts[ind]++;	
+		histCounts[ind]++;
+		//ckout<<histCounts[ind]<<endl;	
 	}
+
 	//use 64-bit in reduction since total histogram might surpass 32-bit limit
 	for (int i = 0; i < lastProbeSize; i++)
 		longhistCounts[i] = histCounts[i];
-	CkReductionMsg* redmsg = CkReductionMsg::buildNew((lastProbeSize)*sizeof(uint64_t), longhistCounts, sum_uint64_t_type);
-	redmsg->setCallback(CkCallback(CkIndex_Sorter<key, value>::Histogram(NULL), sorter_proxy));
-	this->contribute(redmsg);
+	//CkReductionMsg* redmsg = CkReductionMsg::buildNew((lastProbeSize)*sizeof(uint64_t), longhistCounts, sum_uint64_t_type);
+	//redmsg->setCallback(CkCallback(CkIndex_Sorter<key, value>::Histogram(NULL), sorter_proxy));
+	//this->contribute(redmsg);
 	
-	
+	this->contribute((lastProbeSize)*sizeof(int), histCounts, CkReduction::sum_int, 
+		CkCallback(CkIndex_Sorter<key,value>::Histogram(NULL), sorter_proxy));
+
 	cumHist[0] = 0;
 	for(int i=0; i<lastProbeSize-1; i++){
 		cumHist[i+1] = histCounts[i] + cumHist[i];
 	}	
+	
+	//ckout<<"Done 2 "<<CkMyPe()<<endl;
 	for(int i=0; i<numElem; i++){
 		int ind = indices[(bucket_data[i].k - mymin)/indexStep];
+		//if(CkMyPe() == 1 && i>660 && i<665)
+		//	ckout<<"Done 3 "<<i<<" : "<<ind<<" : "<<CkMyPe()<<endl;
+		
 		while(lastProbe[ind] < bucket_data[i].k)
 			ind++;
+		
+		//if(CkMyPe() == 1 && i>660 && i<665)
+		//	ckout<<"Done 3.5 "<<i<<" : "<<ind<<" : "<<CkMyPe()<<" : "<<cumHist[ind]<<endl;
+
 		scratch[cumHist[ind]] = bucket_data[i];
 		cumHist[ind]++;
+		//if(CkMyPe() == 1 && i>660 && i<665)
+		//	ckout<<"Done 4 "<<i<<" : "<<ind<<" : "<<CkMyPe()<<endl;
 	}
+	
 	//swap scratch & bucket_data
 	kv_pair<key, value> * temp = scratch;
 	scratch = bucket_data;
@@ -184,12 +216,17 @@ void Bucket<key, value>::localProbe(){
 
 template <class key, class value>
 void Bucket<key, value>::histCountProbes(probeMessage<key> *pm){
-	memcpy(lastProbe, pm->probe, nBuckets * sizeof(key));
 	lastProbeSize = pm->probeSize;
-	if(lastProbeSize > 0)
+	memcpy(lastProbe, pm->probe, lastProbeSize * sizeof(key));
+	//ckout<<pm->probe[0]<<" Ayein? "<<lastProbe[0]<<endl;
+	//!should be lastProbeSize > 1
+	if(lastProbeSize > 1){
 		localProbe();
-	else
-		CkPrintf("Splitters have been determined - %d \n", CkMyPe());
+	}
+	else{
+		ckout<<"Splitters have been determined  - "<<CkMyPe()<<endl;
+	}
+	delete(pm);
 }
 
 
