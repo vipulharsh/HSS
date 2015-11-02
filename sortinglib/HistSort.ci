@@ -1,7 +1,9 @@
 module HistSort{
   include "defs.h";
   initnode void register_sum_uint64_t(void);
+  initnode void register_minmax_uint64_t(void);
   
+
   template <class key, class value> chare Main {
     entry Main(int _num_buckets);
     entry void Exit();
@@ -25,6 +27,7 @@ module HistSort{
     entry void Begin();
     //!meaning of [expedited]
     entry [expedited] void Histogram(CkReductionMsg *msg);
+    entry [expedited] void globalMinMax(CkReductionMsg *msg);
     entry void Done(CkReductionMsg *msg);
     entry void SanityCheck(CkReductionMsg *msg);
   };
@@ -32,8 +35,8 @@ module HistSort{
   template <class key, class value> array [1D] Bucket {
     entry Bucket(tuning_params par, key _min, key _max, int nBuckets_);	  
     //entry void SetCallback(const CkCallback &cb);
-    entry void SetData();
-    entry void firstProbe(CProxy_Sorter<key, value> _sorter_proxy, key firstkey, key lastkey, int probesize);
+    entry void SetData(CProxy_Sorter<key, value> _sorter_proxy);
+    entry void firstProbe(key firstkey, key lastkey, int probesize);
     entry void firstLocalProbe(int lastProbeSize);
     entry void histCountProbes(probeMessage<key> *pm);
   	//!expedited? entry [expedited] void CountProbe(next_probe<key> *pb);

@@ -2,6 +2,7 @@
 
 
 extern CkReduction::reducerType sum_uint64_t_type; 
+extern CkReduction::reducerType minmax_uint64_t_type; 
 
 
 template <class key, class value>
@@ -45,13 +46,40 @@ void Bucket<key, value>::Reset(){
 
 //set bucket data
 template <class key, class value>
-void Bucket<key, value>::SetData(){
+void Bucket<key, value>::SetData(CProxy_Sorter<key, value> _sorter_proxy){
   DEBUGPRINTF("Set data of chare %d of bucket chare array\n", this->thisIndex);
   numElem = in_elems;
+  sorter_proxy = _sorter_proxy;
   //CkAssert(num_elements > 0);
   bucket_data = (kv_pair<key, value>*)dataIn;
   //!delete this later
   scratch = new kv_pair<key, value>[numElem+1];
+
+  mymin = mymax = bucket_data[0].k;
+  for(int i=1; i<numElem; i++){
+  	mymin = std::min(mymin, bucket_data[i].k);
+  	mymax = std::max(mymax, bucket_data[i].k);
+  }
+
+  ckout<<mymin<<" MINMAX "<<mymax<<endl;
+  key *minmax = new key[2];
+  minmax[0] = mymin;
+  minmax[1] = mymax;
+
+  //CkReductionMsg* msg = CkReductionMsg::buildNew(2*sizeof(uint64_t), minmax, minmax_uint64_t_type);
+  //msg->setCallback(CkCallback(CkIndex_Sorter<key, value>::globalMinMax(NULL), sorter_proxy));
+  //this->contribute(msg);
+  
+  this->contribute(2*sizeof(uint64_t), minmax, minmax_uint64_t_type, 
+  	CkCallback(CkIndex_Sorter<key,value>::globalMinMax(NULL), sorter_proxy));
+    
+
+//  contribute(2*sizeof(uint64_t), minmax, minmax_uint64_t_type, 
+//		CkCallback(CkReductionTarget(Sorter<key, value>, printResults), sorter_proxy));
+
+  //contribute(2*sizeof(uint64_t), minmax, minmax_uint64_t_type, 
+//		CkCallback(CkIndex_Sorter<key,value>::globalMinMax(NULL), sorter_proxy));
+
   
   #if VERBOSE
   double sum = 0; int keysum = 0;
@@ -66,13 +94,12 @@ void Bucket<key, value>::SetData(){
 
 
 template <class key, class value>
-void Bucket<key, value>::firstProbe(CProxy_Sorter<key, value> _sorter_proxy, key firstkey, key lastkey, int probeSize){
-	sorter_proxy = _sorter_proxy;  
+void Bucket<key, value>::firstProbe(key firstkey, key lastkey, int probeSize){
 	lastProbeSize = probeSize;	
 	memset(histCounts, 0, probeSize*sizeof(int));	
 	key step = (lastkey - firstkey + probeSize-1)/(probeSize);
 	
-	//ckout<<step<<" "<<lastkey<<" "<<firstkey<<" "<<probeSize<<" "<<numElem<<" "<<CkMyPe()<<endl;
+	ckout<<step<<" "<<lastkey<<" "<<firstkey<<" "<<probeSize<<" "<<numElem<<" "<<CkMyPe()<<endl;
 	
 	for(int i=0; i<numElem; i++)
 		histCounts[(bucket_data[i].k - firstkey)/step]++;		
@@ -84,7 +111,7 @@ void Bucket<key, value>::firstProbe(CProxy_Sorter<key, value> _sorter_proxy, key
 	}
 
 	
-	//!ckout<<"Sending "<<probeSize<<" histcounts, bytes : "<<(probeSize)*sizeof(uint64_t)<<endl;
+	ckout<<"Sending "<<probeSize<<" histcounts, bytes : "<<(probeSize)*sizeof(uint64_t)<<endl;
 	//!this->contribute((probeSize)*sizeof(uint64_t), longhistCounts, sum_uint64_t_type, 
 	//!	CkCallback(CkIndex_Sorter<key,value>::Histogram(NULL), sorter_proxy));
 	this->contribute((probeSize)*sizeof(int), histCounts, CkReduction::sum_int, 
@@ -98,14 +125,8 @@ void Bucket<key, value>::firstProbe(CProxy_Sorter<key, value> _sorter_proxy, key
 		//ckout<<" >> "<<cumHist[i+1]<<endl;
 	}
 	
-	mymin = maxkey;
-	mymax = minkey;
-	
-
 	for(int i=0; i<numElem; i++){
 		//ckout<<bucket_data[i].k<<endl;
-		if(bucket_data[i].k < mymin) mymin = bucket_data[i].k;
-		if(mymax < bucket_data[i].k) mymax = bucket_data[i].k;
 		int ind = (bucket_data[i].k - firstkey)/step;
 		//ckout<<bucket_data[i].k<<" : "<<ind<<" : "<<cumHist[ind]<<endl;
 		scratch[cumHist[ind]] = bucket_data[i];
@@ -146,8 +167,9 @@ void Bucket<key, value>::localProbe(){
 	
 	//buildIndex
 	int numIndices = indexFactor * lastProbeSize;
-	key indexStep = (mymax - mymin + numIndices - 1) / numIndices;	
+	key indexStep = std::max((mymax - mymin + numIndices - 1) / numIndices, (key)1);	
 	int prb = 0;
+	//ckout<<" lastProbeSize "<<endl;
 	//ckout<<"Bucket Info "<< indexStep<<" : "<<mymax<<" : "<<mymin<<" : "<<numIndices<<" "<<CkMyPe()<<endl;
 	for(int ind=0; ind<numIndices; ind++){	
 		//Something needs to be done about long long

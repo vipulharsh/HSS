@@ -4,6 +4,7 @@
 CkReductionMsg *sum_uint64_t(int nMsg,CkReductionMsg **msgs)
 {
   ///Sum starts off at zero 
+  ckout<<"*********Sum starts off at zero "<<endl;
   int size = msgs[0]->getSize()/sizeof(uint64_t);
   uint64_t ret[size];
   memset(ret, 0, sizeof(uint64_t)*size);
@@ -146,6 +147,7 @@ template <class key, class value>
 void Sorter<key, value>::Histogram(CkReductionMsg *msg){
   VERBOSEPRINTF("Doing Histogramming %lf seconds after start.\n", (CmiWallTimer()-c1));
   num_steps++;
+  ckout<<"Histogramming "<<endl;
   uint64_t* hist_counts = (uint64_t*)msg->getData();
   int lenhist = (int)msg->getSize()/sizeof(uint64_t);
 

@@ -36,6 +36,7 @@ int main(int argc, char **argv){
   MPI_Barrier(MPI_COMM_WORLD);
 
   //on the set, invoke sorting
+
   {
     kv_pair<uint64_t, int>* dataIn;
     kv_pair<uint64_t, int>* dataOut;
@@ -57,7 +58,8 @@ int main(int argc, char **argv){
       for (int i = 0; i < out_elems; i++){
         printf("%lu\n", dataOut[i].myKey);
       }   
-    }*/
+    }
+    //*/
     delete[] dataIn;
     delete[] dataOut;
   }
@@ -67,7 +69,7 @@ int main(int argc, char **argv){
     //num_elems = num_elems*(newid);
     dataIn = new kv_pair<uint64_t, int>[num_elems];
     for (int i = 0; i < num_elems; i++){
-      dataIn[i].k = peid % 10 + 1;
+      dataIn[i].k = peid % 20 + 1;
     }
     DEBUG(printf("In elems on %d are %d\n",peid, num_elems);)
     MPI_Barrier(newComm); //for timer

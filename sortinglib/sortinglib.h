@@ -74,7 +74,7 @@ class Main : public CBase_Main<key, value> {
       CkArrayOptions opts(num_buckets);
       pars.probe_size = num_buckets - 1;
       pars.probe_max = 64;
-      pars.temp_probe_max = 15;
+      pars.temp_probe_max = 20;
       pars.hist_thresh = 5;
       pars.splice_thresh = 1024;
       //try a variety of communication stages
@@ -87,6 +87,7 @@ class Main : public CBase_Main<key, value> {
   
       bucket_arr = CProxy_Bucket<key, value>::ckNew(pars, 0, UINT64_MAX,  num_buckets, opts);
       
+      // maxkey should be MAXINT - c * p
       sorter = CProxy_Sorter<key, value>::ckNew(bucket_arr, num_buckets, 0, UINT64_MAX-1000000000, pars);
     }
     //migration constructor
@@ -119,8 +120,8 @@ class Main : public CBase_Main<key, value> {
 template <class key, class value>
 void Main<key, value>::DataReady() {
   //There is a possibility of a data race here
-  bucket_arr.SetData();     
-  sorter.Begin();       
+  bucket_arr.SetData(sorter);     
+  //sorter.Begin();       
 }
 
 #define CK_TEMPLATES_ONLY

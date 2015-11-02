@@ -32,6 +32,7 @@ class Sorter : public CBase_Sorter<key, value>  {
     int achievedSplitters;
 
     key minkey, maxkey;
+    key globalmin, globalmax;
     tuning_params *params;
     bool firstUse;
 
@@ -48,11 +49,13 @@ class Sorter : public CBase_Sorter<key, value>  {
   public:
 
     void register_sum_uint64_t(void);
+    void register_minmax_uint64_t(void); 
     Sorter(CkMigrateMessage *msg);
     Sorter(){}
     Sorter(const CkArrayID &bucketArr, int num_chares, key min, key max, tuning_params par);
     void Begin();
     void Histogram(CkReductionMsg *msg);
+    void globalMinMax(CkReductionMsg *msg);
     void Done(CkReductionMsg *msg);
     void SanityCheck(CkReductionMsg *msg);
 };

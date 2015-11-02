@@ -1,3 +1,9 @@
 1) will not work on floating types because of ceiling function
 
 2) delete reduction messages
+
+3) instead of std::min and std::max, define inline min and max
+
+4) for minmax, use lesser number of comparisons for minmax operations like std::minmax
+
+5) possibility of a data race in sortinglib.h 122

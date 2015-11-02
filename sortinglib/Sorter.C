@@ -21,6 +21,33 @@ CkReductionMsg *sum_uint64_t(int nMsg,CkReductionMsg **msgs)
 } 
 
 
+CkReductionMsg *minmax_uint64_t(int nMsg,CkReductionMsg **msgs){
+  ckout<<"comes here"<<endl;
+  uint64_t ret[2];
+  uint64_t *m=(uint64_t *)msgs[0]->getData();
+  ret[0] = 0; 
+  ret[1] = 0;
+  for (int i=0;i<nMsg;i++) {
+    //CkAssert(msgs[i]->getSize()==sizeof(int));
+    m=(uint64_t *)msgs[i]->getData();
+    ckout<<m[0]<<" ???:[[[[[ "<<m[1]<<endl;
+    ret[0] = std::min(ret[0], m[0]);
+    ret[1] = std::max(ret[1], m[1]);
+  }
+  return CkReductionMsg::buildNew(2*sizeof(uint64_t),ret);
+}
+
+CkReduction::reducerType minmax_uint64_t_type;
+
+//initnode
+void register_minmax_uint64_t(void){
+  minmax_uint64_t_type=CkReduction::addReducer(minmax_uint64_t);
+}
+
+
+
+
+
 template<class key, class value>
 Sorter<key, value>::Sorter(CkMigrateMessage *msg){}
 
@@ -38,6 +65,17 @@ Sorter<key, value>::Sorter(const CkArrayID &bucketArr, int _nBuckets, key min, k
 }
 
 
+template <class key, class value>
+void Sorter<key, value>::globalMinMax(CkReductionMsg *msg){
+  ckout<<"Reduction Done "<<msg->getSize()/sizeof(uint64_t)<<endl;
+  key *m = (key *)msg->getData();
+  globalmin = m[0];
+  globalmax = m[1];
+  ckout<<"globalmin: "<<globalmin<<", globalmax: "<<globalmax<<endl;
+  //Begin();
+}
+
+
 
 template<class key, class value>
 void Sorter<key, value>::Begin(){
@@ -49,7 +87,9 @@ void Sorter<key, value>::Begin(){
     ckout<<"Params->probe_max: "<<params->temp_probe_max<<endl;
     ckout<<"nBuckets: "<<nBuckets<<endl;;
     ckout<<"minkey: "<<minkey<<", maxkey: "<<maxkey<<endl;
+    ckout<<"globalmin: "<<globalmin<<", globalmax: "<<globalmax<<endl;
     
+
     if(firstUse){
         lastProbe = new key[params->temp_probe_max+1];
         scratch = new key[params->temp_probe_max+1];
@@ -59,7 +99,7 @@ void Sorter<key, value>::Begin(){
 
     if(firstUse || !params->reuse_probe_results){
         lastProbeSize = nBuckets; //to be tuned     
-        buckets.firstProbe(this->thisProxy, minkey, maxkey, lastProbeSize);
+        buckets.firstProbe(minkey, maxkey, lastProbeSize);
         key step = (maxkey - minkey + lastProbeSize-1)/lastProbeSize; 
         for(int i=0; i<lastProbeSize; i++)
             lastProbe[i] = minkey + ((i+1) * step);
@@ -173,8 +213,12 @@ void Sorter<key, value>::nextProbes(std::vector<std::pair<key, int> > &newachv, 
       }
       int probes = (unresolved * params->temp_probe_max)/(nBuckets + 2 - achievedSplitters);
       key probeStep = (it->first-lastkey)/(probes + 1);
-      //ckout<<"#Probes for next round "<<probes<<" "<<unresolved<<" "<<s;
+      //ckout<<"#Probes for next round "<<probes<<" "<<unresolved<<" "<<s<<" "<<probeStep<<endl;
       //ckout<<" "<<params->temp_probe_max<<" : "<<nBuckets<<" : "<<achievedSplitters<<endl;
+      if(probeStep == 0){
+        probeStep = 1;
+        probes = it->first - lastkey;
+      }
       for(int i=0; i<probes; i++){
         scratch[scratchInd++] = lastkey + ((i+1)*probeStep);
       }
