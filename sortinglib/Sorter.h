@@ -20,7 +20,7 @@ class Sorter : public CBase_Sorter<key, value>  {
   private:
     CProxy_Bucket<key, value> buckets;
     int nBuckets;
-    int nElements;
+    uint64_t nElements;
 
     key* lastProbe;
     std::map<key, uint64_t> allPreviousProbes;
@@ -42,9 +42,8 @@ class Sorter : public CBase_Sorter<key, value>  {
     int numProbes;
     double c1, c2;
 
-    int checkGoal(int splitterInd, int histCount);
-    //void nextProbes(std::vector<std::pair<key, int> > &newachv, uint64_t* histCounts);
-    void nextProbes(std::vector<std::pair<key, int> > &newachv, int* histCounts, CkReductionMsg *msg);
+    int checkGoal(int splitterInd, uint64_t histCount);
+    void nextProbes(std::vector<std::pair<key, int> > &newachv, uint64_t* histCounts, CkReductionMsg *msg);
     
   public:
 

@@ -7,3 +7,5 @@
 4) for minmax, use lesser number of comparisons for minmax operations like std::minmax
 
 5) possibility of a data race in sortinglib.h 122
+
+6) change int reductions to uint64_t reductions, change checkgoal

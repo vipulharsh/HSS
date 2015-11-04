@@ -9,7 +9,7 @@ class Bucket : public CBase_Bucket<key, value> {
 	
 	kv_pair<key, value>* bucket_data;
 	int numElem;
-	static const int indexFactor = 2;
+	static const int indexFactor = 4;
 
 	int nBuckets;
 	
@@ -32,6 +32,8 @@ class Bucket : public CBase_Bucket<key, value> {
 	int* indices;
     int* histCounts;
     uint64_t *longhistCounts;
+
+    int numProbes;
     
    
    	void Reset(); 
@@ -43,6 +45,7 @@ class Bucket : public CBase_Bucket<key, value> {
 	  void firstProbe(key firstkey, key lastkey, int probesize);
 	  void firstLocalProbe(int lastProbeSize);
 	  void histCountProbes(probeMessage<key> *pm);
+	  void checkMemoryCorruption();
 
 };
 

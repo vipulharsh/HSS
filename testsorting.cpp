@@ -14,6 +14,30 @@
 
 #define DEBUG(a) 
 
+
+uint64_t m_w= 110101011;
+uint64_t m_z= 1234567891;
+
+
+uint64_t getRandom(){
+  m_z = 36969 * (m_z & 65535) + (m_z >> 16);
+  m_w = 18000 * (m_w & 65535) + (m_w >> 16);
+  return (m_z << 16) + m_w; 
+}
+
+uint64_t getRandom(uint64_t value){
+    value *= 1664525;
+    value += 1013904223;
+    value ^= value >> 12;
+    value ^= value << 25;
+    value ^= value >> 27;
+    value *= 1103515245;
+    value += 12345;
+    return value;
+}
+
+
+
 int main(int argc, char **argv){
   int peid, numpes, newid;
   MPI_Comm newComm;
@@ -43,7 +67,8 @@ int main(int argc, char **argv){
     //num_elems = num_elems*(1+newid);
     dataIn = new kv_pair<uint64_t, int>[num_elems];
     for (int i = 0; i < num_elems; i++){
-      dataIn[i].k = (numpes - peid)*1000 + (num_elems - i);
+      dataIn[i].k = getRandom() & getRandom(peid + i + num_elems);
+      //dataIn[i].k = (numpes - peid)*1000 + (num_elems - i);
     }
     DEBUG(printf("In elems on %d are %d\n",peid, num_elems);)
     MPI_Barrier(newComm); //for timer

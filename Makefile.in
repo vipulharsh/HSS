@@ -1,7 +1,7 @@
 CHARMDIR ?= $(HOME)/Desktop/charm/charm-mpi-with-linux/charm/mpi-linux-x86_64
 #Optimizations need to be enabled
 OPTS = -lstdc++ -g
-CHARMC=$(CHARMDIR)/bin/charmc $(OPTS) -tracemode projections
+CHARMC=$(CHARMDIR)/bin/charmc $(OPTS) 
 
 MPI_LIBS=
 ifeq ($(TARGET),gni)

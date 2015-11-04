@@ -39,7 +39,8 @@ module HistSort{
     entry void firstProbe(key firstkey, key lastkey, int probesize);
     entry void firstLocalProbe(int lastProbeSize);
     entry void histCountProbes(probeMessage<key> *pm);
-  	//!expedited? entry [expedited] void CountProbe(next_probe<key> *pb);
+  	entry void checkMemoryCorruption();
+    //!expedited? entry [expedited] void CountProbe(next_probe<key> *pb);
     //entry void Load(data_msg<key, value>* msg);
     //entry void Load();
   };

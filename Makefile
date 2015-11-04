@@ -9,22 +9,22 @@ else
   DEST=bin-$(CHARM_ARCH)
 endif
 
-SORTINGLIB=sortinglib
-
-testsorting: testsorting.cpp $(LIBS)
-	$(CXX) -c testsorting.cpp -o testsorting.o -I$(CHARMDIR)/include
-	$(CHARMC) -mpi -o $(DEST)/testsorting  testsorting.o -L$(DEST) -lcharm -ltrace-projections -tracemode projections
+testsorting: testsorting.cpp $(LIBS) 
+	$(CXX) -g -c testsorting.cpp -o testsorting.o -I$(CHARMDIR)/include
+	chmod 755 $(DEST)/charm_all_libs.sh
+#	. $(DEST)/charm_all_libs.sh && $(CHARMC) -mpi -o $(DEST)/testsorting  testsorting.o -L$(DEST) -lcharm $(MPI_LIBS) -ltrace-projections -tracemode projections
+	. $(DEST)/charm_all_libs.sh && $(CXX) -g -o $(DEST)/testsorting testsorting.o -L$(DEST) $$CHARM_ALL_LIBS -lcharm $(MPI_LIBS) -ltrace-projections 
 
 $(LIBS):  
 	echo "CHARM_ARCH is $(CHARM_ARCH)"
-	cd $(SORTINGLIB);make;
+	cd sortinglib;make;
 	mkdir -p $(DEST);
-	cp $(SORTINGLIB)/libmoduleHistSort.a $(DEST)/
-	$(CHARMC) -language charm++ -mpi -o $(DEST)/libcharm.a -L$(DEST) -module HistSort -lstdc++
+	cp sortinglib/libmoduleHistSort.a $(DEST)/
+	$(CHARMC) -g -language charm++ -mpi -o $(DEST)/libcharm.a -L$(DEST) -module HistSort -lstdc++
 	mv ./charm_all_libs.sh $(DEST)/
 
 clean: clear
-	cd $(SORTINGLIB);make clean;cd ..;
+	cd sortinglib;make clean;cd ..;
 	rm -f testsorting *.o *.a charmrun libmoduleHistSort.a libcharm.a charm_all_libs.sh
 
 clear:
