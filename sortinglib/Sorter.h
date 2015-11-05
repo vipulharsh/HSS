@@ -19,6 +19,8 @@ template <class key, class value>
 class Sorter : public CBase_Sorter<key, value>  {
   private:
     CProxy_Bucket<key, value> buckets;
+    CProxy_Main<key, value> mainproxy;
+    
     int nBuckets;
     uint64_t nElements;
 
@@ -51,7 +53,8 @@ class Sorter : public CBase_Sorter<key, value>  {
     void register_minmax_uint64_t(void); 
     Sorter(CkMigrateMessage *msg);
     Sorter(){}
-    Sorter(const CkArrayID &bucketArr, int num_chares, key min, key max, tuning_params par);
+    Sorter(const CkArrayID &bucketArr, int num_chares, key min, key max,
+         tuning_params par, CProxy_Main<key, value> _mainproxy);
     void Begin();
     void Histogram(CkReductionMsg *msg);
     void globalMinMax(CkReductionMsg *msg);

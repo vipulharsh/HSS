@@ -93,9 +93,8 @@ void Bucket<key, value>::firstProbe(key firstkey, key lastkey, int probeSize){
 	
 	//use 64-bit in reduction since total histogram might surpass 32-bit limit
 	//ckout<<"Probe Size : "<<probeSize<<endl;
-	for (int i = 0; i < probeSize; i++){
+	for (int i = 0; i < probeSize; i++)
 		longhistCounts[i] = histCounts[i];
-	}
 
 	this->contribute((probeSize)*sizeof(uint64_t), longhistCounts, sum_uint64_t_type, 
 		CkCallback(CkIndex_Sorter<key,value>::Histogram(NULL), sorter_proxy));
@@ -244,6 +243,7 @@ void Bucket<key, value>::histCountProbes(probeMessage<key> *pm){
 	}
 	else{
 		ckout<<"Splitters have been determined  - "<<CkMyPe()<<endl;
+		this->contribute(CkCallback(CkIndex_Sorter<key, value>::Done(NULL), sorter_proxy));
 	}
 	delete(pm);
 }

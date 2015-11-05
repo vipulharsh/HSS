@@ -51,8 +51,9 @@ Sorter<key, value>::Sorter(CkMigrateMessage *msg){}
 
 
 template<class key, class value>
-Sorter<key, value>::Sorter(const CkArrayID &bucketArr, int _nBuckets, key min, key max, tuning_params par) : 
-                 buckets(bucketArr), nBuckets(_nBuckets), minkey(min), maxkey(max){
+Sorter<key, value>::Sorter(const CkArrayID &bucketArr, int _nBuckets, key min, key max, 
+            tuning_params par, CProxy_Main<key, value> _mainproxy) : 
+        mainproxy(_mainproxy), buckets(bucketArr), nBuckets(_nBuckets), minkey(min), maxkey(max){
     VERBOSEPRINTF("Setting up sort. From Constructor\n");
     params = new tuning_params();
     *params = par;
@@ -276,9 +277,11 @@ void Sorter<key, value>::nextProbes(std::vector<std::pair<key, int> > &newachv, 
 
 //Optionary reduction that informs the Sorter chare that sorting has completed
 template <class key, class value>
-void Sorter<key, value>::Done(CkReductionMsg *msg){
+void Sorter<key, value>::Done(CkReductionMsg *msg){ 
   c2 = CmiWallTimer();
+  printf("\nCompleted in %lf seconds.\n", (c2-c1));
   VERBOSEPRINTF("\nCompleted in %lf seconds.\n", (c2-c1));
+  mainproxy.Exit();
 }
 
 //A sanity check that insures global sorted order

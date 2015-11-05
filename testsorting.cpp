@@ -86,8 +86,9 @@ int main(int argc, char **argv){
     }
     //*/
     delete[] dataIn;
-    delete[] dataOut;
+    //delete[] dataOut;
   }
+  /****
   {
     kv_pair<uint64_t, int>* dataIn;
     kv_pair<uint64_t, int>* dataOut;
@@ -109,12 +110,13 @@ int main(int argc, char **argv){
       for (int i = 0; i < out_elems; i++){
         printf("%lu\n", dataOut[i].myKey);
       }   
-    }*/
+    }*
     delete[] dataIn;
-    delete[] dataOut;
-    CharmLibExit();
+    //delete[] dataOut;
   }
-
+  ***/
+  CharmLibExit();
+  
   //final synchronization
   MPI_Barrier(MPI_COMM_WORLD);
   if(!peid) printf("Done on %d pe\n", numpes);

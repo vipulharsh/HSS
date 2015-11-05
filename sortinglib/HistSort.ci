@@ -23,7 +23,7 @@ module HistSort{
 
   template <class key, class value> chare Sorter {
     entry Sorter();
-    entry Sorter(const CkArrayID &bucketArr, int num_chares, key min, key max, tuning_params par);
+    entry Sorter(const CkArrayID &bucketArr, int num_chares, key min, key max, tuning_params par, CProxy_Main<key, value> mainproxy);
     entry void Begin();
     //!meaning of [expedited]
     entry [expedited] void Histogram(CkReductionMsg *msg);
