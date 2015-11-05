@@ -8,4 +8,8 @@
 
 5) possibility of a data race in sortinglib.h 122
 
-6) change int reductions to uint64_t reductions, change checkgoal
+6) <implemented> change int reductions to uint64_t reductions, change checkgoal
+
+7) How to deal with the case when all elements are same
+
+8) Modify allPreviousProbes after sending msg?

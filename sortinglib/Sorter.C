@@ -139,9 +139,9 @@ inline int Sorter<key, value>::checkGoal(int splitterInd, uint64_t histCount){
 template <class key, class value>
 void Sorter<key, value>::Histogram(CkReductionMsg *msg){
     VERBOSEPRINTF("Doing Histogramming %lf seconds after start.\n", (CmiWallTimer()-c1));   
-    
+    double cc1 = CmiWallTimer();
     numProbes++;    
-    ckout<<"Probe Number : ######### : "<<numProbes<<" "<<params->temp_probe_max<<" : "<<nElements<<endl;
+    //ckout<<"Probe Number : ######### : "<<numProbes<<" "<<params->temp_probe_max<<" : "<<nElements<<endl;
     uint64_t* histCounts = (uint64_t*)msg->getData();
     int lenhist = (int)msg->getSize()/sizeof(uint64_t);   
     
@@ -179,7 +179,12 @@ void Sorter<key, value>::Histogram(CkReductionMsg *msg){
         }
         s++;                        
     }    
+    //double cc2 = CmiWallTimer();
+    //ckout<<cc2-cc1<<" : "<< numProbes<<"  - srtr0 <<"<<endl;
     nextProbes(newachv, histCounts, msg);
+    double cc2 = CmiWallTimer();
+    ckout<<cc2-cc1<<" : "<< numProbes<<"  - srtr0 "<<" : "<<allPreviousProbes.size()<<endl;
+    
    //delete msg
 }
 
@@ -187,21 +192,21 @@ void Sorter<key, value>::Histogram(CkReductionMsg *msg){
 
 template <class key, class value>
 void Sorter<key, value>::nextProbes(std::vector<std::pair<key, int> > &newachv, uint64_t* histCounts, CkReductionMsg *msg){
+    //double cc1 = CmiWallTimer();
     int s = 1;
     key lastkey = globalmin;
     int scratchInd = 0;
     int unresolved = 0;
-    
+    int lastunresolved = -1;
     //ckout<<"Next Probes, UnachievedSplitters : "<<nBuckets+1 - achievedSplitters<<" "<<params->temp_probe_max<<endl;
     
-    typename std::map<key, uint64_t>::iterator it; 
+    typename std::map<key, uint64_t>::iterator it, previt; 
     for(it = allPreviousProbes.begin(); it != allPreviousProbes.end() && s<nBuckets; it++){
       uint64_t histCount = it->second;
       //ckout<<s<<" ./././ "<<" : "<< histCount<<" : "<<it->first<<" : "<<achieved[s]<<endl;
       while(checkGoal(s, histCount) > 0){
-        if(!achieved[s]){
+        if(!achieved[s])
           unresolved++;
-        }
         s++;
       }
       int probes = (unresolved * params->temp_probe_max)/(nBuckets + 2 - achievedSplitters);
@@ -210,21 +215,33 @@ void Sorter<key, value>::nextProbes(std::vector<std::pair<key, int> > &newachv, 
         probeStep = 1;
         probes = it->first - lastkey;
       }
+      //!something still needs to be done
+      if(probes==1 && probeStep==1){
+        for(int i=0; i<unresolved; i++){
+          int spltr = s-(1+i);
+          achieved[spltr] = true;
+          finalSplitters[spltr] = lastkey;
+        }
+        probes = 0;
+      }      
       //ckout<<"#Probes for next round "<<probes<<" "<<unresolved<<" "<<s<<" "<<probeStep<<endl;
       //ckout<<" "<<params->temp_probe_max<<" : "<<nBuckets<<" : "<<achievedSplitters<<endl;
-      for(int i=0; i<probes; i++){
+      for(int i=0; i<probes; i++)
         scratch[scratchInd++] = lastkey + ((i+1)*probeStep);
-      }
+      
       lastkey = it->first;
+      if(lastunresolved==0 && unresolved==0)
+        allPreviousProbes.erase(previt);
+      previt = it;
+      lastunresolved = unresolved;
       unresolved = 0;
     }
    scratch[scratchInd++] = globalmax + 1;   
-   ckout<<"Probes are **************************: "<<scratchInd<<endl;
-   for(int i=0; i<scratchInd; i++)
-      ckout<<scratch[i]<<endl;
+   //ckout<<"Probes are **************************: "<<scratchInd<<endl;
+   //for(int i=0; i<scratchInd; i++)
+   //   ckout<<scratch[i]<<endl;
 
    //swap lastProbe and scratch
-
    key *temp = lastProbe;
    lastProbe = scratch;
    scratch = temp;
@@ -245,11 +262,14 @@ void Sorter<key, value>::nextProbes(std::vector<std::pair<key, int> > &newachv, 
     buckets.histCountProbes(pm);
 
  //  if(lastProbeSize==1)
-     for(int i=0; i<=nBuckets; i++)
-       ckout<<"Splitter "<<i<<": "<<finalSplitters[i]<<" "<<achieved[i]<<endl;
+ //    for(int i=0; i<=nBuckets; i++)
+ //      ckout<<"Splitter "<<i<<": "<<finalSplitters[i]<<" "<<achieved[i]<<endl;
    
-   ckout<<"Sent !!"<<endl;
+   //ckout<<"Sent !!"<<endl;
    delete(msg);
+
+  //double cc2 = CmiWallTimer();
+  //ckout<<cc2-cc1<<" : "<< numProbes<<"  - srtr <<"<<endl;
 }
 
 

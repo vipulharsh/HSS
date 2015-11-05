@@ -142,7 +142,7 @@ void Bucket<key, value>::localProbe(){
 	//buildIndex
 	//if(CkMyPe()==2)
 	//	ckout<<"Inside Local Probe "<<numProbes<<" "<<CkMyPe()<<endl;
-
+	//double c1 = CmiWallTimer();
 	int numIndices = indexFactor * lastProbeSize;
 	key indexStep = std::max((mymax - mymin + numIndices) / numIndices, (key)1);	
 	int prb = 0;
@@ -150,19 +150,13 @@ void Bucket<key, value>::localProbe(){
 	//if(CkMyPe()==2 && numProbes==15){
 	//	ckout<<"Bucket Info "<< indexStep<<" : "<<mymax<<" : "<<mymin<<" : "<<numIndices<<" "<<CkMyPe()<<endl;
 	//}
-	int maxcount = 0;
 	for(int ind=0; ind<numIndices; ind++){	
 		//Something needs to be done about long long
-		int count = 0;
-		while(((long long) (lastProbe[prb] - mymin)/indexStep) < ind){
+		while(((long long) (lastProbe[prb] - mymin)/indexStep) < ind)
 			prb++;
-			count++;
-		}
-		maxcount = std::max(count, maxcount);
 		indices[ind] = prb;
 	}
 
-	ckout<<"Latency is "<<maxcount<<endl;
 
 	//if(CkMyPe()==2 && numProbes==15){
 	//	ckout<<"lastProbeSize:  "<<lastProbeSize;
@@ -200,21 +194,24 @@ void Bucket<key, value>::localProbe(){
 	//	return;
 //	if(CkMyPe() == 2 && numProbes==15)
 //		ckout<<" LPS "<<lastProbeSize<<endl;
+	int maxcount = 0, avgCount = 0;
 	for(int i=0; i<numElem; i++){
 		//if(CkMyPe() == 2 && numProbes==15)
 		//	ckout<<" LPS "<<bucket_data[i].k<<" ";
-		int ind = indices[(bucket_data[i].k - mymin)/indexStep];
-		
+		int ind = indices[(bucket_data[i].k - mymin)/indexStep];		
 		//if(CkMyPe() == 2 && numProbes==15)
 		//	ckout<<ind<<" "<<indexStep<<" "<<(bucket_data[i].k - mymin)<<" "<<(bucket_data[i].k - mymin)/indexStep<<endl;
-		
-		while(lastProbe[ind] < bucket_data[i].k)
+		int count = 1;
+		while(lastProbe[ind] < bucket_data[i].k){
 			ind++;		
+			count++;
+		}
+		maxcount = std::max(count, maxcount);
+		avgCount += count;
 		scratch[cumHist[ind]] = bucket_data[i];
 		cumHist[ind]++;
 	}
-
-
+	//ckout<<"Max Latency: "<<maxcount<<" "<<"Avg Latency :"<<(double)avgCount/numElem<<endl;
 	//if(numProbes == 15)
 	//	return;
 	
@@ -223,6 +220,8 @@ void Bucket<key, value>::localProbe(){
 	scratch = bucket_data;
 	bucket_data = temp;
 
+	//double c2 = CmiWallTimer();
+	//ckout<<"It: "<<numProbes<<" "<<c2-c1<<" - "<<CkMyPe()<<endl;
 	//if(CkMyPe()==2)
 	//	ckout<<"Exiting Local Probe   "<<lastProbeSize<<" "<<CkMyPe()<<endl;	
 	//stepsort?
