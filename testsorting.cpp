@@ -51,6 +51,14 @@ int main(int argc, char **argv){
   int num_elems = atoi(argv[1]), out_elems;
   int rand_seed = atoi(argv[2]);
 
+
+  int probe_max = -1;
+  if(argc > 2)
+    probe_max = atoi(argv[3]);
+
+
+
+
   //create a new comm
   MPI_Comm_split(MPI_COMM_WORLD, 1, peid, &newComm);
 
@@ -73,7 +81,7 @@ int main(int argc, char **argv){
     DEBUG(printf("In elems on %d are %d\n",peid, num_elems);)
     MPI_Barrier(newComm); //for timer
     double startTime = MPI_Wtime();
-    HistSorting<uint64_t, int>(num_elems, dataIn, &out_elems, &dataOut);
+    HistSorting<uint64_t, int>(num_elems, dataIn, &out_elems, &dataOut, probe_max);
     MPI_Barrier(newComm); //for timer
     double endTime = MPI_Wtime();
     if(!newid)

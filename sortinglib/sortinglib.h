@@ -39,7 +39,7 @@ void registerSortingLib();
 #endif
 
 template <class key, class value>
-void HistSorting(int input_elems_, kv_pair<key, value>* dataIn_, int * output_elems_, kv_pair<key, value>** dataOut_) {
+void HistSorting(int input_elems_, kv_pair<key, value>* dataIn_, int * output_elems_, kv_pair<key, value>** dataOut_, int probe_max) {
   registerSortingLib<key, value>();
   dataIn = (void*)dataIn_;
   dataOut = (void**)dataOut_;
@@ -49,7 +49,7 @@ void HistSorting(int input_elems_, kv_pair<key, value>* dataIn_, int * output_el
 #if DEBUG
     CkPrintf("[%d] Histogram Sorting on %d at %.3lf MB\n",CkMyPe(),CkNumPes(),CmiMemoryUsage()/(1024.0*1024));
 #endif
-   static CProxy_Main<key, value> mainProxy = CProxy_Main<key, value>::ckNew(CkNumPes());
+   static CProxy_Main<key, value> mainProxy = CProxy_Main<key, value>::ckNew(CkNumPes(), probe_max);
     mainProxy.DataReady();
   }
   StartCharmScheduler();
@@ -67,14 +67,17 @@ class Main : public CBase_Main<key, value> {
     tuning_params pars; 
   public:
     //main constructor
-    Main (int num_buckets_) {
+    Main (int num_buckets_, int probe_max) {
       //input parameter is number of buckets (data chares)
       num_buckets = num_buckets_;
       // Create the sorting entities
       CkArrayOptions opts(num_buckets);
       pars.probe_size = num_buckets - 1;
-      pars.probe_max = 64;
-      pars.temp_probe_max = 20;
+      if(probe_max == -1)
+        pars.probe_max = 64;
+      else
+        pars.probe_max = probe_max;
+      ckout<<pars.probe_max<<endl;
       pars.hist_thresh = 5;
       pars.splice_thresh = 1024;
       //try a variety of communication stages

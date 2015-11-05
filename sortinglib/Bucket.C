@@ -16,15 +16,15 @@ Bucket<key, value>::Bucket(tuning_params par, key min, key max, int nuBuckets_):
   CkPrintf("Creating chare %d of bucket chare array\n", this->thisIndex);
   params = new tuning_params;
   *params = par;
-  lastProbe = new key[params->temp_probe_max+1];
+  lastProbe = new key[params->probe_max+1];
   finalSplitters = new key[nBuckets+2]; //required size is nBuckets+2
   achieved = new bool[nBuckets+2];
   
-  cumHist = new int[params->temp_probe_max+1];
-  histCounts = new int[params->temp_probe_max +1];
-  longhistCounts = new uint64_t[params->temp_probe_max +1];
+  cumHist = new int[params->probe_max+1];
+  histCounts = new int[params->probe_max +1];
+  longhistCounts = new uint64_t[params->probe_max +1];
   
-  indices = new int[params->temp_probe_max * indexFactor + 1];
+  indices = new int[params->probe_max * indexFactor + 1];
   Reset();
 }
 

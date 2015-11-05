@@ -5,7 +5,7 @@ module HistSort{
   
 
   template <class key, class value> chare Main {
-    entry Main(int _num_buckets);
+    entry Main(int _num_buckets, int probe_max);
     entry void Exit();
     entry void DataReady();
     entry void init_isum(CkReductionMsg*);
