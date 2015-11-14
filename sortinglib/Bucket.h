@@ -9,7 +9,7 @@ class Bucket : public CBase_Bucket<key, value> {
 	
 	kv_pair<key, value>* bucket_data;
 	int numElem;
-	static const int indexFactor = 4;
+	static const int indexFactor = 10;
 
 	int nBuckets;
 	
@@ -28,8 +28,9 @@ class Bucket : public CBase_Bucket<key, value> {
 
 
 	kv_pair<key, value>* scratch;
-	int* cumHist;
+	int* cumHist, *cumHist1;
 	int* indices;
+	int numIndicesShift;
     int* histCounts;
     uint64_t *longhistCounts;
 

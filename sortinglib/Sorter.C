@@ -260,9 +260,9 @@ void Sorter<key, value>::nextProbes(std::vector<std::pair<key, int> > &newachv, 
 //   if(numProbes <= 15)
     buckets.histCountProbes(pm);
 
- //  if(lastProbeSize==1)
- //    for(int i=0; i<=nBuckets; i++)
- //      ckout<<"Splitter "<<i<<": "<<finalSplitters[i]<<" "<<achieved[i]<<endl;
+   if(lastProbeSize==1)
+     for(int i=0; i<=nBuckets; i++)
+       ckout<<"Splitter "<<i<<": "<<finalSplitters[i]<<" "<<achieved[i]<<endl;
    
    //ckout<<"Sent !!"<<endl;
    delete(msg);

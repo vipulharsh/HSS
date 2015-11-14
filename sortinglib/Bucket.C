@@ -9,6 +9,17 @@ template <class key, class value>
 Bucket<key, value>::Bucket(CkMigrateMessage *msg){}
 
 
+//closest power of 2
+std::pair<int, int> nextpow2(int n){
+	int ret = 1, pow = 0;
+	while(ret < n){
+		ret *= 2;
+		pow++;
+	}
+	return std::pair<int, int>(ret, pow);
+}
+
+
 ///initialize Bucket (create data)
 template <class key, class value>
 Bucket<key, value>::Bucket(tuning_params par, key min, key max, int nuBuckets_):
@@ -21,10 +32,13 @@ Bucket<key, value>::Bucket(tuning_params par, key min, key max, int nuBuckets_):
   achieved = new bool[nBuckets+2];
   
   cumHist = new int[params->probe_max+1];
+  cumHist1 = new int[params->probe_max+1];
+
   histCounts = new int[params->probe_max +1];
   longhistCounts = new uint64_t[params->probe_max +1];
   
-  indices = new int[params->probe_max * indexFactor + 1];
+  std::pair<int, int> pp =  nextpow2(params->probe_max * indexFactor + 1);
+  indices = new int[pp.first];
   Reset();
 }
 
@@ -104,7 +118,23 @@ void Bucket<key, value>::firstProbe(key firstkey, key lastkey, int probeSize){
 		cumHist[i+1] = histCounts[i] + cumHist[i];
 		//ckout<<" >> "<<cumHist[i+1]<<endl;
 	}
-	
+	memcpy(cumHist1, cumHist, (probeSize+1) * sizeof(cumHist[0]));	
+	for(int bkt=0; bkt<probeSize; bkt++){
+		for(int i=cumHist[bkt]; i<cumHist1[bkt+1]; i++){
+			int ind = (bucket_data[i].k - firstkey)/step;
+			if(ind != bkt){
+				int swap = cumHist[ind];
+				kv_pair<key, value> temp = bucket_data[i];
+				bucket_data[i] = bucket_data[swap];
+				bucket_data[swap] = temp;
+				cumHist[ind]++;
+				i--;
+			}
+		}
+	}
+
+
+/*
 	for(int i=0; i<numElem; i++){
 		//ckout<<bucket_data[i].k<<endl;
 		int ind = (bucket_data[i].k - firstkey)/step;
@@ -116,6 +146,7 @@ void Bucket<key, value>::firstProbe(key firstkey, key lastkey, int probeSize){
 	kv_pair<key, value> * temp = scratch;
 	scratch = bucket_data;
 	bucket_data = temp;
+*/
 
 	//for(int i=0; i<numElem; i++)
 	//	ckout<<bucket_data[i].k<<endl;
@@ -142,7 +173,7 @@ void Bucket<key, value>::localProbe(){
 	//if(CkMyPe()==2)
 	//	ckout<<"Inside Local Probe "<<numProbes<<" "<<CkMyPe()<<endl;
 	//double c1 = CmiWallTimer();
-	int numIndices = indexFactor * lastProbeSize;
+	int numIndices = nBuckets * indexFactor;
 	key indexStep = std::max((mymax - mymin + numIndices) / numIndices, (key)1);	
 	int prb = 0;
 	//ckout<<" lastProbeSize "<<endl;
@@ -188,12 +219,34 @@ void Bucket<key, value>::localProbe(){
 	for(int i=0; i<lastProbeSize-1; i++){
 		cumHist[i+1] = histCounts[i] + cumHist[i];
 	}	
+	int maxcount = 0, avgCount = 0;
+	memcpy(cumHist1, cumHist, (lastProbeSize) * sizeof(cumHist[0]));	
+	for(int bkt=0; bkt<lastProbeSize-1; bkt++){
+		for(int i=cumHist[bkt]; i<cumHist1[bkt+1]; i++){
+			int ind = indices[(bucket_data[i].k - mymin)/indexStep];
+			int count = 1;
+			while(lastProbe[ind] < bucket_data[i].k){
+				ind++;		
+				count++;
+			}
+			maxcount = std::max(count, maxcount);
+			avgCount += count;
+			if(ind != bkt){
+				int swap = cumHist[ind];
+				kv_pair<key, value> temp = bucket_data[i];
+				bucket_data[i] = bucket_data[swap];
+				bucket_data[swap] = temp;
+				cumHist[ind]++;
+				i--;
+			}
+		}
+	}
 
 	//if(numProbes == 15)
 	//	return;
 //	if(CkMyPe() == 2 && numProbes==15)
 //		ckout<<" LPS "<<lastProbeSize<<endl;
-	int maxcount = 0, avgCount = 0;
+/*
 	for(int i=0; i<numElem; i++){
 		//if(CkMyPe() == 2 && numProbes==15)
 		//	ckout<<" LPS "<<bucket_data[i].k<<" ";
@@ -210,15 +263,15 @@ void Bucket<key, value>::localProbe(){
 		scratch[cumHist[ind]] = bucket_data[i];
 		cumHist[ind]++;
 	}
-	//ckout<<"Max Latency: "<<maxcount<<" "<<"Avg Latency :"<<(double)avgCount/numElem<<endl;
-	//if(numProbes == 15)
-	//	return;
-	
 	//swap scratch & bucket_data
 	kv_pair<key, value> * temp = scratch;
 	scratch = bucket_data;
 	bucket_data = temp;
+*/
 
+	ckout<<"Max Latency: "<<maxcount<<" "<<"Avg Latency :"<<(double)avgCount/numElem<<endl;
+	//if(numProbes == 15)
+	//	return;
 	//double c2 = CmiWallTimer();
 	//ckout<<"It: "<<numProbes<<" "<<c2-c1<<" - "<<CkMyPe()<<endl;
 	//if(CkMyPe()==2)
