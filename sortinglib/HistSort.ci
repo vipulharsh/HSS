@@ -40,6 +40,7 @@ module HistSort{
     entry void firstLocalProbe(int lastProbeSize);
     entry void histCountProbes(probeMessage<key> *pm);
   	entry void checkMemoryCorruption();
+    entry void stepSort();
     //!expedited? entry [expedited] void CountProbe(next_probe<key> *pb);
     //entry void Load(data_msg<key, value>* msg);
     //entry void Load();

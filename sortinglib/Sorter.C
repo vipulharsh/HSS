@@ -60,6 +60,7 @@ Sorter<key, value>::Sorter(const CkArrayID &bucketArr, int _nBuckets, key min, k
     firstUse = true;
     numProbes = 0;
     ckout<<"CONS Params->probe_max: "<<params->probe_max<<endl;
+    c1 = CmiWallTimer();
 }
 
 
@@ -76,7 +77,6 @@ void Sorter<key, value>::globalMinMax(CkReductionMsg *msg){
 template<class key, class value>
 void Sorter<key, value>::Begin(){
 
-    c1 = CmiWallTimer();
 
     ckout<<"Sorter Constructor : "<<endl; 
     ckout<<"Params->probe_max: "<<params->probe_max<<endl;

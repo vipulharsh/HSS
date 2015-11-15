@@ -26,6 +26,11 @@ class Bucket : public CBase_Bucket<key, value> {
     key* lastProbe;
     int lastProbeSize;
 
+    int *sepCounts;
+    int lastSortedChunk;
+   	int numChunks;
+   	bool doneHists;
+
 
 	kv_pair<key, value>* scratch;
 	int* cumHist, *cumHist1;
@@ -43,6 +48,7 @@ class Bucket : public CBase_Bucket<key, value> {
       Bucket(CkMigrateMessage *);
 	  Bucket(tuning_params par, key _min, key _max, int nBuckets_);
 	  void SetData(CProxy_Sorter<key, value> _sorter_proxy);
+	  void stepSort();
 	  void firstProbe(key firstkey, key lastkey, int probesize);
 	  void firstLocalProbe(int lastProbeSize);
 	  void histCountProbes(probeMessage<key> *pm);
