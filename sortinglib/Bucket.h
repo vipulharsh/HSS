@@ -32,7 +32,7 @@ class Bucket : public CBase_Bucket<key, value> {
    	bool doneHists;
 
 
-	kv_pair<key, value>* scratch;
+	//kv_pair<key, value>* scratch;
 	int* cumHist, *cumHist1;
 	int* indices;
 	int numIndicesShift;

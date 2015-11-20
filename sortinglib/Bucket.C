@@ -75,7 +75,7 @@ void Bucket<key, value>::SetData(CProxy_Sorter<key, value> _sorter_proxy){
   //CkAssert(num_elements > 0);
   bucket_data = (kv_pair<key, value>*)dataIn;
   //!delete this later
-  scratch = new kv_pair<key, value>[numElem+1];
+  //scratch = new kv_pair<key, value>[numElem+1];
 
   mymin = mymax = bucket_data[0].k;
   
@@ -138,7 +138,8 @@ void Bucket<key, value>::stepSort(){
 	std::sort(bucket_data + sepCounts[lastSortedChunk], 
 		bucket_data + sepCounts[lastSortedChunk+1]);
 
-	if(lastSortedChunk<2){
+	//if(lastSortedChunk<2)
+	{
 		ckout<<"Size of Chunk : "<<lastSortedChunk<<" : "<<CmiWallTimer()-cc1;
 		ckout<<" : "<<sepCounts[lastSortedChunk+1] - sepCounts[lastSortedChunk]<<" : ";
 		//ckout<<sepCounts[lastSortedChunk+1]<<" , "<<sepCounts[lastSortedChunk]<<" : ";
@@ -226,6 +227,7 @@ void Bucket<key, value>::localProbe(){
 				prb++;
 			indices[ind] = prb;
 		}
+		indices[numIndices] = lastProbeSize;
 
 	//if(CkMyPe()==2 && numProbes==15){
 	//	ckout<<"lastProbeSize:  "<<lastProbeSize;
@@ -237,19 +239,27 @@ void Bucket<key, value>::localProbe(){
 	//}
 		int maxcount = 0, avgcount = 0;
 		for(int i=sepCounts[lastSortedChunk]; i<numElem; i++){
-			int ind = indices[(bucket_data[i].k - currmin)/indexStep];
+			int index = (bucket_data[i].k - currmin)/indexStep;
+			int ind = indices[index];
 			int count=1;
-			while(lastProbe[ind] < bucket_data[i].k){
-				ind++; count++;
+			if(indices[ind+1] - indices[ind] >= 15){
+				ind = std::lower_bound(lastProbe + ind, 
+					lastProbe + indices[index+1] + 1, bucket_data[i].k) - lastProbe;
 			}
+			else{
+				while(lastProbe[ind] < bucket_data[i].k){
+					ind++; //count++;
+				}
+			}
+
 			histCounts[ind]++;
-			maxcount = std::max(maxcount, count);
-			avgcount += count;
+			//maxcount = std::max(maxcount, count);
+			//avgcount += count;
 		//ckout<<histCounts[ind]<<" ? "<<CkMyPe()<<endl;	
 		}
-		ckout<<"Avg Count is : "<<((double)avgcount)/numElem<<" : ";
-		ckout<<"Real Avg : "<<((double)avgcount)/(numElem - sepCounts[lastSortedChunk])<<" : ";
-		ckout<<"Max Count is : "<<maxcount<<" : ";
+		//ckout<<"Avg Count is : "<<((double)avgcount)/numElem<<" : ";
+		//ckout<<"Real Avg : "<<((double)avgcount)/(numElem - sepCounts[lastSortedChunk])<<" : ";
+		//ckout<<"Max Count is : "<<maxcount<<" : ";
 		ckout<<"Elements Scanned : "<<numElem - sepCounts[lastSortedChunk]<<" "<<CkMyPe()<<endl;
 	}
 
