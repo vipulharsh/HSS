@@ -36,7 +36,7 @@ module HistSort{
     entry Bucket(tuning_params par, key _min, key _max, int nBuckets_);	  
     //entry void SetCallback(const CkCallback &cb);
     entry void SetData(CProxy_Sorter<key, value> _sorter_proxy);
-    entry void firstProbe(key firstkey, key lastkey, int probesize);
+    entry void firstProbe(key firstkey, key lastkey, key stepSize, int probeSize);
     entry void firstLocalProbe(int lastProbeSize);
     entry void histCountProbes(probeMessage<key> *pm);
   	entry void checkMemoryCorruption();

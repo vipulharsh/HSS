@@ -1,3 +1,4 @@
+#include <assert.h>
 /*global*/ CkReduction::reducerType sum_uint64_t_type; 
 
 ///reduction for summing arrays of unsigned 64-bit integers
@@ -72,8 +73,6 @@ void Sorter<key, value>::globalMinMax(CkReductionMsg *msg){
   Begin();
 }
 
-
-
 template<class key, class value>
 void Sorter<key, value>::Begin(){
 
@@ -93,11 +92,13 @@ void Sorter<key, value>::Begin(){
     }
 
     if(firstUse || !params->reuse_probe_results){
-        lastProbeSize = nBuckets; //to be tuned     
         key firstkey = globalmin;
         key lastkey = globalmax+1;
-        buckets.firstProbe(firstkey, lastkey, lastProbeSize);
-        key step = (lastkey - firstkey + lastProbeSize-1)/lastProbeSize; 
+        std::pair<int, key> p2= grtstPow2((lastkey-firstkey + nBuckets - 1)/nBuckets + 1);
+        key step = p2.second;
+        lastProbeSize = (lastkey - firstkey)/step + 1;
+        //ckout<<step<<" "<<lastProbeSize<<" First sorter "<<endl;
+        buckets.firstProbe(firstkey, lastkey, step, lastProbeSize);
         for(int i=0; i<lastProbeSize; i++)
             lastProbe[i] = firstkey + ((i+1) * step);
         lastProbe[lastProbeSize-1] = lastkey; //this is fine

@@ -156,6 +156,19 @@ void registerSortingLib() {
   CMessage_probeMessage<key >::__register("probeMessage<key >", sizeof(probeMessage<key >),(CkPackFnPtr) probeMessage<key >::pack,(CkUnpackFnPtr) probeMessage<key >::unpack);
 }
 
+template <class key>
+std::pair<int, key> grtstPow2(key n){
+  key ret = 1;
+  int cnt = 0;
+  while(ret < n){
+    ret *= 2;
+    cnt++;
+  }
+  return std::pair<int, key>(cnt-1, ret>>1);
+}
+
+
+
 //template <class key, class value>
 template<>
 void recursive_pup_impl<Sorter<unsigned long, int >, 1>::operator()(Sorter<unsigned long, int > *obj, PUP::er &p) {

@@ -49,7 +49,7 @@ class Bucket : public CBase_Bucket<key, value> {
 	  Bucket(tuning_params par, key _min, key _max, int nBuckets_);
 	  void SetData(CProxy_Sorter<key, value> _sorter_proxy);
 	  void stepSort();
-	  void firstProbe(key firstkey, key lastkey, int probesize);
+	  void firstProbe(key firstkey, key lastkey, key step, int probeSize);
 	  void firstLocalProbe(int lastProbeSize);
 	  void histCountProbes(probeMessage<key> *pm);
 	  void checkMemoryCorruption();

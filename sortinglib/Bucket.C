@@ -74,8 +74,6 @@ void Bucket<key, value>::SetData(CProxy_Sorter<key, value> _sorter_proxy){
   sorter_proxy = _sorter_proxy;
   //CkAssert(num_elements > 0);
   bucket_data = (kv_pair<key, value>*)dataIn;
-  //!delete this later
-  //scratch = new kv_pair<key, value>[numElem+1];
 
   mymin = mymax = bucket_data[0].k;
   
@@ -85,27 +83,28 @@ void Bucket<key, value>::SetData(CProxy_Sorter<key, value> _sorter_proxy){
   	mymax = std::max(mymax, bucket_data[i].k);
   }
   ckout<<"Time for min max : "<<CmiWallTimer() - cc1<<" - "<<CkMyPe()<<endl;
-
   //ckout<<mymin<<" minmax "<<mymax<<" - "<<CkMyPe()<<endl;
   key minmax[2] = {mymin, mymax};
   //needs to be changed to key
   this->contribute(2*sizeof(uint64_t), minmax, minmax_uint64_t_type, 
   	CkCallback(CkIndex_Sorter<key,value>::globalMinMax(NULL), sorter_proxy)); 
   
-
-  memset(histCounts, 0, numChunks*sizeof(int));	
   key step = (mymax - mymin + numChunks)/(numChunks);
+  std::pair<int, key> p2 = grtstPow2(step * 2);
+  step = p2.second;
+  numChunks = (mymax + 1 - mymin)/step + 1;
+  memset(histCounts, 0, numChunks*sizeof(int));	
+
   for(int i=0; i<numElem; i++)
-		histCounts[(bucket_data[i].k - mymin)/step]++;		 
+		histCounts[(bucket_data[i].k - mymin)>>p2.first]++;		 
   cumHist[0] = 0;	
-  for(int i=0; i<numChunks; i++){
+  for(int i=0; i<numChunks; i++)
 	cumHist[i+1] = histCounts[i] + cumHist[i];
-	//ckout<<" >> "<<cumHist[i+1]<<endl;
-  }
+
   memcpy(sepCounts, cumHist, (numChunks+1) * sizeof(cumHist[0]));	
   for(int bkt=0; bkt<numChunks; bkt++){
   	for(int i=cumHist[bkt]; i<sepCounts[bkt+1]; i++){
-  		int ind = (bucket_data[i].k - mymin)/step;
+  		int ind = (bucket_data[i].k - mymin)>>p2.first;
   		if(ind != bkt){
   			int swap = cumHist[ind];
   			kv_pair<key, value> temp = bucket_data[i];
@@ -132,21 +131,16 @@ void Bucket<key, value>::SetData(CProxy_Sorter<key, value> _sorter_proxy){
 template <class key, class value>
 void Bucket<key, value>::stepSort(){
 	if(lastSortedChunk == numChunks)
-		return;
-	
+		return;	
 	double cc1 = CmiWallTimer();
 	std::sort(bucket_data + sepCounts[lastSortedChunk], 
 		bucket_data + sepCounts[lastSortedChunk+1]);
-
-	//if(lastSortedChunk<2)
-	{
-		ckout<<"Size of Chunk : "<<lastSortedChunk<<" : "<<CmiWallTimer()-cc1;
-		ckout<<" : "<<sepCounts[lastSortedChunk+1] - sepCounts[lastSortedChunk]<<" : ";
-		//ckout<<sepCounts[lastSortedChunk+1]<<" , "<<sepCounts[lastSortedChunk]<<" : ";
-		ckout<<" - "<<CkMyPe()<<endl;
-	}
+/*
+	ckout<<"Size of Chunk : "<<lastSortedChunk<<" : "<<CmiWallTimer()-cc1;
+	ckout<<" : "<<sepCounts[lastSortedChunk+1] - sepCounts[lastSortedChunk]<<" : ";
+	ckout<<" - "<<CkMyPe()<<endl;
+*/
 	lastSortedChunk++;
-
 	if(doneHists)
 		stepSort();
 	else
@@ -155,15 +149,13 @@ void Bucket<key, value>::stepSort(){
 
 
 template <class key, class value>
-void Bucket<key, value>::firstProbe(key firstkey, key lastkey, int probeSize){
+void Bucket<key, value>::firstProbe(key firstkey, key lastkey, key step, int probeSize){
 	lastProbeSize = probeSize;	
 	memset(histCounts, 0, probeSize*sizeof(int));	
-	key step = (lastkey - firstkey + probeSize-1)/(probeSize);
-	
+	std::pair<int, key> p2= grtstPow2(step+1);
 	//ckout<<step<<" "<<lastkey<<" "<<firstkey<<" "<<probeSize<<" "<<numElem<<" "<<CkMyPe()<<endl;	
 	for(int i=0; i<numElem; i++)
-		histCounts[(bucket_data[i].k - firstkey)/step]++;		
-	
+		histCounts[(bucket_data[i].k - firstkey)>>p2.first]++;			
 	//use 64-bit in reduction since total histogram might surpass 32-bit limit
 	//ckout<<"Probe Size : "<<probeSize<<endl;
 	for (int i = 0; i < probeSize; i++)
@@ -182,8 +174,6 @@ void Bucket<key, value>::firstLocalProbe(int _lastProbeSize){
 	lastProbeSize = _lastProbeSize;
 	localProbe();
 }
-
-
 
 
 template <class key, class value>
@@ -270,8 +260,6 @@ void Bucket<key, value>::localProbe(){
 	this->contribute((lastProbeSize)*sizeof(uint64_t), longhistCounts, sum_uint64_t_type, 
 		CkCallback(CkIndex_Sorter<key,value>::Histogram(NULL), sorter_proxy));
 	//ckout<<"Max Latency: "<<maxcount<<" "<<"Avg Latency :"<<(double)avgCount/numElem<<endl;
-	//if(numProbes == 15)
-	//	return;
 	double c2 = CmiWallTimer();
 	//ckout<<"It: "<<numProbes<<" "<<c2-c1<<" - "<<CkMyPe()<<endl;
 	//if(CkMyPe()==2)
@@ -289,7 +277,6 @@ void Bucket<key, value>::histCountProbes(probeMessage<key> *pm){
 	//	ckout<<"00****** "<<lastProbeSize<<" "<<CkMyPe()<<endl;
 
 	memcpy(lastProbe, pm->probe, lastProbeSize * sizeof(key));
-	//!should be lastProbeSize > 1
 	if(lastProbeSize > 1){
 		localProbe();
 	}
