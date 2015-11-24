@@ -27,13 +27,14 @@ class Bucket : public CBase_Bucket<key, value> {
     int lastProbeSize;
 
     int *sepCounts;
+    key *sepKeys;
     int lastSortedChunk;
    	int numChunks;
    	bool doneHists;
 
 
 	//kv_pair<key, value>* scratch;
-	int* cumHist, *cumHist1;
+	int* cumHist;
 	int* indices;
 	int numIndicesShift;
     int* histCounts;
@@ -52,8 +53,6 @@ class Bucket : public CBase_Bucket<key, value> {
 	  void firstProbe(key firstkey, key lastkey, key step, int probeSize);
 	  void firstLocalProbe(int lastProbeSize);
 	  void histCountProbes(probeMessage<key> *pm);
-	  void checkMemoryCorruption();
-
 };
 
 //need to include .C file in order to have it instantiated when the .h file is included externally

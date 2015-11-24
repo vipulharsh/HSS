@@ -156,6 +156,8 @@ void registerSortingLib() {
   CMessage_probeMessage<key >::__register("probeMessage<key >", sizeof(probeMessage<key >),(CkPackFnPtr) probeMessage<key >::pack,(CkUnpackFnPtr) probeMessage<key >::unpack);
 }
 
+
+
 template <class key>
 std::pair<int, key> grtstPow2(key n){
   key ret = 1;
@@ -166,6 +168,9 @@ std::pair<int, key> grtstPow2(key n){
   }
   return std::pair<int, key>(cnt-1, ret>>1);
 }
+
+template<int> std::pair<int, int> grtstPow2(int);
+
 
 
 

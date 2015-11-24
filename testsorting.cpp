@@ -75,7 +75,7 @@ int main(int argc, char **argv){
     //num_elems = num_elems*(1+newid);
     dataIn = new kv_pair<uint64_t, int>[num_elems];
     for (int i = 0; i < num_elems; i++){
-      dataIn[i].k  = getRandom()  & getRandom() & getRandom() & getRandom((peid + i) & num_elems);
+      dataIn[i].k  = getRandom() & getRandom((peid + i) & num_elems);
       //dataIn[i].k = (numpes - peid)*1000 + (num_elems - i);
       //dataIn[i].k = peid;
     }

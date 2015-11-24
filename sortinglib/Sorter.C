@@ -120,7 +120,6 @@ void Sorter<key, value>::Begin(){
     allPreviousProbes.clear();
     //allPreviousProbes[minkey] = 0;
     ckout<<"Exiting Sorter Constructor... "<<params->probe_max<<endl;
-
 }
 
 
@@ -198,7 +197,7 @@ void Sorter<key, value>::nextProbes(std::vector<std::pair<key, int> > &newachv, 
     int scratchInd = 0;
     int unresolved = 0;
     int lastunresolved = -1;
-    //ckout<<"Next Probes, UnachievedSplitters : "<<nBuckets+1 - achievedSplitters<<" "<<params->probe_max<<endl;
+    ckout<<"Next Probes, UnachievedSplitters : "<<nBuckets+1 - achievedSplitters<<" "<<params->probe_max<<endl;
     
     typename std::map<key, uint64_t>::iterator it, previt; 
     for(it = allPreviousProbes.begin(); it != allPreviousProbes.end() && s<nBuckets; it++){
@@ -222,6 +221,8 @@ void Sorter<key, value>::nextProbes(std::vector<std::pair<key, int> > &newachv, 
           achieved[spltr] = true;
           finalSplitters[spltr] = lastkey;
         }
+        ckout<<"Can't do sorting : Too many Duplicates"<<endl;
+        CkExit();
         probes = 0;
       }      
       //ckout<<"#Probes for next round "<<probes<<" "<<unresolved<<" "<<s<<" "<<probeStep<<endl;
