@@ -21,6 +21,11 @@ module HistSort{
       int newachv_id[];
     };
 
+ template <class key, class value>
+    message data_msg {
+      kv_pair<key, value> data[];
+    };
+
   template <class key, class value> chare Sorter {
     entry Sorter();
     entry Sorter(const CkArrayID &bucketArr, int num_chares, key min, key max, tuning_params par, CProxy_Main<key, value> mainproxy);
@@ -40,8 +45,7 @@ module HistSort{
     entry void firstLocalProbe(int lastProbeSize);
     entry void histCountProbes(probeMessage<key> *pm);
   	entry void stepSort();
-    //!expedited? entry [expedited] void CountProbe(next_probe<key> *pb);
-    //entry void Load(data_msg<key, value>* msg);
+    entry void Load(data_msg<key, value>* msg);
     //entry void Load();
   };
 };

@@ -220,6 +220,8 @@ void Sorter<key, value>::nextProbes(std::vector<std::pair<key, int> > &newachv, 
           int spltr = s-(1+i);
           achieved[spltr] = true;
           finalSplitters[spltr] = lastkey;
+          //do Something here
+          //newachv.push_back(std::pair<key, int>(lastkey, spltr));
         }
         ckout<<"Can't do sorting : Too many Duplicates"<<endl;
         CkExit();

@@ -78,6 +78,7 @@ int main(int argc, char **argv){
       dataIn[i].k  = getRandom() & getRandom((peid + i) & num_elems);
       //dataIn[i].k = (numpes - peid)*1000 + (num_elems - i);
       //dataIn[i].k = peid;
+      //dataIn[i].k = 3;
     }
     DEBUG(printf("In elems on %d are %d\n",peid, num_elems);)
     MPI_Barrier(newComm); //for timer

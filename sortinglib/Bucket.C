@@ -31,6 +31,8 @@ Bucket<key, value>::Bucket(tuning_params par, key min, key max, int nuBuckets_):
   numChunks = nBuckets;
   sepCounts = new int[numChunks+2];
   sepKeys = new key[numChunks+2];
+  sorted = new bool[numChunks+2];
+  sent = new bool[nBuckets+1];
   Reset();
 }
 
@@ -39,6 +41,8 @@ Bucket<key, value>::Bucket(tuning_params par, key min, key max, int nuBuckets_):
 template <class key, class value>
 void Bucket<key, value>::Reset(){
 	memset(achieved+1, false, nBuckets);
+    memset(sorted, false, numChunks+1);
+    memset(sent, false, nBuckets+1);
     achieved[0] = achieved[nBuckets] = true;
     //check the validity of this
     numProbes = 0;
@@ -89,6 +93,7 @@ void Bucket<key, value>::SetData(CProxy_Sorter<key, value> _sorter_proxy){
   	sepKeys[i+1] = step * (i+1);
   }
   sepKeys[0] = 0;
+  sepKeys[numChunks] = maxkey;
   memcpy(sepCounts, cumHist, (numChunks+1) * sizeof(cumHist[0]));	
   for(int bkt=0; bkt<numChunks; bkt++){
   	for(int i=cumHist[bkt]; i<sepCounts[bkt+1]; i++){
@@ -121,14 +126,18 @@ void Bucket<key, value>::stepSort(){
 	if(lastSortedChunk == numChunks)
 		return;	
 	double cc1 = CmiWallTimer();
-	std::sort(bucket_data + sepCounts[lastSortedChunk], 
-		bucket_data + sepCounts[lastSortedChunk+1]);
+	
+	if(!sorted[lastSortedChunk+1]){
+		std::sort(bucket_data + sepCounts[lastSortedChunk], 
+			bucket_data + sepCounts[lastSortedChunk+1]);
+	}
 
-	ckout<<"Size of Chunk : "<<lastSortedChunk<<" : "<<CmiWallTimer()-cc1;
-	ckout<<" : "<<sepCounts[lastSortedChunk+1] - sepCounts[lastSortedChunk]<<" : ";
-	ckout<<" - "<<CkMyPe()<<endl;
+	//ckout<<"Size of Chunk : "<<lastSortedChunk<<" : "<<CmiWallTimer()-cc1;
+	//ckout<<" : "<<sepCounts[lastSortedChunk+1] - sepCounts[lastSortedChunk]<<" : ";
+	//ckout<<" - "<<CkMyPe()<<endl;
 
 	lastSortedChunk++;
+	sorted[lastSortedChunk] = true;
 	if(doneHists)
 		stepSort();
 	else
@@ -217,6 +226,7 @@ void Bucket<key, value>::localProbe(){
 	double c2 = CmiWallTimer();
 }
 
+
 template <class key, class value>
 void Bucket<key, value>::histCountProbes(probeMessage<key> *pm){
 	numProbes++;
@@ -228,17 +238,62 @@ void Bucket<key, value>::histCountProbes(probeMessage<key> *pm){
 	achievedSplitters += pm->num_newachv;
 	lastProbeSize = pm->probeSize;
 	memcpy(lastProbe, pm->probe, lastProbeSize * sizeof(key));
-	if(lastProbeSize > 1)
+	if(lastProbeSize > 1){
 		localProbe();
+		partialSend(pm);
+	}
 	else{
 		ckout<<"Splitters have been determined  - "<<CkMyPe()<<endl;
-		this->contribute(CkCallback(CkIndex_Sorter<key, value>::Done(NULL), sorter_proxy));
+		partialSend(pm);
+		this->contribute(CkCallback(CkIndex_Sorter<key, value>::Done(NULL), sorter_proxy));		
 	}
 	delete(pm);
 }
 
 
 
+template <class key, class value>
+void Bucket<key, value>::partialSend(probeMessage<key> *pm){
+	for(int i=0; i<pm->num_newachv; i++){
+		for(int bkt = pm->newachv_id[i]; bkt<= pm->newachv_id[i]+1; bkt++){
+			if(!sent[bkt] && achieved[bkt] && achieved[bkt-1]){
+				//find what all chunks it belongs to
+				key sep1 = finalSplitters[bkt-1];
+				key sep2 = finalSplitters[bkt];
+				int chunk1 = std::upper_bound(sepKeys, sepKeys + numChunks + 1, sep1) - sepKeys - 1;
+				int chunk2 = std::lower_bound(sepKeys, sepKeys + numChunks + 1, sep2) - sepKeys;
+
+				//ckout<<numChunks<<" : "<<mymax<<" : "<<sep1<<" ;; "<<sep2<<" : "<<sepKeys[numChunks]<<" ! ";
+				//	ckout<<chunk1<<" ;';';';'; "<<chunk2<<" for "<<bkt<<" - "<<CkMyPe()<<endl;
+				
+				//sort those chunks if not already sorted
+				for(int c = chunk1+1; c <= chunk2; c++){
+					if(!sorted[c]){
+						std::sort(bucket_data + sepCounts[c-1], 
+						bucket_data + sepCounts[c]);
+						sorted[c] = true;
+						//ckout<<chunk1<<" ;';';';'; "<<chunk2<<" for "<<bkt<<" - "<<CkMyPe()<<endl;
+					}
+				}
+
+				//find keys and send
+				kv_pair<key, value> comp;
+				comp.k = sep1;
+				int ind1 = std::lower_bound(bucket_data + sepCounts[chunk1],
+					 bucket_data + sepCounts[chunk2], comp) - bucket_data;
+				comp.k = sep2;
+				int ind2 = std::lower_bound(bucket_data + sepCounts[chunk1],
+					 bucket_data + sepCounts[chunk2], comp) - bucket_data;
+				ckout<<"Sending "<<ind1<<"-"<<ind2<<" to "<<bkt<<" from "<<CkMyPe()<<endl;
+				sent[bkt] = true;
+				data_msg<key, value> *dm = new (ind2-ind1) data_msg<key,value>;
+				this->thisProxy[bkt-1].Load(dm);
+			}
+		}
+	}
+}
 
 
-
+template <class key, class value>
+void Bucket<key, value>::Load(data_msg<key, value>* msg){
+}
