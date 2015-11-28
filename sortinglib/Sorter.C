@@ -157,8 +157,6 @@ void Sorter<key, value>::Histogram(CkReductionMsg *msg){
 
     CkAssert(lenhist == lastProbeSize);
     
-    if(numProbes <= 1)
-        nElements = histCounts[lastProbeSize-1];
 
     int p = 0; //currProbe
     int s = 1; //currSplitter
@@ -180,6 +178,11 @@ void Sorter<key, value>::Histogram(CkReductionMsg *msg){
     }    
     //double cc2 = CmiWallTimer();
     //ckout<<cc2-cc1<<" : "<< numProbes<<"  - srtr0 <<"<<endl;
+    if(numProbes <= 1){
+      nElements = histCounts[lastProbeSize-1];
+      newachv.push_back(std::pair<key, int>(maxkey, nBuckets));
+    }
+
     nextProbes(newachv, histCounts, msg);
     double cc2 = CmiWallTimer();
     ckout<<cc2-cc1<<" : "<< numProbes<<"  - srtr0 "<<" : "<<allPreviousProbes.size()<<endl;

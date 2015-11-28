@@ -13,3 +13,5 @@
 7) How to deal with the case when all elements are same
 
 8) Modify allPreviousProbes after sending msg?
+
+9) Modify 0 to min in Bucket.c 

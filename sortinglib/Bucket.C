@@ -43,24 +43,30 @@ void Bucket<key, value>::Reset(){
 	memset(achieved+1, false, nBuckets);
     memset(sorted, false, numChunks+1);
     memset(sent, false, nBuckets+1);
-    achieved[0] = achieved[nBuckets] = true;
+    achieved[0] = true;
+    //achieved[0] = achieved[nBuckets] = true;
     //check the validity of this
     numProbes = 0;
     finalSplitters[0] = minkey;    
-    finalSplitters[nBuckets] = maxkey;
-    achievedSplitters = 2;
+    //finalSplitters[nBuckets] = maxkey;
+    //achievedSplitters = 2;
+    achievedSplitters = 1;
 
     lastSortedChunk = 0;
     doneHists = false;
+    loadBuffer.clear();
+
+    received = 0;
 }
 
 
 //set bucket data
 template <class key, class value>
-void Bucket<key, value>::SetData(CProxy_Sorter<key, value> _sorter_proxy){
+void Bucket<key, value>::SetData(CProxy_Sorter<key, value> _sorter_proxy, CProxy_Main<key, value> _main_proxy){
   DEBUGPRINTF("Set data of chare %d of bucket chare array\n", this->thisIndex);
   numElem = in_elems;
   sorter_proxy = _sorter_proxy;
+  main_proxy = _main_proxy;
   //CkAssert(num_elements > 0);
   bucket_data = (kv_pair<key, value>*)dataIn;
 
@@ -90,9 +96,9 @@ void Bucket<key, value>::SetData(CProxy_Sorter<key, value> _sorter_proxy){
   cumHist[0] = 0;	
   for(int i=0; i<numChunks; i++){
 	cumHist[i+1] = histCounts[i] + cumHist[i];
-  	sepKeys[i+1] = step * (i+1);
+  	sepKeys[i+1] = mymin + step * (i+1);
   }
-  sepKeys[0] = 0;
+  sepKeys[0] = mymin;
   sepKeys[numChunks] = maxkey;
   memcpy(sepCounts, cumHist, (numChunks+1) * sizeof(cumHist[0]));	
   for(int bkt=0; bkt<numChunks; bkt++){
@@ -116,7 +122,7 @@ void Bucket<key, value>::SetData(CProxy_Sorter<key, value> _sorter_proxy){
   for(int i = 0; i < numElem; i++) 
     keysum += (int)(bucket_data[i].k % 100);  
   this->contribute(sizeof(int), &keysum, CkReduction::sum_int,
-  CkCallback(CkIndex_Main<key, value>::init_isum(NULL),mainProxy));
+  CkCallback(CkIndex_Main<key, value>::init_isum(NULL),main_proxy));
   #endif
 }
 
@@ -131,11 +137,9 @@ void Bucket<key, value>::stepSort(){
 		std::sort(bucket_data + sepCounts[lastSortedChunk], 
 			bucket_data + sepCounts[lastSortedChunk+1]);
 	}
-
 	//ckout<<"Size of Chunk : "<<lastSortedChunk<<" : "<<CmiWallTimer()-cc1;
 	//ckout<<" : "<<sepCounts[lastSortedChunk+1] - sepCounts[lastSortedChunk]<<" : ";
 	//ckout<<" - "<<CkMyPe()<<endl;
-
 	lastSortedChunk++;
 	sorted[lastSortedChunk] = true;
 	if(doneHists)
@@ -184,7 +188,7 @@ void Bucket<key, value>::localProbe(){
 		for(int prb=0; prb<lastProbeSize; prb++){
 			kv_pair<key, value> comp;
 			comp.k = lastProbe[prb];
-			histCounts[prb] = std::upper_bound(bucket_data,
+			histCounts[prb] = std::upper_bound(bucket_data + cumCount,
 				 bucket_data + sepCounts[lastSortedChunk], comp) - bucket_data;
 			histCounts[prb] -= cumCount;
 			cumCount += histCounts[prb];
@@ -192,7 +196,7 @@ void Bucket<key, value>::localProbe(){
 	}
 
 	if(lastSortedChunk < numChunks){
-		//buildIndex
+		//buildIndex : !Change this to for division by 2
 		int numIndices = std::max(nBuckets, lastProbeSize) * indexFactor;	
 		key currmin = mymin;
 		if(sepCounts[lastSortedChunk]>0)
@@ -244,6 +248,7 @@ void Bucket<key, value>::histCountProbes(probeMessage<key> *pm){
 	}
 	else{
 		ckout<<"Splitters have been determined  - "<<CkMyPe()<<endl;
+		doneHists = true;
 		partialSend(pm);
 		this->contribute(CkCallback(CkIndex_Sorter<key, value>::Done(NULL), sorter_proxy));		
 	}
@@ -254,8 +259,9 @@ void Bucket<key, value>::histCountProbes(probeMessage<key> *pm){
 
 template <class key, class value>
 void Bucket<key, value>::partialSend(probeMessage<key> *pm){
+	//randomize it
 	for(int i=0; i<pm->num_newachv; i++){
-		for(int bkt = pm->newachv_id[i]; bkt<= pm->newachv_id[i]+1; bkt++){
+		for(int bkt = pm->newachv_id[i]; bkt<= pm->newachv_id[i]+1 && bkt<=nBuckets; bkt++){
 			if(!sent[bkt] && achieved[bkt] && achieved[bkt-1]){
 				//find what all chunks it belongs to
 				key sep1 = finalSplitters[bkt-1];
@@ -272,6 +278,7 @@ void Bucket<key, value>::partialSend(probeMessage<key> *pm){
 						std::sort(bucket_data + sepCounts[c-1], 
 						bucket_data + sepCounts[c]);
 						sorted[c] = true;
+						//use this sorted chunk to optimize computations in localProbe
 						//ckout<<chunk1<<" ;';';';'; "<<chunk2<<" for "<<bkt<<" - "<<CkMyPe()<<endl;
 					}
 				}
@@ -284,9 +291,12 @@ void Bucket<key, value>::partialSend(probeMessage<key> *pm){
 				comp.k = sep2;
 				int ind2 = std::lower_bound(bucket_data + sepCounts[chunk1],
 					 bucket_data + sepCounts[chunk2], comp) - bucket_data;
-				ckout<<"Sending "<<ind1<<"-"<<ind2<<" to "<<bkt<<" from "<<CkMyPe()<<endl;
+				//ckout<<"Sending "<<ind1<<"-"<<ind2<<" to "<<bkt<<" from "<<CkMyPe()<<endl;
 				sent[bkt] = true;
 				data_msg<key, value> *dm = new (ind2-ind1) data_msg<key,value>;
+				memcpy(dm->data, bucket_data + ind1, (ind2-ind1)*sizeof(kv_pair<key, value>));
+				dm->num_vals = ind2-ind1;
+				dm->sorted = true;
 				this->thisProxy[bkt-1].Load(dm);
 			}
 		}
@@ -296,4 +306,89 @@ void Bucket<key, value>::partialSend(probeMessage<key> *pm){
 
 template <class key, class value>
 void Bucket<key, value>::Load(data_msg<key, value>* msg){
+	if(!msg->sorted){
+		std::sort(msg->data, msg->data + msg->num_vals);
+		msg->sorted = true;
+	}
+/*
+	key kk=0;
+	for(int i=0; i<msg->num_vals; i++)
+		kk += msg->data[i].k;
+	ckout<<kk<<" Successful "<<endl;
+*/
+	loadBuffer.push_back(msg);
+	received++;
+	if(received < nBuckets)
+		collapseAndMerge();
+	else{
+		//ckout<<"loadBuffer Size yet to be merged : "<<loadBuffer.size()<<endl;
+		totalMerge();
+		*dataOut = loadBuffer[0]->data;
+		*out_elems = loadBuffer[0]->num_vals;
+		#if VERBOSE
+	      	double sum = 0; int keysum = 0;
+	      	for(int i = 0; i < *out_elems; i++) 
+	      	  keysum += (int)(loadBuffer[0]->data[i].k % 100);   
+	      	this->contribute(sizeof(int), &keysum, CkReduction::sum_int,
+	      	    CkCallback(CkIndex_Main<key, value>::final_isum(NULL),main_proxy));
+	      	//printf("%d ** KeySum %lu Sum %lf\n",2,keysum, sum);
+		#endif
+	}
 }
+
+
+template <class key, class value>
+void Bucket<key, value>::collapseAndMerge(){
+	while (loadBuffer.size() > 1) {
+        int n = loadBuffer.size() - 2;
+        if ((n >= 1 && 
+       		loadBuffer[n-1]->num_vals <= loadBuffer[n]->num_vals + loadBuffer[n+1]->num_vals)
+        ||(n >= 2 && 
+        	loadBuffer[n-2]->num_vals <= loadBuffer[n-1]->num_vals + loadBuffer[n]->num_vals)) {   
+            if (loadBuffer[n-1]->num_vals < loadBuffer[n+1]->num_vals)
+                n--;
+        } 
+        else if (loadBuffer[n]->num_vals > loadBuffer[n+1]->num_vals)
+            break; // Invariant is established
+        
+        mergeAt(n);
+    }
+}
+
+template <class key, class value>
+void Bucket<key, value>::totalMerge(){
+	while(loadBuffer.size() > 1)
+		mergeAt(loadBuffer.size()-2);
+}
+
+
+
+//merge loadBuffers[n] & loadBuffers[n+1]
+template <class key, class value>
+void Bucket<key, value>::mergeAt(int n){
+	data_msg<key, value>* msg1;
+	data_msg<key, value>* msg2;
+	if(loadBuffer[n]->num_vals > loadBuffer[n+1]->num_vals){
+		msg1 = loadBuffer[n+1];
+		msg2 = loadBuffer[n];
+	}
+	else{
+		msg1 = loadBuffer[n];
+		msg2 = loadBuffer[n+1];
+	}
+	int s1 = msg1->num_vals;
+	int s2 = msg2->num_vals; 
+
+	data_msg<key, value> *result = new (s1 + s2) data_msg<key,value>;
+	result->num_vals = s1 + s2;
+	result->sorted = true;
+	
+	//ckout<<"MergeAt :- "<<CkMyPe()<<" : "<<n<<" : "<<s1<<" : "<<s2<<" : "<<endl;
+	
+	std::merge(msg1->data, msg1->data + s1, msg2->data, msg2->data + s2, result->data);
+	loadBuffer.erase(loadBuffer.begin()+n);
+	loadBuffer[n] = result;
+	delete(msg1); delete(msg2);
+}
+
+

@@ -29,6 +29,8 @@ class Bucket : public CBase_Bucket<key, value> {
 	key mymin, mymax;
 	
 	CProxy_Sorter<key, value> sorter_proxy;
+	CProxy_Main<key, value> main_proxy;
+
 	tuning_params *params;
 	
 	key* finalSplitters;
@@ -56,15 +58,20 @@ class Bucket : public CBase_Bucket<key, value> {
 
     int numProbes;
     
-   
+   	std::vector < data_msg<key, value>* > loadBuffer;
+   	int received;
+
    	void Reset(); 
    	void localProbe();
    	void partialSend(probeMessage<key> *pm);
+   	void collapseAndMerge();
+   	void totalMerge();
+   	void mergeAt(int n);
 
   public:
       Bucket(CkMigrateMessage *);
 	  Bucket(tuning_params par, key _min, key _max, int nBuckets_);
-	  void SetData(CProxy_Sorter<key, value> _sorter_proxy);
+	  void SetData(CProxy_Sorter<key, value> _sorter_proxy, CProxy_Main<key, value> _main_proxy);
 	  void stepSort();
 	  void firstProbe(key firstkey, key lastkey, key step, int probeSize);
 	  void firstLocalProbe(int lastProbeSize);
