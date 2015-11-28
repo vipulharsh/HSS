@@ -21,7 +21,7 @@ module HistSort{
       int newachv_id[];
     };
 
- template <class key, class value>
+  template <class key, class value>
     message data_msg {
       kv_pair<key, value> data[];
     };
@@ -33,7 +33,7 @@ module HistSort{
     //!meaning of [expedited]
     entry [expedited] void Histogram(CkReductionMsg *msg);
     entry [expedited] void globalMinMax(CkReductionMsg *msg);
-    entry void Done(CkReductionMsg *msg);
+    entry [expedited] void Done(CkReductionMsg *msg);
     entry void SanityCheck(CkReductionMsg *msg);
   };
 

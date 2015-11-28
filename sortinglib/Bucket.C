@@ -73,10 +73,13 @@ void Bucket<key, value>::SetData(CProxy_Sorter<key, value> _sorter_proxy, CProxy
   mymin = mymax = bucket_data[0].k;
   
   double cc1 = CmiWallTimer();
+  //ckout<<bucket_data[0].k<<" : ";
   for(int i=1; i<numElem; i++){
   	mymin = std::min(mymin, bucket_data[i].k);
   	mymax = std::max(mymax, bucket_data[i].k);
+  	//ckout<<bucket_data[i].k<<" : ";
   }
+  //ckout<<" - "<<CkMyPe()<<endl;
 
   ckout<<"Time for min max : "<<CmiWallTimer() - cc1<<" for "<<numElem<<" - "<<CkMyPe()<<endl;
   //ckout<<mymin<<" minmax "<<mymax<<" - "<<CkMyPe()<<endl;
@@ -234,6 +237,11 @@ void Bucket<key, value>::localProbe(){
 template <class key, class value>
 void Bucket<key, value>::histCountProbes(probeMessage<key> *pm){
 	numProbes++;
+	if(numProbes == 3 && this->thisIndex==3){
+	//	ckout<<" Now contributing "<<numProbes<<endl;
+	//	this->contribute(CkCallback(CkIndex_Sorter<key, value>::Done(NULL), sorter_proxy));	
+	}	
+	 
 	for(int i=0; i<pm->num_newachv; i++){
 		finalSplitters[pm->newachv_id[i]] = pm->newachv_key[i];
 		assert(!achieved[pm->newachv_id[i]]);
@@ -250,7 +258,21 @@ void Bucket<key, value>::histCountProbes(probeMessage<key> *pm){
 		ckout<<"Splitters have been determined  - "<<CkMyPe()<<endl;
 		doneHists = true;
 		partialSend(pm);
-		this->contribute(CkCallback(CkIndex_Sorter<key, value>::Done(NULL), sorter_proxy));		
+		if(received == nBuckets){
+			#if VERBOSE
+		      	double sum = 0; int keysum = 0;
+		      	for(int i = 0; i < loadBuffer[0]->num_vals; i++) 
+		      	  keysum += (int)(loadBuffer[0]->data[i].k % 100);   
+		      	this->contribute(sizeof(int), &keysum, CkReduction::sum_int,
+		      	    CkCallback(CkIndex_Main<key, value>::final_isum(NULL),main_proxy));
+		      	//printf("%d ** KeySum %lu Sum %lf\n",CkMyPe(),keysum, sum);
+			#endif
+		    //for(int i=0; i<*out_elems; i++)
+		    //	ckout<<loadBuffer[0]->data[i].k<<" : ";
+		    ckout<<" Done at "<<CkMyPe()<<endl;
+		    //not working???
+			this->contribute(CkCallback(CkIndex_Sorter<key, value>::Done(NULL), sorter_proxy));		
+		}
 	}
 	delete(pm);
 }
@@ -291,7 +313,7 @@ void Bucket<key, value>::partialSend(probeMessage<key> *pm){
 				comp.k = sep2;
 				int ind2 = std::lower_bound(bucket_data + sepCounts[chunk1],
 					 bucket_data + sepCounts[chunk2], comp) - bucket_data;
-				//ckout<<"Sending "<<ind1<<"-"<<ind2<<" to "<<bkt<<" from "<<CkMyPe()<<endl;
+				//ckout<<"Sending "<<ind1<<"-"<<ind2<<" to "<<bkt<<" from "<<this->thisIndex<<endl;
 				sent[bkt] = true;
 				data_msg<key, value> *dm = new (ind2-ind1) data_msg<key,value>;
 				memcpy(dm->data, bucket_data + ind1, (ind2-ind1)*sizeof(kv_pair<key, value>));
@@ -306,6 +328,7 @@ void Bucket<key, value>::partialSend(probeMessage<key> *pm){
 
 template <class key, class value>
 void Bucket<key, value>::Load(data_msg<key, value>* msg){
+
 	if(!msg->sorted){
 		std::sort(msg->data, msg->data + msg->num_vals);
 		msg->sorted = true;
@@ -318,21 +341,30 @@ void Bucket<key, value>::Load(data_msg<key, value>* msg){
 */
 	loadBuffer.push_back(msg);
 	received++;
-	if(received < nBuckets)
+
+	if(received < nBuckets){
 		collapseAndMerge();
+	}
 	else{
 		//ckout<<"loadBuffer Size yet to be merged : "<<loadBuffer.size()<<endl;
 		totalMerge();
 		*dataOut = loadBuffer[0]->data;
 		*out_elems = loadBuffer[0]->num_vals;
-		#if VERBOSE
-	      	double sum = 0; int keysum = 0;
-	      	for(int i = 0; i < *out_elems; i++) 
-	      	  keysum += (int)(loadBuffer[0]->data[i].k % 100);   
-	      	this->contribute(sizeof(int), &keysum, CkReduction::sum_int,
-	      	    CkCallback(CkIndex_Main<key, value>::final_isum(NULL),main_proxy));
-	      	//printf("%d ** KeySum %lu Sum %lf\n",2,keysum, sum);
-		#endif
+		if(doneHists){
+			#if VERBOSE
+		      	double sum = 0; int keysum = 0;
+		      	for(int i = 0; i < loadBuffer[0]->num_vals; i++) 
+		      	  keysum += (int)(loadBuffer[0]->data[i].k % 100);   
+		      	this->contribute(sizeof(int), &keysum, CkReduction::sum_int,
+		      	    CkCallback(CkIndex_Main<key, value>::final_isum(NULL),main_proxy));
+		      	//printf("%d ** KeySum %lu Sum %lf\n",CkMyPe(),keysum, sum);
+			#endif
+		    //for(int i=0; i<*out_elems; i++)
+		    //	ckout<<loadBuffer[0]->data[i].k<<" : ";
+		    ckout<<" Done at "<<CkMyPe()<<endl;
+		    //not working???
+			this->contribute(CkCallback(CkIndex_Sorter<key, value>::Done(NULL), sorter_proxy));		
+		}
 	}
 }
 

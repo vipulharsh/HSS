@@ -32,6 +32,7 @@ class Sorter : public CBase_Sorter<key, value>  {
     key* finalSplitters;
     bool* achieved;
     int achievedSplitters;
+    uint64_t* achievedCounts;
 
     key minkey, maxkey;
     key globalmin, globalmax;

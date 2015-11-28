@@ -55,7 +55,7 @@ template<class key, class value>
 Sorter<key, value>::Sorter(const CkArrayID &bucketArr, int _nBuckets, key min, key max, 
             tuning_params par, CProxy_Main<key, value> _mainproxy) : 
         mainproxy(_mainproxy), buckets(bucketArr), nBuckets(_nBuckets), minkey(min), maxkey(max){
-    VERBOSEPRINTF("Setting up sort. From Constructor\n");
+    //VERBOSEPRINTF("Setting up sort. From Constructor\n");
     params = new tuning_params();
     *params = par;
     firstUse = true;
@@ -89,6 +89,7 @@ void Sorter<key, value>::Begin(){
         scratch = new key[params->probe_max+1];
         finalSplitters = new key[nBuckets+2]; //required size is nBuckets+2
         achieved = new bool[nBuckets+2];
+        achievedCounts = new uint64_t[nBuckets+2];
     }
 
     if(firstUse || !params->reuse_probe_results){
@@ -114,6 +115,7 @@ void Sorter<key, value>::Begin(){
     //Don't use memset for non-inbuilt types
     memset(achieved+1, false, nBuckets);
     achieved[0] = achieved[nBuckets] = true;
+    achievedCounts[0] = 0;
     finalSplitters[0] = minkey;    
     finalSplitters[nBuckets] = maxkey;
     achievedSplitters = 2;
@@ -147,8 +149,7 @@ void Sorter<key, value>::Histogram(CkReductionMsg *msg){
     //store cumulative counts
     for(int i=1; i<lenhist; i++){
 		  histCounts[i] += histCounts[i-1];
-    }
-  
+    }  
     
     for(int i=0; i<lastProbeSize; i++){
       allPreviousProbes[lastProbe[i]] = histCounts[i];
@@ -157,7 +158,6 @@ void Sorter<key, value>::Histogram(CkReductionMsg *msg){
 
     CkAssert(lenhist == lastProbeSize);
     
-
     int p = 0; //currProbe
     int s = 1; //currSplitter
     std::vector<std::pair<key, int> > newachv; //splitters that were achieved in this round
@@ -171,6 +171,7 @@ void Sorter<key, value>::Histogram(CkReductionMsg *msg){
               achievedSplitters++;
               finalSplitters[s] = lastProbe[p];
               achieved[s] = true;
+              achievedCounts[s] = histCounts[p];
               newachv.push_back(std::pair<key, int>(lastProbe[p], s));
           }
         }
@@ -180,8 +181,11 @@ void Sorter<key, value>::Histogram(CkReductionMsg *msg){
     //ckout<<cc2-cc1<<" : "<< numProbes<<"  - srtr0 <<"<<endl;
     if(numProbes <= 1){
       nElements = histCounts[lastProbeSize-1];
+      achievedCounts[nBuckets] = nElements; 
       newachv.push_back(std::pair<key, int>(maxkey, nBuckets));
     }
+
+    assert(histCounts[lastProbeSize-1] == nElements);
 
     nextProbes(newachv, histCounts, msg);
     double cc2 = CmiWallTimer();
@@ -207,6 +211,7 @@ void Sorter<key, value>::nextProbes(std::vector<std::pair<key, int> > &newachv, 
       uint64_t histCount = it->second;
       //ckout<<s<<" ./././ "<<" : "<< histCount<<" : "<<it->first<<" : "<<achieved[s]<<endl;
       while(checkGoal(s, histCount) > 0){
+        //ckout<<s<<" ?>;? "<<unresolved<<" : "<<histCount<<endl;
         if(!achieved[s])
           unresolved++;
         s++;
@@ -225,9 +230,9 @@ void Sorter<key, value>::nextProbes(std::vector<std::pair<key, int> > &newachv, 
           finalSplitters[spltr] = lastkey;
           //do Something here
           //newachv.push_back(std::pair<key, int>(lastkey, spltr));
+          ckout<<"Can't do sorting : Too many Duplicates"<<endl;
+          CkExit();
         }
-        ckout<<"Can't do sorting : Too many Duplicates"<<endl;
-        CkExit();
         probes = 0;
       }      
       //ckout<<"#Probes for next round "<<probes<<" "<<unresolved<<" "<<s<<" "<<probeStep<<endl;
@@ -265,20 +270,17 @@ void Sorter<key, value>::nextProbes(std::vector<std::pair<key, int> > &newachv, 
    }  
 
 //   if(numProbes <= 15)
-    buckets.histCountProbes(pm);
+   buckets.histCountProbes(pm);
 
    if(lastProbeSize==1)
      for(int i=0; i<=nBuckets; i++)
-       ckout<<"Splitter "<<i<<": "<<finalSplitters[i]<<" "<<achieved[i]<<endl;
+       ckout<<"Splitter "<<i<<": "<<finalSplitters[i]<<" "<<achieved[i]<<" : "<<achievedCounts[i]<<endl;
    
    //ckout<<"Sent !!"<<endl;
    delete(msg);
-
   //double cc2 = CmiWallTimer();
   //ckout<<cc2-cc1<<" : "<< numProbes<<"  - srtr <<"<<endl;
 }
-
-
 
 //Optionary reduction that informs the Sorter chare that sorting has completed
 template <class key, class value>
