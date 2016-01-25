@@ -57,8 +57,6 @@ int main(int argc, char **argv){
     probe_max = atoi(argv[3]);
 
 
-
-
   //create a new comm
   MPI_Comm_split(MPI_COMM_WORLD, 1, peid, &newComm);
 

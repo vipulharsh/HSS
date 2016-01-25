@@ -35,6 +35,7 @@ class Bucket : public CBase_Bucket<key, value> {
 	
 	key* finalSplitters;
 	bool* achieved;
+	uint64_t* achievedCounts;
     int achievedSplitters;
     bool* sent;
 
@@ -58,8 +59,16 @@ class Bucket : public CBase_Bucket<key, value> {
 
     int numProbes;
     
-   	std::vector < data_msg<key, value>* > loadBuffer;
+   	std::vector < data_msg<key, value>* > incomingMsgBuffer;
+   	std::vector <std::pair<int, int> > loadBuffer;	
    	int received;
+   	int firstUsed;
+   	bool set;
+    bool firstMergingWork;
+    bool mergingDone;
+    bool totalmerge;
+    bool noMergingWork;
+
 
    	void Reset(); 
    	void localProbe();
@@ -67,6 +76,9 @@ class Bucket : public CBase_Bucket<key, value> {
    	void collapseAndMerge();
    	void totalMerge();
    	void mergeAt(int n);
+   	void mymerge(kv_pair<key, value> *first1, kv_pair<key, value> *last1,
+								 kv_pair<key, value> *first2, kv_pair<key, value> *last2,
+								 kv_pair<key, value> *result);
 
   public:
       Bucket(CkMigrateMessage *);
@@ -77,6 +89,7 @@ class Bucket : public CBase_Bucket<key, value> {
 	  void firstLocalProbe(int lastProbeSize);
 	  void histCountProbes(probeMessage<key> *pm);
 	  void Load(data_msg<key, value>* msg);
+    void MergingWork();
 };
 
 //need to include .C file in order to have it instantiated when the .h file is included externally

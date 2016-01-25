@@ -259,7 +259,7 @@ void Sorter<key, value>::nextProbes(std::vector<std::pair<key, int> > &newachv, 
    lastProbeSize = scratchInd;
    
    int r = newachv.size();
-   probeMessage<key> *pm = new (lastProbeSize, r, r) probeMessage<key>;
+   probeMessage<key> *pm = new (lastProbeSize, r, r, r) probeMessage<key>;
    pm->probeSize = lastProbeSize;
    pm->num_newachv = r;
    memcpy(pm->probe, lastProbe, lastProbeSize * sizeof(key));
@@ -267,6 +267,7 @@ void Sorter<key, value>::nextProbes(std::vector<std::pair<key, int> > &newachv, 
    for(int i=0; i<r; i++){
 	   pm->newachv_key[i] = newachv[i].first;
      pm->newachv_id[i] = newachv[i].second;
+     pm->newachv_count[i] = achievedCounts[newachv[i].second];
    }  
 
 //   if(numProbes <= 15)

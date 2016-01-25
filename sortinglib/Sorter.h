@@ -10,9 +10,9 @@ class probeMessage : public CMessage_probeMessage<key> {
     int probeSize;
     key* newachv_key;
     int* newachv_id;
+    uint64_t* newachv_count;
     int num_newachv;
 };
-
 
 
 template <class key, class value>

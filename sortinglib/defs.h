@@ -4,7 +4,7 @@
 #include "pup.h"
 
 //prints a lot of information, will generate large logs, will also perform sanity checks on data
-//#define DEBUG 
+#define DEBUG 1
 
 #ifdef DEBUG
 #define DEBUGPRINTF(format, ...) CkPrintf(format, ## __VA_ARGS__)
