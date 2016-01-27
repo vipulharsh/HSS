@@ -20,7 +20,7 @@ class Bucket : public CBase_Bucket<key, value> {
 	
 	kv_pair<key, value>* bucket_data;
 	int numElem;
-	static const int indexFactor = 10;
+	static const int indexFactor = 2;
 
 
 	int nBuckets;

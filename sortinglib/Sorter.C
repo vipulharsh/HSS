@@ -153,7 +153,7 @@ void Sorter<key, value>::Histogram(CkReductionMsg *msg){
     
     for(int i=0; i<lastProbeSize; i++){
       allPreviousProbes[lastProbe[i]] = histCounts[i];
-      //ckout<<lastProbe[i]<<" :-: "<<histCounts[i]<<endl;
+     // ckout<<lastProbe[i]<<" :-: "<<histCounts[i]<<endl;
     }
 
     CkAssert(lenhist == lastProbeSize);
