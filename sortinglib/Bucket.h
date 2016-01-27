@@ -50,10 +50,9 @@ class Bucket : public CBase_Bucket<key, value> {
    	bool doneHists;
 
 
-	//kv_pair<key, value>* scratch;
-	int* cumHist;
-	int* indices;
-	int numIndicesShift;
+	  int* cumHist;
+	  int* indices;
+	  int numIndicesShift;
     int* histCounts;
     uint64_t *longhistCounts;
 
@@ -63,13 +62,13 @@ class Bucket : public CBase_Bucket<key, value> {
    	std::vector <std::pair<int, int> > loadBuffer;	
    	int received;
    	int firstUsed;
-   	bool set;
     bool firstMergingWork;
     bool mergingDone;
     bool totalmerge;
     bool noMergingWork;
 
-
+    kv_pair<key, value>* scratch;
+    
    	void Reset(); 
    	void localProbe();
    	void partialSend(probeMessage<key> *pm);

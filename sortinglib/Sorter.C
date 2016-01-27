@@ -132,6 +132,8 @@ template <class key, class value>
 inline int Sorter<key, value>::checkGoal(int splitterInd, uint64_t histCount){
     uint64_t goal = (nElements * splitterInd)/nBuckets;
     uint64_t margin = (nElements * 5)/(100 * nBuckets); //5%
+    //ckout<<nElements<<" : "<<splitterInd<<" : "<<nBuckets<<endl;
+    //ckout<<goal<<" : "<<margin<<" : "<<goal-margin<<" : "<<goal + margin<<endl;
     return (histCount < goal-margin ? -1 : (histCount > goal+margin ? 1 : 0));
 }
 
@@ -153,20 +155,27 @@ void Sorter<key, value>::Histogram(CkReductionMsg *msg){
     
     for(int i=0; i<lastProbeSize; i++){
       allPreviousProbes[lastProbe[i]] = histCounts[i];
-     // ckout<<lastProbe[i]<<" :-: "<<histCounts[i]<<endl;
+      //ckout<<lastProbe[i]<<" :-: "<<histCounts[i]<<endl;
     }
 
     CkAssert(lenhist == lastProbeSize);
-    
+
+    std::vector<std::pair<key, int> > newachv; //splitters that were achieved in this round
+    if(numProbes <= 1){
+      nElements = histCounts[lastProbeSize-1];
+      achievedCounts[nBuckets] = nElements; 
+      newachv.push_back(std::pair<key, int>(maxkey, nBuckets));
+    }
+
     int p = 0; //currProbe
     int s = 1; //currSplitter
-    std::vector<std::pair<key, int> > newachv; //splitters that were achieved in this round
     while(s < nBuckets){
         //ckout<<s<<" : "<<p<<" : "<<histCounts[p]<<endl;
         if(!achieved[s]){
           //relative position of  histCounts[currProbe] w.r.t. currSplitter 
-          while(checkGoal(s, histCounts[p]) < 0)
+          while(checkGoal(s, histCounts[p]) < 0){
               p++;
+          }
           if(checkGoal(s, histCounts[p]) == 0){ //achieved
               achievedSplitters++;
               finalSplitters[s] = lastProbe[p];
@@ -176,15 +185,10 @@ void Sorter<key, value>::Histogram(CkReductionMsg *msg){
           }
         }
         s++;                        
-    }    
+    }
     //double cc2 = CmiWallTimer();
     //ckout<<cc2-cc1<<" : "<< numProbes<<"  - srtr0 <<"<<endl;
-    if(numProbes <= 1){
-      nElements = histCounts[lastProbeSize-1];
-      achievedCounts[nBuckets] = nElements; 
-      newachv.push_back(std::pair<key, int>(maxkey, nBuckets));
-    }
-
+    
     assert(histCounts[lastProbeSize-1] == nElements);
 
     nextProbes(newachv, histCounts, msg);
@@ -270,12 +274,13 @@ void Sorter<key, value>::nextProbes(std::vector<std::pair<key, int> > &newachv, 
      pm->newachv_count[i] = achievedCounts[newachv[i].second];
    }  
 
-//   if(numProbes <= 15)
    buckets.histCountProbes(pm);
 
-   if(lastProbeSize==1)
+   if(lastProbeSize==1){
+     ckout<<"Done Histogramming in "<<CmiWallTimer()-c1<<" seconds"<<endl;
      for(int i=0; i<=nBuckets; i++)
        ckout<<"Splitter "<<i<<": "<<finalSplitters[i]<<" "<<achieved[i]<<" : "<<achievedCounts[i]<<endl;
+   }
    
    //ckout<<"Sent !!"<<endl;
    delete(msg);

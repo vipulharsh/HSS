@@ -4,7 +4,7 @@
 #include "pup.h"
 
 //prints a lot of information, will generate large logs, will also perform sanity checks on data
-#define DEBUG 1
+#define DEBUG 0
 
 #ifdef DEBUG
 #define DEBUGPRINTF(format, ...) CkPrintf(format, ## __VA_ARGS__)
@@ -13,7 +13,7 @@
 #endif
 
 //prints basic executing information
-#define VERBOSE 1
+#define VERBOSE 0
 
 #ifdef VERBOSE
 #define VERBOSEPRINTF(format, ...) CkPrintf(format, ## __VA_ARGS__)
@@ -38,8 +38,6 @@ class tuning_params{
     ///whether to reuse the old converged probe when another iteration of sortin is needed on the same section
     bool reuse_probe_results;
 
-    int temp_probe_max;
-
     void pup(PUP::er &p) {
       p | probe_size; 
       p | probe_max;
@@ -47,7 +45,6 @@ class tuning_params{
       p | splice_thresh;
       p | eager_send;
       p | reuse_probe_results;
-      p | temp_probe_max;
     }
 
 };
