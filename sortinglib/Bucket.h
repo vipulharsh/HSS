@@ -12,6 +12,18 @@ class data_msg : public CMessage_data_msg<key, value> {
 };
 
 
+//struct for lb
+//! pup method, also pup method not implemented for kv_pair in sortinglib.h
+template <class key, class value>
+struct lb_struct{
+    int numVals;
+    int start;
+    data_msg<key, value>* msg;
+};
+
+
+
+
 
 template <class key, class value>
 class Bucket : public CBase_Bucket<key, value> {
@@ -59,25 +71,29 @@ class Bucket : public CBase_Bucket<key, value> {
     int numProbes;
     
    	std::vector < data_msg<key, value>* > incomingMsgBuffer;
-   	std::vector <std::pair<int, int> > loadBuffer;	
+   	std::vector <lb_struct<key, value> > loadBuffer;	
    	int received;
-   	int firstUsed;
+   	int lastUsed;
     bool firstMergingWork;
     bool mergingDone;
     bool totalmerge;
     bool noMergingWork;
 
     kv_pair<key, value>* scratch;
-    
+    int dummyCount, dummyCount2;
+
    	void Reset(); 
    	void localProbe();
    	void partialSend(probeMessage<key> *pm);
    	void collapseAndMerge();
    	void totalMerge();
    	void mergeAt(int n);
-   	void mymerge(kv_pair<key, value> *first1, kv_pair<key, value> *last1,
-								 kv_pair<key, value> *first2, kv_pair<key, value> *last2,
-								 kv_pair<key, value> *result);
+   	void forward_merge(kv_pair<key, value> *first1, kv_pair<key, value> *last1,
+								       kv_pair<key, value> *first2, kv_pair<key, value> *last2,
+								       kv_pair<key, value> *result);
+    void backward_merge(kv_pair<key, value> *first1, kv_pair<key, value> *last1,
+                        kv_pair<key, value> *first2, kv_pair<key, value> *last2,
+                        kv_pair<key, value> *result);
 
   public:
       Bucket(CkMigrateMessage *);
