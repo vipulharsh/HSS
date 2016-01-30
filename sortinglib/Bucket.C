@@ -298,8 +298,8 @@ void Bucket<key, value>::histCountProbes(probeMessage<key> *pm){
 	
 	if(flag != (achieved[this->thisIndex] &&  achieved[this->thisIndex+1])){
 			mergingDone = false;
-			if(lastSortedChunk == numChunks)																																			if(lastSortedChunk == numChunks)
-				this->thisProxy[this->thisIndex].MergingWork();
+			//if(lastSortedChunk == numChunks)																																			if(lastSortedChunk == numChunks)
+			//	this->thisProxy[this->thisIndex].MergingWork();
 	}
     
 	if(lastProbeSize > 1)
@@ -311,8 +311,8 @@ void Bucket<key, value>::histCountProbes(probeMessage<key> *pm){
 	
 	if(lastProbeSize <= 1){
 		//ckout<<"Splitters have been determined  - "<<CkMyPe()<<endl;	
-		//if(lastSortedChunk == numChunks)																
-		//	this->thisProxy[this->thisIndex].MergingWork();
+		if(lastSortedChunk == numChunks)																
+			this->thisProxy[this->thisIndex].MergingWork();
 		if(mergingDone){
 			#if VERBOSE
 		      	kv_pair<key, value> *finalData = (kv_pair<key, value>*)*dataOut;
@@ -330,6 +330,7 @@ void Bucket<key, value>::histCountProbes(probeMessage<key> *pm){
 		    //not working???
 			this->contribute(CkCallback(CkIndex_Sorter<key, value>::Done(NULL), sorter_proxy));		
 		}
+
 	}
 	delete(pm);
 }
@@ -490,8 +491,8 @@ void Bucket<key, value>::MergingWork(){
     if(!noMergingWork && lastSortedChunk==numChunks){
 	    if(doneHists)
 			MergingWork();
-		else
-			this->thisProxy[this->thisIndex].MergingWork();
+		//else
+		//	this->thisProxy[this->thisIndex].MergingWork();
 	}
 }
 
@@ -561,7 +562,7 @@ void Bucket<key, value>::mergeAt(int n){
 	lb.numVals = loadBuffer[n].numVals + loadBuffer[n+1].numVals;
 	lb.msg = NULL;
 	loadBuffer[n] = lb;
-	//dummyCount2 += loadBuffer[n].numVals;
+	dummyCount2 += loadBuffer[n].numVals;
 	loadBuffer.erase(loadBuffer.begin()+n+1);
 }
 
