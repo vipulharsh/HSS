@@ -62,6 +62,7 @@ void Bucket<key, value>::Reset(){
     noMergingWork = false;
     firstMergingWork = true;
     dummyCount = 0;
+    callPartialSendOne = true;
 }
 
 
@@ -153,6 +154,7 @@ void Bucket<key, value>::SetData(CProxy_Sorter<key, value> _sorter_proxy, CProxy
 template <class key, class value>
 void Bucket<key, value>::stepSort(){
 	double cc1 = CmiWallTimer();	
+	//if(lastSortedChunk == numChunks-1) return;
 	if(!sorted[lastSortedChunk+1]){
 		std::sort(bucket_data + sepCounts[lastSortedChunk], 
 			bucket_data + sepCounts[lastSortedChunk+1]);
@@ -169,7 +171,7 @@ void Bucket<key, value>::stepSort(){
 			this->thisProxy[this->thisIndex].stepSort();
 	}
 	else if(achieved[this->thisIndex] &&  achieved[this->thisIndex+1])
-		MergingWork();
+		this->thisProxy[this->thisIndex].MergingWork();
 
 	//if(lastSortedChunk == numChunks)
 	//	ckout<<"Sorting finished ********************** Called: "<<(achieved[this->thisIndex] &&  achieved[this->thisIndex+1])<<" - "<<CkMyPe()<<endl;	
@@ -239,14 +241,29 @@ void Bucket<key, value>::localProbe(){
 
 	if(lastSortedChunk < numChunks){
 		//buildIndex : !Change this to for division by 2
-		int numIndices = std::max(nBuckets, lastProbeSize) * indexFactor;	
 		key currmin = mymin;
 		if(sepCounts[lastSortedChunk]>0){
 			currmin = bucket_data[sepCounts[lastSortedChunk]-1].k;
 		}
 	
+		int numIndices = std::max(nBuckets, lastProbeSize) * indexFactor;			
 		key indexStep = std::max((mymax- currmin + numIndices)/numIndices, (key)1);	
+		
+		std::pair<int, key> p2= grtstPow2((mymax-currmin)/numIndices + 1);
+
+		//ckout<<currmin<<" : "<<mymax<<" - "<<CkMyPe()<<endl;
+		indexStep = p2.second * 2;
+		int indexStepLog = p2.first + 1;
+		int numIndices2 = numIndices;
+		numIndices = (mymax - currmin)/indexStep + 1;
+		assert(numIndices <= numIndices2);
+		//int indexStepLog = 0;
+		//while(currmin + (indexStep * numIndices) <= mymax){
+		//	indexStep *= 2;
+		//	indexStepLog++;
+		//}
 		//ckout<<"IndexStep : "<<indexStep<<" - "<<sepCounts[lastSortedChunk]<<" ;;; "<<numIndices<<" - "<<CkMyPe()<<endl;
+
 		int prb = 0;
 		for(int ind=0; ind<numIndices; ind++){	
 			//Something needs to be done about long long
@@ -258,7 +275,8 @@ void Bucket<key, value>::localProbe(){
 		indices[numIndices] = lastProbeSize-1;
 
 		for(int i=sepCounts[lastSortedChunk]; i<numElem; i++){
-			int index = (bucket_data[i].k - currmin)/indexStep;
+			//int index = (bucket_data[i].k - currmin)/indexStep;
+			int index = (bucket_data[i].k - currmin)>>indexStepLog;
 			int ind = indices[index];
 			ind = std::lower_bound(lastProbe + ind, 
 				lastProbe + indices[index+1] + 1, bucket_data[i].k) - lastProbe;
@@ -344,45 +362,66 @@ void Bucket<key, value>::partialSend(probeMessage<key> *pm){
 		i = (ti + this->thisIndex)%pm->num_newachv;
 		for(int bkt = pm->newachv_id[i]; bkt<= pm->newachv_id[i]+1 && bkt<=nBuckets; bkt++){
 			if(!sent[bkt] && achieved[bkt] && achieved[bkt-1]){
-				//find what all chunks it belongs to
-				key sep1 = finalSplitters[bkt-1];
-				key sep2 = finalSplitters[bkt];
-				int chunk1 = std::upper_bound(sepKeys, sepKeys + numChunks + 1, sep1) - sepKeys - 1;
-				int chunk2 = std::lower_bound(sepKeys, sepKeys + numChunks + 1, sep2) - sepKeys;
-
-				//ckout<<numChunks<<" : "<<mymax<<" : "<<sep1<<" ;; "<<sep2<<" : "<<sepKeys[numChunks]<<" ! ";
-				//	ckout<<chunk1<<" ;';';';'; "<<chunk2<<" for "<<bkt<<" - "<<CkMyPe()<<endl;
-				
-				//sort those chunks if not already sorted
-				for(int c = chunk1+1; c <= chunk2; c++){
-					if(!sorted[c]){
-						std::sort(bucket_data + sepCounts[c-1], 
-						bucket_data + sepCounts[c]);
-						sorted[c] = true;
-						//use this sorted chunk to optimize computations in localProbe
-						//ckout<<chunk1<<" ;';';';'; "<<chunk2<<" for "<<bkt<<" - "<<CkMyPe()<<endl;
-					}
-				}
-
-				//find keys and send
-				kv_pair<key, value> comp;
-				comp.k = sep1;
-				int ind1 = std::lower_bound(bucket_data + sepCounts[chunk1],
-					 bucket_data + sepCounts[chunk2], comp) - bucket_data;
-				comp.k = sep2;
-				int ind2 = std::lower_bound(bucket_data + sepCounts[chunk1],
-					 bucket_data + sepCounts[chunk2], comp) - bucket_data;
-				//ckout<<"Sending "<<ind1<<"-"<<ind2<<" to "<<bkt<<" from "<<this->thisIndex<<endl;
+				toSend.push_back(bkt);
 				sent[bkt] = true;
-				data_msg<key, value> *dm = new (ind2-ind1) data_msg<key,value>;
-				memcpy(dm->data, bucket_data + ind1, (ind2-ind1)*sizeof(kv_pair<key, value>));
-				dm->num_vals = ind2-ind1;
-				dm->sorted = true;
-				this->thisProxy[bkt-1].Load(dm);
+				if(callPartialSendOne){
+					this->thisProxy[this->thisIndex].partialSendOne();
+					callPartialSendOne = false;
+				}
 			}
 		}
 	}
 }
+
+
+
+template <class key, class value>
+void Bucket<key, value>::partialSendOne(){
+	int bkt = toSend.back();
+	toSend.pop_back();
+
+	//find what all chunks it belongs to
+	key sep1 = finalSplitters[bkt-1];
+	key sep2 = finalSplitters[bkt];
+	int chunk1 = std::upper_bound(sepKeys, sepKeys + numChunks + 1, sep1) - sepKeys - 1;
+	int chunk2 = std::lower_bound(sepKeys, sepKeys + numChunks + 1, sep2) - sepKeys;
+
+	//ckout<<numChunks<<" : "<<mymax<<" : "<<sep1<<" ;; "<<sep2<<" : "<<sepKeys[numChunks]<<" ! ";
+	//	ckout<<chunk1<<" ;';';';'; "<<chunk2<<" for "<<bkt<<" - "<<CkMyPe()<<endl;
+	
+	//sort those chunks if not already sorted
+	for(int c = chunk1+1; c <= chunk2; c++){
+		if(!sorted[c]){
+			std::sort(bucket_data + sepCounts[c-1], 
+			bucket_data + sepCounts[c]);
+			sorted[c] = true;
+			//use this sorted chunk to optimize computations in localProbe
+			//ckout<<chunk1<<" ;';';';'; "<<chunk2<<" for "<<bkt<<" - "<<CkMyPe()<<endl;
+		}
+	}
+
+	//find keys and send
+	kv_pair<key, value> comp;
+	comp.k = sep1;
+	int ind1 = std::lower_bound(bucket_data + sepCounts[chunk1],
+		 bucket_data + sepCounts[chunk2], comp) - bucket_data;
+	comp.k = sep2;
+	int ind2 = std::lower_bound(bucket_data + sepCounts[chunk1],
+		 bucket_data + sepCounts[chunk2], comp) - bucket_data;
+	//ckout<<"Sending "<<ind1<<"-"<<ind2<<" to "<<bkt<<" from "<<this->thisIndex<<endl;
+	data_msg<key, value> *dm = new (ind2-ind1) data_msg<key,value>;
+	memcpy(dm->data, bucket_data + ind1, (ind2-ind1)*sizeof(kv_pair<key, value>));
+	dm->num_vals = ind2-ind1;
+	dm->sorted = true;
+	this->thisProxy[bkt-1].Load(dm);
+	if(!toSend.empty())
+		this->thisProxy[this->thisIndex].partialSendOne();
+	else
+		callPartialSendOne = true;
+}
+
+
+
 
 
 template <class key, class value>

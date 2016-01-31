@@ -10,7 +10,7 @@ else
 endif
 
 testsorting: testsorting.cpp $(LIBS) 
-	$(CXX) -g -c testsorting.cpp -o testsorting.o -I$(CHARMDIR)/include
+	$(CXX) -c testsorting.cpp -o testsorting.o -I$(CHARMDIR)/include
 	chmod 755 $(DEST)/charm_all_libs.sh
 #	. $(DEST)/charm_all_libs.sh && $(CHARMC) -mpi -o $(DEST)/testsorting  testsorting.o -L$(DEST) -lcharm $(MPI_LIBS) -ltrace-projections -tracemode projections
 	. $(DEST)/charm_all_libs.sh && $(CXX)  -o $(DEST)/testsorting testsorting.o -L$(DEST) $$CHARM_ALL_LIBS -lcharm $(MPI_LIBS) -ltrace-projections 

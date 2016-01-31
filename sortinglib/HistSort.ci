@@ -47,6 +47,7 @@ module HistSort{
   	entry void stepSort();
     entry void Load(data_msg<key, value>* msg);
     entry void MergingWork();
+    entry void partialSendOne();
     //entry void Load();
   };
 };

@@ -98,7 +98,7 @@ void Sorter<key, value>::Begin(){
         std::pair<int, key> p2= grtstPow2((lastkey-firstkey + nBuckets - 1)/nBuckets + 1);
         key step = p2.second;
         lastProbeSize = (lastkey - firstkey)/step + 1;
-        //ckout<<step<<" "<<lastProbeSize<<" First sorter "<<endl;
+        ckout<<step<<" "<<lastProbeSize<<" First sorter "<<endl;
         buckets.firstProbe(firstkey, lastkey, step, lastProbeSize);
         for(int i=0; i<lastProbeSize; i++)
             lastProbe[i] = firstkey + ((i+1) * step);

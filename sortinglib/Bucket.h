@@ -2,7 +2,6 @@
 #define __BUCKET_H__
 
 
-
 template <class key, class value>
 class data_msg : public CMessage_data_msg<key, value> {
   public:
@@ -32,7 +31,7 @@ class Bucket : public CBase_Bucket<key, value> {
 	
 	kv_pair<key, value>* bucket_data;
 	int numElem;
-	static const int indexFactor = 2;
+	static const int indexFactor = 3;
 
 
 	int nBuckets;
@@ -72,12 +71,15 @@ class Bucket : public CBase_Bucket<key, value> {
     
    	std::vector < data_msg<key, value>* > incomingMsgBuffer;
    	std::vector <lb_struct<key, value> > loadBuffer;	
-   	int received;
+   	
+    std::vector <int> toSend;
+    int received;
    	int lastUsed;
     bool firstMergingWork;
     bool mergingDone;
     bool totalmerge;
     bool noMergingWork;
+    bool callPartialSendOne;
 
     kv_pair<key, value>* scratch;
     int dummyCount, dummyCount2;
@@ -105,6 +107,7 @@ class Bucket : public CBase_Bucket<key, value> {
 	  void histCountProbes(probeMessage<key> *pm);
 	  void Load(data_msg<key, value>* msg);
     void MergingWork();
+    void partialSendOne();
 };
 
 //need to include .C file in order to have it instantiated when the .h file is included externally
