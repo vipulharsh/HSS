@@ -80,6 +80,8 @@ class Bucket : public CBase_Bucket<key, value> {
     bool totalmerge;
     bool noMergingWork;
     bool callPartialSendOne;
+    bool startMergingWork;
+    int numSent;
 
     kv_pair<key, value>* scratch;
     int dummyCount, dummyCount2;

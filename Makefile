@@ -20,7 +20,7 @@ $(LIBS):
 	cd sortinglib;make;
 	mkdir -p $(DEST);
 	cp sortinglib/libmoduleHistSort.a $(DEST)/
-	$(CHARMC)  -language charm++ -mpi -o $(DEST)/libcharm.a -L$(DEST) -module HistSort -lstdc++
+	$(CHARMC)  -language charm++ -mpi -o $(DEST)/libcharm.a -L$(DEST) -module HistSort -lstdc++ 
 	mv ./charm_all_libs.sh $(DEST)/
 
 clean: clear

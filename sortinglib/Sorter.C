@@ -95,7 +95,8 @@ void Sorter<key, value>::Begin(){
     if(firstUse || !params->reuse_probe_results){
         key firstkey = globalmin;
         key lastkey = globalmax+1;
-        std::pair<int, key> p2= grtstPow2((lastkey-firstkey + nBuckets - 1)/nBuckets + 1);
+        int prbmaxBy2 = params->probe_max/2;
+        std::pair<int, key> p2= grtstPow2((lastkey-firstkey + prbmaxBy2 - 1)/prbmaxBy2 + 1);
         key step = p2.second;
         lastProbeSize = (lastkey - firstkey)/step + 1;
         ckout<<step<<" "<<lastProbeSize<<" First sorter "<<endl;
