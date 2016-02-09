@@ -8,7 +8,7 @@
 #include <vector>
 #include <cstring>
 #include <algorithm>
-#include "mpi-interoperate.h"
+//#include "mpi-interoperate.h"
 #include "defs.h"
 
 //#define DEBUG 1
@@ -19,7 +19,6 @@ class kv_pair {
   public:
     key k;
     value v;
-
     /*inline*/ bool operator< (const kv_pair<key, value>& other) const{
       return k < other.k;
     }    
@@ -28,6 +27,7 @@ class kv_pair {
 //Global variables
 int in_elems, *out_elems;
 void* dataIn, **dataOut;
+
 
 #include "HistSort.decl.h"
 #include "Sorter.h"
@@ -39,12 +39,13 @@ void registerSortingLib();
 #endif
 
 template <class key, class value>
-void HistSorting(int input_elems_, kv_pair<key, value>* dataIn_, int * output_elems_, kv_pair<key, value>** dataOut_, int probe_max) {
+void HistSorting(int input_elems_, kv_pair<key, value>* dataIn_, int *output_elems_, kv_pair<key, value>** dataOut_, int probe_max) {
   registerSortingLib<key, value>();
   dataIn = (void*)dataIn_;
   dataOut = (void**)dataOut_;
   in_elems = input_elems_;
   out_elems = output_elems_;
+
   if(CkMyPe() == 0) {
 #if DEBUG
     CkPrintf("[%d] Histogram Sorting on %d at %.3lf MB\n",CkMyPe(),CkNumPes(),CmiMemoryUsage()/(1024.0*1024));
@@ -52,7 +53,7 @@ void HistSorting(int input_elems_, kv_pair<key, value>* dataIn_, int * output_el
    static CProxy_Main<key, value> mainProxy = CProxy_Main<key, value>::ckNew(CkNumPes(), probe_max);
     mainProxy.DataReady();
   }
-  StartCharmScheduler();
+  //StartCharmScheduler();
 }
 
 //main entrypoint of tester, coordinates testing of sorting library
@@ -60,7 +61,6 @@ template <class key, class value>
 class Main : public CBase_Main<key, value> {
   private:
     int num_buckets;
-
     //chare array proxies
     CProxy_Sorter<key, value> sorter;
     CProxy_Bucket<key, value> bucket_arr;
@@ -77,7 +77,7 @@ class Main : public CBase_Main<key, value> {
         pars.probe_max = 64;
       else
         pars.probe_max = probe_max;
-      ckout<<pars.probe_max<<endl;
+      
       pars.hist_thresh = 5;
       pars.splice_thresh = 1024;
       //try a variety of communication stages
@@ -161,7 +161,6 @@ void registerSortingLib() {
 }
 
 
-
 template <class key>
 std::pair<int, key> grtstPow2(key n){
   key ret = 1;
@@ -174,8 +173,6 @@ std::pair<int, key> grtstPow2(key n){
 }
 
 template<int> std::pair<int, int> grtstPow2(int);
-
-
 
 
 //template <class key, class value>

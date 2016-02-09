@@ -1,9 +1,10 @@
 #include <algorithm>
 #include "assert.h"
-#include "sortinglib.h"
+//#include "sortinglib.h"
 
 extern CkReduction::reducerType sum_uint64_t_type; 
 extern CkReduction::reducerType minmax_uint64_t_type; 
+
 
 
 template <class key, class value>
@@ -13,7 +14,7 @@ Bucket<key, value>::Bucket(CkMigrateMessage *msg){}
 template <class key, class value>
 Bucket<key, value>::Bucket(tuning_params par, key min, key max, int nuBuckets_):
 	minkey(min), maxkey(max), nBuckets(nuBuckets_){
-	CkPrintf("Creating chare %d of bucket chare array\n", this->thisIndex);
+	//CkPrintf("Creating chare %d of bucket chare array\n", this->thisIndex);
 	params = new tuning_params;
 	*params = par;
 	lastProbe = new key[params->probe_max+1];
@@ -62,6 +63,7 @@ void Bucket<key, value>::Reset(){
 	noMergingWork = false;
 	firstMergingWork = true;
 	dummyCount = 0;
+	dummyCount2 = 0;
 	callPartialSendOne = true;
 	numSent = 0;
 	startMergingWork = false;
@@ -72,11 +74,20 @@ void Bucket<key, value>::Reset(){
 template <class key, class value>
 void Bucket<key, value>::SetData(CProxy_Sorter<key, value> _sorter_proxy, CProxy_Main<key, value> _main_proxy){
 	DEBUGPRINTF("Set data of chare %d of bucket chare array\n", this->thisIndex);
+	
 	numElem = in_elems;
 	sorter_proxy = _sorter_proxy;
 	main_proxy = _main_proxy;
 	//CkAssert(num_elements > 0);
 	bucket_data = (kv_pair<key, value>*)dataIn;
+
+	//for(int i=0; i<numElem; i++){
+	//	ckout<<"bucket_data["<<i<<"]: "<<bucket_data[i].k<<" : "<<CkMyPe()<<endl;
+	//}
+
+	//ckout<<"SetData Begins - "<<CkMyPe()<<endl;
+	//ckout<<in_elems<<" KKK  - "<<CkMyPe()<<endl;
+	//ckout<<out_elems<<" MMM  - "<<CkMyPe()<<endl;
 
 	mymin = mymax = bucket_data[0].k;
 
@@ -344,8 +355,8 @@ void Bucket<key, value>::histCountProbes(probeMessage<key> *pm){
 			#endif
 		    //for(int i=0; i<*out_elems; i++)
 		    //	ckout<<loadBuffer[0]->data[i].k<<" : ";
-		    uint64_t cnt = achievedCounts[this->thisIndex+1] - achievedCounts[this->thisIndex];
-		    ckout<<*out_elems<<" : "<<cnt<<" : "<<dummyCount<<" : "<<dummyCount2<<" Done at "<<CkMyPe()<<endl;
+		    //uint64_t cnt = achievedCounts[this->thisIndex+1] - achievedCounts[this->thisIndex];
+		    ckout<<*out_elems<<"  "<<dummyCount<<"  "<<dummyCount2<<" Done at "<<CkMyPe()<<endl;
 		    //not working???
 			this->contribute(CkCallback(CkIndex_Sorter<key, value>::Done(NULL), sorter_proxy));		
 		}
@@ -424,7 +435,7 @@ void Bucket<key, value>::partialSendOne(){
 	}
 	else{
 		callPartialSendOne = true;
-		if(lastSortedChunk == numChunks && !mergingDone && startMergingWork)
+		if(lastSortedChunk == numChunks && !mergingDone && startMergingWork && numSent == nBuckets)
 			this->thisProxy[this->thisIndex].MergingWork();
 	}
 }
@@ -449,10 +460,11 @@ void Bucket<key, value>::MergingWork(){
 	if(mergingDone) return;
 
 	noMergingWork = false;
-	if(firstMergingWork && lastSortedChunk == numChunks && toSend.empty()){
+	if(firstMergingWork){
 		//ckout<<"Merging Begins - "<<CkMyPe()<<endl;
-		*out_elems = achievedCounts[this->thisIndex+1] - achievedCounts[this->thisIndex];
 		//ckout<<*out_elems<<" LLL  - "<<CkMyPe()<<endl;
+		
+		*out_elems = achievedCounts[this->thisIndex+1] - achievedCounts[this->thisIndex];	
 		*dataOut = new kv_pair<key, value>[*out_elems];
 		scratch = new kv_pair<key, value>[(*out_elems)/2];
 		//firstUsed = *out_elems;
@@ -527,8 +539,8 @@ void Bucket<key, value>::MergingWork(){
 				#endif
 				//for(int i=0; i<*out_elems; i++)
 				//	ckout<<loadBuffer[0]->data[i].k<<" : ";
-				uint64_t cnt = achievedCounts[this->thisIndex+1] - achievedCounts[this->thisIndex];
-				ckout<<*out_elems<<" : "<<cnt<<" : "<<dummyCount<<" : "<<dummyCount2<<" Done at "<<" - "<<CkMyPe()<<endl;
+				//uint64_t cnt = achievedCounts[this->thisIndex+1] - achievedCounts[this->thisIndex];
+				ckout<<*out_elems<<"  "<<dummyCount<<"  "<<dummyCount2<<" Done at "<<"  "<<CkMyPe()<<endl;
 				this->contribute(CkCallback(CkIndex_Sorter<key, value>::Done(NULL), sorter_proxy));		
 			}
 			return;	

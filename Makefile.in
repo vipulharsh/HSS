@@ -1,4 +1,5 @@
-CHARMDIR ?= $(HOME)/Desktop/charm/charm-mpi-with-linux/charm/mpi-linux-x86_64
+#CHARMDIR ?= $(HOME)/Desktop/charm/charm-mpi-with-linux/charm/
+CHARMDIR ?= $(HOME)/Desktop/charm/charm-net-linux
 #Optimizations need to be enabled
 OPTS = -O3
 CHARMC=$(CHARMDIR)/bin/charmc $(OPTS) 

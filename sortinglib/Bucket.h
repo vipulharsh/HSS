@@ -28,11 +28,10 @@ template <class key, class value>
 class Bucket : public CBase_Bucket<key, value> {
   private:
 	
-	
 	kv_pair<key, value>* bucket_data;
+
 	int numElem;
 	static const int indexFactor = 3;
-
 
 	int nBuckets;
 	
