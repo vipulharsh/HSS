@@ -1,6 +1,9 @@
 //standard header files
 #include <stdio.h>
 #include <stdlib.h>
+
+#include "testsorting.decl.h"
+
 //header files for libraries in Charm
 #include "sortinglib/sortinglib.h"
 
@@ -26,7 +29,6 @@ uint64_t getRandom(uint64_t value){
     return value;
 }
 
-#include "testsorting.decl.h"
 
 class testsorting : public CBase_testsorting{
   public:
@@ -48,23 +50,33 @@ class dataManager : public CBase_dataManager{
       kv_pair<uint64_t, int>* dataIn;
       kv_pair<uint64_t, int>* dataOut;
       int out_elems;
+      CkCallback CB;
+      double startTime, endTime;
   public:
     dataManager(int numBuckets, int numElem, int probe_max){
         //num_elems = num_elems*(1+newid);
         dataIn = new kv_pair<uint64_t, int>[numElem];
         int peid = CkMyPe();
         for (int i = 0; i < numElem; i++){
-            //dataIn[i].k  = getRandom() & getRandom((peid + i) & numElem);
+            dataIn[i].k  = getRandom() & getRandom((peid + i) & numElem);
             //ckout<<"dataIn["<<i<<"]: "<<dataIn[i].k<<"  ::  "<<CkMyPe()<<endl;
             //dataIn[i].k = (numpes - peid)*1000 + (numElem - i);
-            dataIn[i].k = peid;
+            //dataIn[i].k = peid;
             //dataIn[i].k = 3;
         }
         DEBUG(printf("In elems on %d are %d\n",peid, numElem);)
-        HistSorting<uint64_t, int>(numElem, dataIn, &out_elems, &dataOut, probe_max);
-        //ckout<<"Exiting program from "<<CkMyPe()<<endl;
-        //delete[] dataIn;
-        //delete[] dataOut;
+        int entryMethodIndex = CkIndex_dataManager::SortingDone(); 
+        CB = CkCallback(entryMethodIndex, thisProxy[CkMyPe()]);
+        startTime = CmiWallTimer();
+        HistSorting<uint64_t, int>(numElem, dataIn, &out_elems, &dataOut, probe_max, &CB);
+    }
+
+    void SortingDone(){
+        delete[] dataIn;
+        delete[] dataOut;
+        endTime = CmiWallTimer();
+        //if(!CkMyPe())
+        //  printf("Time taken in first sorting %lf s\n", endTime - startTime);
     }
 };
 

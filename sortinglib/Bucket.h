@@ -97,7 +97,7 @@ class Bucket : public CBase_Bucket<key, value> {
     void backward_merge(kv_pair<key, value> *first1, kv_pair<key, value> *last1,
                         kv_pair<key, value> *first2, kv_pair<key, value> *last2,
                         kv_pair<key, value> *result);
-
+    void postMerging();
   public:
       Bucket(CkMigrateMessage *);
 	  Bucket(tuning_params par, key _min, key _max, int nBuckets_);

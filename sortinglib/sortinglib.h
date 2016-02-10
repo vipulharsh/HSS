@@ -11,7 +11,6 @@
 //#include "mpi-interoperate.h"
 #include "defs.h"
 
-//#define DEBUG 1
 #define UINT64_MAX (18446744073709551615ULL)
 
 template <class key, class value>
@@ -27,7 +26,7 @@ class kv_pair {
 //Global variables
 int in_elems, *out_elems;
 void* dataIn, **dataOut;
-
+CkCallback *CB; bool callBackSet;
 
 #include "HistSort.decl.h"
 #include "Sorter.h"
@@ -39,12 +38,21 @@ void registerSortingLib();
 #endif
 
 template <class key, class value>
-void HistSorting(int input_elems_, kv_pair<key, value>* dataIn_, int *output_elems_, kv_pair<key, value>** dataOut_, int probe_max) {
+void HistSorting(int input_elems_, kv_pair<key, value>* dataIn_, 
+                 int *output_elems_, kv_pair<key, value>** dataOut_,
+                 int probe_max, CkCallback *CB_) {
   registerSortingLib<key, value>();
   dataIn = (void*)dataIn_;
   dataOut = (void**)dataOut_;
   in_elems = input_elems_;
   out_elems = output_elems_;
+  
+  callBackSet = false;
+  CB = CB_;
+  if(CB_){
+    callBackSet = true;
+  }
+
 
   if(CkMyPe() == 0) {
 #if DEBUG

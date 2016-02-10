@@ -293,7 +293,6 @@ void Sorter<key, value>::nextProbes(std::vector<std::pair<key, int> > &newachv, 
 template <class key, class value>
 void Sorter<key, value>::Done(CkReductionMsg *msg){ 
   c2 = CmiWallTimer();
-  printf("\nCompleted in %lf seconds.\n", (c2-c1));
   VERBOSEPRINTF("\nCompleted in %lf seconds.\n", (c2-c1));
   mainproxy.Exit();
 }

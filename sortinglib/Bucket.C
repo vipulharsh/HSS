@@ -141,7 +141,7 @@ void Bucket<key, value>::SetData(CProxy_Sorter<key, value> _sorter_proxy, CProxy
 	#if VERBOSE
 	double sum = 0; int keysum = 0;
 	for(int i = 0; i < numElem; i++) 
-	keysum += (int)(bucket_data[i].k % 100);  
+	keysum += (int)(bucket_data[i].k % 1009);  
 	this->contribute(sizeof(int), &keysum, CkReduction::sum_int,
 	CkCallback(CkIndex_Main<key, value>::init_isum(NULL),main_proxy));
 	#endif
@@ -344,26 +344,14 @@ void Bucket<key, value>::histCountProbes(probeMessage<key> *pm){
 		//if(lastSortedChunk == numChunks && numSent == nBuckets)
 		//	MergingWork();
 		if(mergingDone){
-			#if VERBOSE
-				kv_pair<key, value> *finalData = (kv_pair<key, value>*)*dataOut;
-				double sum = 0; int keysum = 0;
-				for(int i = 0; i < *out_elems; i++) 
-					keysum += (int)(finalData[i].k % 100);   
-				this->contribute(sizeof(int), &keysum, CkReduction::sum_int,
-					CkCallback(CkIndex_Main<key, value>::final_isum(NULL),main_proxy));
-				//printf("%d ** KeySum %lu Sum %lf\n",CkMyPe(),keysum, sum);
-			#endif
-		    //for(int i=0; i<*out_elems; i++)
-		    //	ckout<<loadBuffer[0]->data[i].k<<" : ";
-		    //uint64_t cnt = achievedCounts[this->thisIndex+1] - achievedCounts[this->thisIndex];
-		    ckout<<*out_elems<<"  "<<dummyCount<<"  "<<dummyCount2<<" Done at "<<CkMyPe()<<endl;
-		    //not working???
-			this->contribute(CkCallback(CkIndex_Sorter<key, value>::Done(NULL), sorter_proxy));		
+			postMerging();
 		}
 
 	}
 	delete(pm);
 }
+
+
 
 
 
@@ -528,20 +516,7 @@ void Bucket<key, value>::MergingWork(){
 			//ckout<<"Total Merge over -"<<CkMyPe()<<endl;
 			//ckout<<*out_elems<<" : "<<doneHists<<" Done at "<<CkMyPe()<<endl;
 			if(doneHists){
-				#if VERBOSE
-					kv_pair<key, value> *finalData = (kv_pair<key, value>*)*dataOut;
-					double sum = 0; int keysum = 0;
-					for(int i = 0; i < *out_elems; i++) 
-						keysum += (int)(finalData[i].k % 100);   
-					this->contribute(sizeof(int), &keysum, CkReduction::sum_int,
-						CkCallback(CkIndex_Main<key, value>::final_isum(NULL),main_proxy));
-					//printf("%d ** KeySum %lu Sum %lf\n",CkMyPe(),keysum, sum);
-				#endif
-				//for(int i=0; i<*out_elems; i++)
-				//	ckout<<loadBuffer[0]->data[i].k<<" : ";
-				//uint64_t cnt = achievedCounts[this->thisIndex+1] - achievedCounts[this->thisIndex];
-				ckout<<*out_elems<<"  "<<dummyCount<<"  "<<dummyCount2<<" Done at "<<"  "<<CkMyPe()<<endl;
-				this->contribute(CkCallback(CkIndex_Sorter<key, value>::Done(NULL), sorter_proxy));		
+				postMerging();
 			}
 			return;	
 		}
@@ -560,6 +535,31 @@ void Bucket<key, value>::MergingWork(){
 		//	callMergingWork = true;
 	}
 }
+
+
+
+template <class key, class value>
+void Bucket<key, value>::postMerging(){
+	#if VERBOSE
+		kv_pair<key, value> *finalData = (kv_pair<key, value>*)*dataOut;
+		double sum = 0; int keysum = 0;
+		for(int i = 0; i < *out_elems; i++)
+			keysum += (int)(finalData[i].k % 1009);
+		this->contribute(sizeof(int), &keysum, CkReduction::sum_int,
+			CkCallback(CkIndex_Main<key, value>::final_isum(NULL),main_proxy));
+		//printf("%d ** KeySum %lu Sum %lf\n",CkMyPe(),keysum, sum);
+	#endif
+	//for(int i=0; i<*out_elems; i++)
+	//	ckout<<loadBuffer[0]->data[i].k<<" : ";
+	//uint64_t cnt = achievedCounts[this->thisIndex+1] - achievedCounts[this->thisIndex];
+	//ckout<<*out_elems<<"  "<<dummyCount<<"  "<<dummyCount2<<" Done at "<<"  "<<CkMyPe()<<endl;
+	if(callBackSet)
+		CB->send();
+	this->contribute(CkCallback(CkIndex_Sorter<key, value>::Done(NULL), sorter_proxy));
+}
+
+
+
 
 
 
