@@ -1,7 +1,9 @@
 #CHARMDIR ?= $(HOME)/Desktop/charm/charm-mpi-with-linux/charm/
-CHARMDIR ?= $(HOME)/Desktop/charm/charm-net-linux
+#CHARMDIR ?= $(HOME)/Desktop/charm/charm-net-linux
+#CHARMDIR ?= $(HOME)/Downloads/tpsortingV/charm/netlrts-linux-x86_64
+CHARMDIR ?= $(HOME)/Downloads/tpsortingV/charm/netlrts-linux-x86_64-smp
 #Optimizations need to be enabled
-OPTS = -O3
+OPTS = -O3 -tracemode projections
 CHARMC=$(CHARMDIR)/bin/charmc $(OPTS) 
 
 MPI_LIBS=

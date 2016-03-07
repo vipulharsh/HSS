@@ -2,6 +2,7 @@
 #define __SORTER_H__
 
 #include <map>
+#include <vector>
 
 template <class key>
 class probeMessage : public CMessage_probeMessage<key> {
@@ -21,7 +22,7 @@ class Sorter : public CBase_Sorter<key, value>  {
     CProxy_Bucket<key, value> buckets;
     CProxy_Main<key, value> mainproxy;
     
-    int nBuckets;
+    int nBuckets, nNodes;
     uint64_t nElements;
 
     key* lastProbe;
@@ -38,6 +39,8 @@ class Sorter : public CBase_Sorter<key, value>  {
     key globalmin, globalmax;
     tuning_params *params;
     bool firstUse;
+
+    std::vector<key> collectedSample;
 
     /**
     For collecting stats
@@ -56,6 +59,8 @@ class Sorter : public CBase_Sorter<key, value>  {
     Sorter(){}
     Sorter(const CkArrayID &bucketArr, int num_chares, key min, key max,
          tuning_params par, CProxy_Main<key, value> _mainproxy);
+    void recvSample(array_msg<key>* am);
+    void Init();
     void Begin();
     void Histogram(CkReductionMsg *msg);
     void globalMinMax(CkReductionMsg *msg);

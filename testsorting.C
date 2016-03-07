@@ -58,8 +58,8 @@ class dataManager : public CBase_dataManager{
         dataIn = new kv_pair<uint64_t, int>[numElem];
         int peid = CkMyPe();
         for (int i = 0; i < numElem; i++){
-            dataIn[i].k  = getRandom() & getRandom((peid + i) & numElem);
-            //ckout<<"dataIn["<<i<<"]: "<<dataIn[i].k<<"  ::  "<<CkMyPe()<<endl;
+            dataIn[i].k  = getRandom() & getRandom((peid + i) ^ numElem);
+            //ckout<<"dataIn["<<i<<"]: "<<dataIn[i].k<<"  ::  "<<peid<<endl;
             //dataIn[i].k = (numpes - peid)*1000 + (numElem - i);
             //dataIn[i].k = peid;
             //dataIn[i].k = 3;
@@ -79,6 +79,8 @@ class dataManager : public CBase_dataManager{
         //  printf("Time taken in first sorting %lf s\n", endTime - startTime);
     }
 };
+
+
 
 
 #include "testsorting.def.h"

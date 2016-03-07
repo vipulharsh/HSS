@@ -27,20 +27,31 @@ module HistSort{
       kv_pair<key, value> data[];
     };
 
+  template <class key>
+    message array_msg {
+      key data[];
+    };
+
+
+ 
   template <class key, class value> chare Sorter {
     entry Sorter();
-    entry Sorter(const CkArrayID &bucketArr, int num_chares, key min, key max, tuning_params par, CProxy_Main<key, value> mainproxy);
+    entry Sorter(const CkArrayID &bucketArr, int num_chares, key min, key max,  
+                 tuning_params par, CProxy_Main<key, value> mainproxy);
     entry void Begin();
     entry [expedited] void Histogram(CkReductionMsg *msg);
     entry [expedited] void globalMinMax(CkReductionMsg *msg);
     entry void Done(CkReductionMsg *msg);
     entry void SanityCheck(CkReductionMsg *msg);
+    entry void recvSample(array_msg<key> *am);
   };
+
 
   template <class key, class value> array [1D] Bucket {
     entry Bucket(tuning_params par, key _min, key _max, int nBuckets_);	  
     //entry void SetCallback(const CkCallback &cb);
     entry void SetData(CProxy_Sorter<key, value> _sorter_proxy, CProxy_Main<key, value> _main_proxy);
+    entry void genSample(array_msg<int>  *am);
     entry void firstProbe(key firstkey, key lastkey, key stepSize, int probeSize);
     entry [expedited] void firstLocalProbe(int lastProbeSize);
     entry [expedited] void histCountProbes(probeMessage<key> *pm);
@@ -48,7 +59,23 @@ module HistSort{
     entry void Load(data_msg<key, value>* msg);
     entry void MergingWork();
     entry void partialSendOne();
+    entry void finalProbes(array_msg<key>* finalprb);
     //entry void Load();
+
+  };
+
+
+
+  template <class key, class value> nodegroup NodeManager{
+      entry NodeManager();
+      entry [exclusive] void registerLocalChare(
+                  int nElem,
+                  int pe,
+                  CProxy_Bucket<key, value> _bucket_arr,
+                  CProxy_Sorter<key, value> _sorter
+                  );
+      entry [exclusive, expedited] void collectSamples(array_msg<key>* sample);
+      entry void finalProbes(array_msg<key> *s);            
   };
 };
 

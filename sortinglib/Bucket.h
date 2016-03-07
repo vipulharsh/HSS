@@ -21,6 +21,12 @@ struct lb_struct{
 };
 
 
+template <class key>
+class array_msg : public CMessage_array_msg<key> {
+  public:
+    key* data;
+    int numElem;
+};
 
 
 
@@ -34,6 +40,7 @@ class Bucket : public CBase_Bucket<key, value> {
 	static const int indexFactor = 3;
 
 	int nBuckets;
+  int nNodes;
 	
 	key minkey, maxkey;
 	key mymin, mymax;
@@ -85,6 +92,8 @@ class Bucket : public CBase_Bucket<key, value> {
     kv_pair<key, value>* scratch;
     int dummyCount, dummyCount2;
 
+    CProxy_NodeManager<key, value>  nodemgr;
+
    	void Reset(); 
    	void localProbe();
    	void partialSend(probeMessage<key> *pm);
@@ -99,10 +108,15 @@ class Bucket : public CBase_Bucket<key, value> {
                         kv_pair<key, value> *result);
     void postMerging();
   public:
-      Bucket(CkMigrateMessage *);
+    Bucket(CkMigrateMessage *);
 	  Bucket(tuning_params par, key _min, key _max, int nBuckets_);
 	  void SetData(CProxy_Sorter<key, value> _sorter_proxy, CProxy_Main<key, value> _main_proxy);
-	  void stepSort();
+	  void genSample(array_msg<int>  *am);
+    void finalProbes(array_msg<key>* finalprb);
+
+
+
+    void stepSort();
 	  void firstProbe(key firstkey, key lastkey, key step, int probeSize);
 	  void firstLocalProbe(int lastProbeSize);
 	  void histCountProbes(probeMessage<key> *pm);

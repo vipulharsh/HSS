@@ -1,6 +1,6 @@
 #include <algorithm>
 #include "assert.h"
-//#include "sortinglib.h"
+#include "sortinglib.h"
 
 extern CkReduction::reducerType sum_uint64_t_type; 
 extern CkReduction::reducerType minmax_uint64_t_type; 
@@ -14,9 +14,10 @@ Bucket<key, value>::Bucket(CkMigrateMessage *msg){}
 template <class key, class value>
 Bucket<key, value>::Bucket(tuning_params par, key min, key max, int nuBuckets_):
 	minkey(min), maxkey(max), nBuckets(nuBuckets_){
-	//CkPrintf("Creating chare %d of bucket chare array\n", this->thisIndex);
+	CkPrintf("Creating chare %d of bucket chare array\n", this->thisIndex);
 	params = new tuning_params;
 	*params = par;
+	nNodes = CkNumNodes();
 	lastProbe = new key[params->probe_max+1];
 	finalSplitters = new key[nBuckets+2]; //required size is nBuckets+2
 	achieved = new bool[nBuckets+2];
@@ -42,9 +43,9 @@ Bucket<key, value>::Bucket(tuning_params par, key min, key max, int nuBuckets_):
 //reset variables after sorting
 template <class key, class value>
 void Bucket<key, value>::Reset(){
-	memset(achieved+1, false, nBuckets);
+	memset(achieved+1, false, nNodes);
 	memset(sorted, false, numChunks+1);
-	memset(sent, false, nBuckets+1);
+	memset(sent, false, nNodes+1);
 	achieved[0] = true;
 	//achieved[0] = achieved[nBuckets] = true;
 	//check the validity of this
@@ -74,17 +75,20 @@ void Bucket<key, value>::Reset(){
 template <class key, class value>
 void Bucket<key, value>::SetData(CProxy_Sorter<key, value> _sorter_proxy, CProxy_Main<key, value> _main_proxy){
 	DEBUGPRINTF("Set data of chare %d of bucket chare array\n", this->thisIndex);
-	
+	nodemgr = *(Global<key, value>::nodemgr);
+
 	numElem = in_elems;
 	sorter_proxy = _sorter_proxy;
 	main_proxy = _main_proxy;
 	//CkAssert(num_elements > 0);
 	bucket_data = (kv_pair<key, value>*)dataIn;
+	nodemgr[CkMyNode()].registerLocalChare(numElem, CkMyPe(),  
+										   this->thisProxy, sorter_proxy);
 
 	//for(int i=0; i<numElem; i++){
 	//	ckout<<"bucket_data["<<i<<"]: "<<bucket_data[i].k<<" : "<<CkMyPe()<<endl;
 	//}
-
+	
 	//ckout<<"SetData Begins - "<<CkMyPe()<<endl;
 	//ckout<<in_elems<<" KKK  - "<<CkMyPe()<<endl;
 	//ckout<<out_elems<<" MMM  - "<<CkMyPe()<<endl;
@@ -102,41 +106,11 @@ void Bucket<key, value>::SetData(CProxy_Sorter<key, value> _sorter_proxy, CProxy
 	//ckout<<mymin<<" minmax "<<mymax<<" - "<<CkMyPe()<<endl;
 	key minmax[2] = {mymin, mymax};
 	//needs to be changed to key
-	this->contribute(2*sizeof(uint64_t), minmax, minmax_uint64_t_type, 
-		CkCallback(CkIndex_Sorter<key,value>::globalMinMax(NULL), sorter_proxy)); 
+//	this->contribute(2*sizeof(uint64_t), minmax, minmax_uint64_t_type, 
+//		CkCallback(CkIndex_Sorter<key,value>::globalMinMax(NULL), sorter_proxy)); 
 
-	key step = (mymax - mymin + numChunks)/(numChunks);
-	std::pair<int, key> p2 = grtstPow2(step * 2);
-	step = p2.second;
-	numChunks = (mymax + 1 - mymin)/step + 1;
-	memset(histCounts, 0, numChunks*sizeof(int));	
 
-	for(int i=0; i<numElem; i++)
-		histCounts[(bucket_data[i].k - mymin)>>p2.first]++;		 
-	cumHist[0] = 0;	
-	for(int i=0; i<numChunks; i++){
-	cumHist[i+1] = histCounts[i] + cumHist[i];
-		sepKeys[i+1] = mymin + step * (i+1);
-	}
-	sepKeys[0] = mymin;
-	sepKeys[numChunks] = maxkey ;
-	memcpy(sepCounts, cumHist, (numChunks+1) * sizeof(cumHist[0]));	
-	for(int bkt=0; bkt<numChunks; bkt++){
-		for(int i=cumHist[bkt]; i<sepCounts[bkt+1]; i++){
-			int ind = (bucket_data[i].k - mymin)>>p2.first;
-			if(ind != bkt){
-				int swap = cumHist[ind];
-				kv_pair<key, value> temp = bucket_data[i];
-				bucket_data[i] = bucket_data[swap];
-				bucket_data[swap] = temp;
-				cumHist[ind]++;
-				i--;
-			}
-		}
-	}
 
-	lastSortedChunk = 0;
-	stepSort();
 
 	#if VERBOSE
 	double sum = 0; int keysum = 0;
@@ -162,6 +136,40 @@ void Bucket<key, value>::SetData(CProxy_Sorter<key, value> _sorter_proxy, CProxy
 *
 *
 **********************************************************************************/
+
+
+
+
+
+template <class key, class value>
+void Bucket<key, value>::genSample(array_msg<int>  *am){
+	//ckout<<"I will generate samples now "<<CkMyPe()<<endl;
+	array_msg<key> *sample = new (am->numElem) array_msg<key>;
+	for(int i=0; i<am->numElem; i++){
+		sample->data[i] = bucket_data[am->data[i]].k;
+	}
+	sample->numElem = am->numElem;
+	nodemgr[CkMyNode()].collectSamples(sample);
+	delete(am);
+	/****  Undo this ***/
+	//this->thisProxy[this->thisIndex].stepSort();
+}
+
+
+
+template <class key, class value>
+void Bucket<key, value>::finalProbes(array_msg<key>* finalprb){
+	ckout<<"bucket "<<CkMyPe()<<" got the final probes "<<endl;
+	memcpy(lastProbe, finalprb->data, finalprb->numElem * sizeof(key));
+	lastProbe[finalprb->numElem] = maxkey;
+	lastProbeSize = finalprb->numElem + 1;
+	ckout<<"lastProbeSize :  "<<lastProbeSize<<"  :  "<<CkMyPe()<<"  "<<endl;
+	localProbe();
+}
+
+
+
+
 
 
 template <class key, class value>
@@ -248,10 +256,10 @@ void Bucket<key, value>::localProbe(){
 
 	//ckout<<"Time taken in sorted Histogramming at "<<CkMyPe()<<" : "<<CmiWallTimer()-c1<<endl;
 
-//	ckout<<" LastProbeSize "<<lastProbeSize<<" : "<<CkMyPe()<<endl;
-//	ckout<<" Hist Count on "<<CkMyPe()<<" --- "<<lastSortedChunk<<endl;
-//	for (int i = 0; i < lastProbeSize; i++)
-//		ckout<<" Hist Count on "<<CkMyPe()<<" - "<<histCounts[i]<<" : "<<lastProbe[i]<<" : "<<lastProbeSize<<endl; 
+	//ckout<<" LastProbeSize "<<lastProbeSize<<" : "<<CkMyPe()<<endl;
+	//ckout<<" Hist Count on "<<CkMyPe()<<" --- "<<lastSortedChunk<<endl;
+	//for (int i = 0; i < lastProbeSize; i++)
+	//	ckout<<" Hist Count on "<<CkMyPe()<<" - "<<histCounts[i]<<" : "<<lastProbe[i]<<" : "<<lastProbeSize<<endl; 
 
 	if(lastSortedChunk < numChunks){
 		//buildIndex : !Change this to for division by 2
@@ -260,18 +268,26 @@ void Bucket<key, value>::localProbe(){
 			currmin = bucket_data[sepCounts[lastSortedChunk]-1].k;
 		}
 	
-		int numIndices = std::max(nBuckets, lastProbeSize) * indexFactor;			
+
+		int numIndices = std::max(nNodes, lastProbeSize) * indexFactor;			
 		key indexStep = std::max((mymax- currmin + numIndices)/numIndices, (key)1);	
 		
 		std::pair<int, key> p2= grtstPow2((mymax-currmin)/numIndices + 1);
+
+
 
 		//ckout<<currmin<<" : "<<mymax<<" - "<<CkMyPe()<<endl;
 		indexStep = p2.second * 2;
 		int indexStepLog = p2.first + 1;
 		int numIndices2 = numIndices;
+
+
 		numIndices = (mymax - currmin)/indexStep + 1;
+
 		assert(numIndices <= numIndices2);
 		//ckout<<"IndexStep : "<<indexStep<<" - "<<sepCounts[lastSortedChunk]<<" ;;; "<<numIndices<<" - "<<CkMyPe()<<endl;
+
+
 
 		int prb = 0;
 		for(int ind=0; ind<numIndices; ind++){	
@@ -297,6 +313,12 @@ void Bucket<key, value>::localProbe(){
 		}
 		ckout<<"Elements Scanned : "<<numElem - sepCounts[lastSortedChunk]<<" "<<CkMyPe()<<endl;
 	}
+
+	for(int i=0; i < lastProbeSize; i++){
+		ckout<<"Histcount : "<<i<<"("<<lastProbe[i]<<") : "<<histCounts[i]<<"  - "<<CkMyPe()<<endl;
+	}
+
+
 	//use 64-bit in reduction since total histogram might surpass 32-bit limit
 	for (int i = 0; i < lastProbeSize; i++)
 		longhistCounts[i] = histCounts[i]; 

@@ -1,6 +1,6 @@
 #ifndef __SORTING_LIB_H__
 #define __SORTING_LIB_H__
-#include <cstdio>
+#include <stdio.h>
 #include <cmath>
 #include <time.h>
 #include <list>
@@ -8,7 +8,10 @@
 #include <vector>
 #include <cstring>
 #include <algorithm>
-//#include "mpi-interoperate.h"
+#include <stdlib.h>
+#include <random>
+#include <algorithm>
+#include <chrono>
 #include "defs.h"
 
 #define UINT64_MAX (18446744073709551615ULL)
@@ -24,13 +27,32 @@ class kv_pair {
 };
 
 //Global variables
-int in_elems, *out_elems;
-void* dataIn, **dataOut;
-CkCallback *CB; bool callBackSet;
+__thread int in_elems, *out_elems;
+__thread void* dataIn, **dataOut;
+__thread CkCallback *CB;  __thread bool callBackSet;
+
+
 
 #include "HistSort.decl.h"
+
+
+template <class key, class value> 
+class Global {
+public:    
+    static CProxy_NodeManager<key, value> *nodemgr;
+
+private:    
+    Global() {}
+    Global(const Global& rhs) {}
+    void operator=(const Global& rhs) {}
+};
+
+template <class key, class value> 
+CProxy_NodeManager<key, value> * Global<key, value>::nodemgr = new CProxy_NodeManager<key, value>;
+
 #include "Sorter.h"
 #include "Bucket.h"
+
 
 #ifndef CK_TEMPLATES_ONLY
 template <class key, class value>
@@ -53,6 +75,7 @@ void HistSorting(int input_elems_, kv_pair<key, value>* dataIn_,
     callBackSet = true;
   }
 
+  CkPrintf("[%d] HistSorting on, First Elt. %ld \n",CkMyPe(), ((kv_pair<key, value>*) dataIn)[0]);
 
   if(CkMyPe() == 0) {
 #if DEBUG
@@ -61,8 +84,12 @@ void HistSorting(int input_elems_, kv_pair<key, value>* dataIn_,
    static CProxy_Main<key, value> mainProxy = CProxy_Main<key, value>::ckNew(CkNumPes(), probe_max);
     mainProxy.DataReady();
   }
-  //StartCharmScheduler();
 }
+
+
+
+
+
 
 //main entrypoint of tester, coordinates testing of sorting library
 template <class key, class value>
@@ -96,11 +123,16 @@ class Main : public CBase_Main<key, value> {
 
       pars.reuse_probe_results = true;
   
-      bucket_arr = CProxy_Bucket<key, value>::ckNew(pars, 0, UINT64_MAX,  num_buckets, opts);
+      //*(Global<key, value>::nodemgr) = CProxy_NodeManager<key, value>::ckNew();
+      CProxy_NodeManager<key, value>::ckNew();
+
+      bucket_arr = CProxy_Bucket<key, value>::ckNew(pars, 0,
+                       UINT64_MAX,  num_buckets, opts);
       
       // maxkey should be MAXINT - c * p
       sorter = CProxy_Sorter<key, value>::ckNew(bucket_arr, num_buckets, 0, 
-        UINT64_MAX-1000000000, pars, this->thisProxy);
+                      UINT64_MAX-1000000000, pars, this->thisProxy);
+
     }
     //migration constructor
     Main (CkMigrateMessage *m) { }
@@ -136,6 +168,11 @@ void Main<key, value>::DataReady() {
   //sorter.Begin();       
 }
 
+
+
+#include "nodemanager.h"
+
+
 #define CK_TEMPLATES_ONLY
 #include "HistSort.def.h"
 #undef CK_TEMPLATES_ONLY 
@@ -147,25 +184,31 @@ void registerSortingLib() {
   if(initDone) return;
   initDone = 1;
 
-/* REG: chare Main<uint64_t,data_value >: Chare;
-*/
+// REG: chare Main<uint64_t,data_value >: Chare;
   CkIndex_Main<key, value >::__register("Main<key, value >", sizeof(Main<key, value >));
 
-/* REG: chare Sorter<key,value >: Chare;
-*/
+// REG: chare Sorter<key,value >: Chare;
   CkIndex_Sorter<key,value >::__register("Sorter<key,value >", sizeof(Sorter<key,value >));
 
-/* REG: array Bucket<key,value >: ArrayElement;
-*/
+// REG: array Bucket<key,value >: ArrayElement;
   CkIndex_Bucket<key,value >::__register("Bucket<key,value >", sizeof(Bucket<key,value >));
 
-/* REG: message next_probe<key >;
+// REG: array Bucket<key,value >: ArrayElement;
+  CkIndex_NodeManager<key,value >::__register("NodeManager<key,value >", sizeof(NodeManager<key,value >));
+
+/* REG: message probeMessage<key >;
 */
   CMessage_probeMessage<key >::__register("probeMessage<key >", sizeof(probeMessage<key >),(CkPackFnPtr) probeMessage<key >::pack,(CkUnpackFnPtr) probeMessage<key >::unpack);
 
-/* REG: message next_probe<key >;
+/* REG: message data_msg<key, value >;
 */
   CMessage_data_msg<key, value >::__register("data_msg<key,value >", sizeof(data_msg<key,value >),(CkPackFnPtr) data_msg<key,value >::pack,(CkUnpackFnPtr) data_msg<key,value >::unpack);
+
+
+/* REG: message array_msg<key >;
+*/
+  CMessage_array_msg<key>::__register("array_msg<key >", sizeof(array_msg<key >),(CkPackFnPtr) array_msg<key >::pack,(CkUnpackFnPtr) array_msg<key >::unpack);
+
 }
 
 
@@ -201,6 +244,13 @@ template <>
 void recursive_pup_impl<Main<unsigned long, int >, 1>::operator()(Main<unsigned long, int > *obj, PUP::er &p) {
     obj->parent_pup(p);
     obj->Main::pup(p);
+}
+
+
+template <>
+void recursive_pup_impl<NodeManager<unsigned long, int >, 1>::operator()(NodeManager<unsigned long, int > *obj, PUP::er &p) {
+    obj->parent_pup(p);
+    obj->NodeManager<unsigned long, int >::pup(p);
 }
 
 
