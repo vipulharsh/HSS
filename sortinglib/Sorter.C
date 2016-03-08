@@ -57,52 +57,18 @@ Sorter<key, value>::Sorter(const CkArrayID &bucketArr, int _nBuckets, key min,
         mainproxy(_mainproxy), buckets(bucketArr), nBuckets(_nBuckets), 
         minkey(min), maxkey(max){
     //VERBOSEPRINTF("Setting up sort. From Constructor\n");
+    c1 = CmiWallTimer();
     nNodes = CkNumNodes();
     params = new tuning_params();
     *params = par;
     firstUse = true;
     numProbes = 0;
     ckout<<"CONS Params->probe_max: "<<params->probe_max<<endl;
-    c1 = CmiWallTimer();
     //should be a reset
     collectedSample.clear();
     Init();
 }
 
-
-template<class key, class value>
-void Sorter<key, value>::recvSample(array_msg<key>* am){
-  static int msgReceived = 0;
-
-  ckout<<"Received msg number "<<msgReceived<<" at "<<CkMyNode()<<endl;
-  ckout<<"Elts. recved "<<am->numElem<<endl;
-  //for(int i=0; i<am->numElem; i++)
-  //    ckout<<am->data[i]<<endl;
-  collectedSample.insert(collectedSample.end(), am->data, am->data + am->numElem);  
-  msgReceived++;
-  delete(am); 
-  if(msgReceived == CkNumNodes()){
-    std::sort(collectedSample.begin(), collectedSample.end());
-    //take p samples from this
-    array_msg<key> *finalProbe = new (CkNumNodes()) array_msg<key>;
-
-    //what if CkNumNodes = 1? : do something different 
-
-
-    int step = collectedSample.size()/(std::max(CkNumNodes()-1, 1));
-    for(int i=0; i<CkNumNodes()-1; i++){
-      finalProbe->data[i] = collectedSample[(i+1) * step - 1];
-    }
-    finalProbe->numElem = CkNumNodes()-1;
-
-    lastProbeSize = CkNumNodes();
-
-    memcpy(lastProbe, finalProbe->data, finalProbe->numElem * sizeof(key));
-    lastProbe[finalProbe->numElem] = maxkey;  
-
-    (Global<key, value>::nodemgr)->finalProbes(finalProbe);   
-  }
-}
 
 
 
@@ -201,6 +167,47 @@ void Sorter<key, value>::Begin(){
 }
 
 
+template<class key, class value>
+void Sorter<key, value>::recvSample(array_msg<key>* am){
+  static int msgReceived = 0;
+
+  //ckout<<"Received msg number "<<msgReceived<<" at "<<CkMyNode()<<endl;
+  //ckout<<"Elts. recved "<<am->numElem<<endl;
+  //for(int i=0; i<am->numElem; i++)
+  //    ckout<<am->data[i]<<endl;
+  collectedSample.insert(collectedSample.end(), am->data, am->data + am->numElem);  
+  msgReceived++;
+  delete(am); 
+  if(msgReceived == CkNumNodes()){
+    std::sort(collectedSample.begin(), collectedSample.end());
+    //what if CkNumNodes = 1? : do something different 
+    int factor = 1; //take 2*factor + 1 samples at every index   
+    //take factor * p samples from this
+    array_msg<key> *finalProbe = new (1 + (CkNumNodes()-1)*(2*factor+1)) array_msg<key>;
+    int step = collectedSample.size()/(std::max(CkNumNodes()-1, 1));
+    int prbsize = 0;
+    for(int i=0; i<CkNumNodes()-1; i++){
+      int ind = (i+1) * step - 1;
+      for(int j=ind-factor; j<=ind+factor; j++){
+          if(j >= 0 && j<collectedSample.size()){
+              finalProbe->data[prbsize++] = collectedSample[j];
+          }
+      }
+    }
+    finalProbe->data[prbsize++] = maxkey;
+    for(int i=1; i<prbsize; i++)
+        assert(finalProbe->data[i-1] <= finalProbe->data[i]);
+
+    finalProbe->numElem = prbsize;
+    lastProbeSize = prbsize;
+    memcpy(lastProbe, finalProbe->data, finalProbe->numElem * sizeof(key));
+    for(int i=0; i<lastProbeSize; i++)
+        ckout<<"Probe #"<<i<<" : "<<lastProbe[i]<<endl;
+
+    (Global<key, value>::nodemgr)->finalProbes(finalProbe);   
+  }
+}
+
 
 
 
@@ -224,12 +231,13 @@ void Sorter<key, value>::Histogram(CkReductionMsg *msg){
     uint64_t* histCounts = (uint64_t*)msg->getData();
     int lenhist = (int)msg->getSize()/sizeof(uint64_t);   
     
+
     //store cumulative counts
     for(int i=1; i<lenhist; i++){
-		  histCounts[i] += histCounts[i-1];
+      histCounts[i] += histCounts[i-1];
     }  
     
-    CkAssert(lenhist == lastProbeSize);
+    assert(lenhist == lastProbeSize);
 
     std::vector<std::pair<key, int> > newachv; //splitters that were achieved in this round
     if(numProbes <= 1){
@@ -237,14 +245,6 @@ void Sorter<key, value>::Histogram(CkReductionMsg *msg){
       achievedCounts[nNodes] = nElements; 
       newachv.push_back(std::pair<key, int>(maxkey, nNodes));
     }
-
-
-    for(int i=0; i<lastProbeSize; i++){
-      allPreviousProbes[lastProbe[i]] = histCounts[i];
-      uint64_t goal = (nElements * (i+1))/nNodes;
-      ckout<<lastProbe[i]<<" :-: "<<histCounts[i]<<",   Goal: "<<goal<<endl;
-    }
-
 
 
     int p = 0; //currProbe
@@ -268,7 +268,26 @@ void Sorter<key, value>::Histogram(CkReductionMsg *msg){
     }
     //double cc2 = CmiWallTimer();
     //ckout<<cc2-cc1<<" : "<< numProbes<<"  - srtr0 <<"<<endl;
-    
+
+
+
+//****************FOR DEBUG ******************
+    int spltridx = 1;
+    for(int i=0; i<lastProbeSize; i++){
+      allPreviousProbes[lastProbe[i]] = histCounts[i];
+      
+      while(checkGoal(spltridx, histCounts[i]) > 0){
+          spltridx++;
+      }
+
+      uint64_t goal = (nElements * spltridx)/nNodes;
+      ckout<<lastProbe[i]<<" :-: "<<histCounts[i]<<",   Goal: "<<goal<<", "<<achieved[spltridx]<<endl;
+    }
+
+//**********************************************
+
+
+
     assert(histCounts[lastProbeSize-1] == nElements);
 
     nextProbes(newachv, histCounts, msg);
@@ -291,17 +310,12 @@ void Sorter<key, value>::nextProbes(std::vector<std::pair<key, int> > &newachv, 
     ckout<<"Next Probes, UnachievedSplitters : "<<nNodes+1 - achievedSplitters<<" "<<params->probe_max<<endl;
 
 
-
-
-
+    c2 = CmiWallTimer();
+    CkPrintf("\nCompleted in %lf seconds.\n", (c2-c1));
+    mainproxy.Exit();
     return;
 
 
-
-
-
-
-    
     typename std::map<key, uint64_t>::iterator it, previt; 
     for(it = allPreviousProbes.begin(); it != allPreviousProbes.end() && s<nNodes; it++){
       uint64_t histCount = it->second;
@@ -343,10 +357,10 @@ void Sorter<key, value>::nextProbes(std::vector<std::pair<key, int> > &newachv, 
       lastunresolved = unresolved;
       unresolved = 0;
     }
-   scratch[scratchInd++] = globalmax + 1;   
-   //ckout<<"Probes are **************************: "<<scratchInd<<endl;
-   //for(int i=0; i<scratchInd; i++)
-   //   ckout<<scratch[i]<<endl;
+   scratch[scratchInd++] = maxkey + 1;   
+   ckout<<"Probes are **************************: "<<scratchInd<<endl;
+   for(int i=0; i<scratchInd; i++)
+      ckout<<scratch[i]<<endl;
 
    //swap lastProbe and scratch
    key *temp = lastProbe;

@@ -159,11 +159,10 @@ void Bucket<key, value>::genSample(array_msg<int>  *am){
 
 template <class key, class value>
 void Bucket<key, value>::finalProbes(array_msg<key>* finalprb){
-	ckout<<"bucket "<<CkMyPe()<<" got the final probes "<<endl;
+	//ckout<<"bucket "<<CkMyPe()<<" got the final probes "<<endl;
 	memcpy(lastProbe, finalprb->data, finalprb->numElem * sizeof(key));
-	lastProbe[finalprb->numElem] = maxkey;
-	lastProbeSize = finalprb->numElem + 1;
-	ckout<<"lastProbeSize :  "<<lastProbeSize<<"  :  "<<CkMyPe()<<"  "<<endl;
+	lastProbeSize = finalprb->numElem;
+	//ckout<<"lastProbeSize :  "<<lastProbeSize<<"  :  "<<CkMyPe()<<"  "<<endl;
 	localProbe();
 }
 
@@ -305,19 +304,14 @@ void Bucket<key, value>::localProbe(){
 			int ind = indices[index];
 			ind = std::lower_bound(lastProbe + ind, 
 				lastProbe + indices[index+1] + 1, bucket_data[i].k) - lastProbe;
-			//ckout<<i<<" **** "<<bucket_data[i].k<<" ------- "<<ind<<" & Index: "<<index<<" & "<<indices[index]<<" & "<<indexStep<<" & "<<currmin<<" - "<<CkMyPe()<<endl;
-			if(bucket_data[i].k == lastProbe[ind])
+			while(bucket_data[i].k == lastProbe[ind] && ind<lastProbeSize-1)
  				ind++;
+ 			//ckout<<i<<" **** "<<bucket_data[i].k<<" ------- "<<ind<<" & Index: "<<index<<" & "<<indices[index]<<" & "<<indexStep<<" & "<<currmin<<" - "<<CkMyPe()<<endl;
  			//assert(bucket_data[i].k < lastProbe[ind]);
 			histCounts[ind]++;			
 		}
-		ckout<<"Elements Scanned : "<<numElem - sepCounts[lastSortedChunk]<<" "<<CkMyPe()<<endl;
+		//ckout<<"Elements Scanned : "<<numElem - sepCounts[lastSortedChunk]<<" "<<CkMyPe()<<endl;
 	}
-
-	for(int i=0; i < lastProbeSize; i++){
-		ckout<<"Histcount : "<<i<<"("<<lastProbe[i]<<") : "<<histCounts[i]<<"  - "<<CkMyPe()<<endl;
-	}
-
 
 	//use 64-bit in reduction since total histogram might surpass 32-bit limit
 	for (int i = 0; i < lastProbeSize; i++)
@@ -357,7 +351,8 @@ void Bucket<key, value>::histCountProbes(probeMessage<key> *pm){
 	else
 		doneHists = true;
 
-	partialSend(pm);
+	/*** Undo ***/
+	//partialSend(pm);
 
 
 	if(lastProbeSize <= 1){
