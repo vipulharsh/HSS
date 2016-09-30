@@ -16,8 +16,8 @@ all: clean $(DEST)/testsorting
 $(DEST)/testsorting: $(LIBS) testsorting.ci testsorting.C  
 #	chmod 755 $(DEST)/charm_all_libs.sh
 #	. $(DEST)/charm_all_libs.sh && $(CHARMC) -mpi -o $(DEST)/testsorting  testsorting.o -L$(DEST) -lcharm $(MPI_LIBS) -ltrace-projections -tracemode projections
-	$(CHARMC) -O3 -language charm++ testsorting.ci
-	$(CHARMC) -O3 -language charm++ -o $@ testsorting.C -Lbin -module HistSort -lstdc++
+	$(CHARMC) -language charm++ testsorting.ci
+	$(CHARMC) -language charm++ -o $@ testsorting.C -Lbin -module HistSort -lstdc++
 #	. $(DEST)/charm_all_libs.sh && $(CXX)  -o $(DEST)/testsorting testsorting.o -L$(DEST) $$CHARM_ALL_LIBS -lcharm $(MPI_LIBS) -ltrace-projections 
 
 $(LIBS):  

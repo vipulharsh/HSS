@@ -9,7 +9,7 @@ mainmodule testsorting {
 
     group dataManager{
     	entry dataManager(int numBuckets, int numElem, int probe_max);
-	    entry void SortingDone();
+	entry void SortingDone();
 	//entry void foo(int x);
     };
 

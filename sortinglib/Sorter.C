@@ -53,8 +53,8 @@ Sorter<key, value>::Sorter(CkMigrateMessage *msg){}
 
 template<class key, class value>
 Sorter<key, value>::Sorter(const CkArrayID &bucketArr, int _nBuckets, key min,
-            key max, tuning_params par, CProxy_Main<key, value> _mainproxy) : 
-        mainproxy(_mainproxy), buckets(bucketArr), nBuckets(_nBuckets), 
+            key max, tuning_params par, CProxy_Main<key, value> _mainproxy, CkNodeGroupID _nodeMgrID) : 
+        mainproxy(_mainproxy), buckets(bucketArr), nBuckets(_nBuckets),  nodeMgrID(_nodeMgrID),
         minkey(min), maxkey(max){
     //VERBOSEPRINTF("Setting up sort. From Constructor\n");
     c1 = CmiWallTimer();
@@ -72,7 +72,7 @@ Sorter<key, value>::Sorter(const CkArrayID &bucketArr, int _nBuckets, key min,
 
 
 
-
+/*
 template <class key, class value>
 void Sorter<key, value>::globalMinMax(CkReductionMsg *msg){
   key *m = (key *)msg->getData();
@@ -81,7 +81,7 @@ void Sorter<key, value>::globalMinMax(CkReductionMsg *msg){
   ckout<<"In Sorter global Min Max "<<m[0]<<" "<<m[1]<<endl;
   Begin();
 }
-
+*/
 
 
 
@@ -111,9 +111,7 @@ void Sorter<key, value>::Init(){
 
 
 
-
-
-
+/*
 template<class key, class value>
 void Sorter<key, value>::Begin(){
 
@@ -168,7 +166,7 @@ void Sorter<key, value>::Begin(){
     //allPreviousProbes[minkey] = 0;
     ckout<<"Exiting Sorter Constructor... "<<params->probe_max<<endl;
 }
-
+*/
 
 template<class key, class value>
 void Sorter<key, value>::recvSample(array_msg<key>* am){
@@ -195,34 +193,11 @@ void Sorter<key, value>::recvSample(array_msg<key>* am){
     for(int i=0; i<lastProbeSize; i++)
 	ckout<<"Sample #"<<i<<" : "<<lastProbe[i]<<endl;
 
-/**
-    //what if CkNumNodes = 1? : do something different 
-    int factor = 1; //take 2*factor + 1 samples at every index   
-    //take factor * p samples from this
-    array_msg<key> *finalProbe = new (1 + (CkNumNodes()-1)*(2*factor+1)) array_msg<key>;
-    int step = collectedSample.size()/(std::max(CkNumNodes()-1, 1));
-    int prbsize = 0;
-    for(int i=0; i<CkNumNodes()-1; i++){
-      int ind = (i+1) * step - 1;
-      for(int j=ind-factor; j<=ind+factor; j++){
-          if(j >= 0 && j<collectedSample.size()){
-              finalProbe->data[prbsize++] = collectedSample[j];
-          }
-      }
-    }
-    finalProbe->data[prbsize++] = maxkey;
-    for(int i=1; i<prbsize; i++)
-        assert(finalProbe->data[i-1] <= finalProbe->data[i]);
+    buckets.finalProbes(finalProbe);
 
-    finalProbe->numElem = prbsize;
-    lastProbeSize = prbsize;
-    memcpy(lastProbe, finalProbe->data, finalProbe->numElem * sizeof(key));
-  
-    ckout<<"probe size: "<<lastProbeSize<<endl;
-    //for(int i=0; i<lastProbeSize; i++)
-    //    ckout<<"Probe #"<<i<<" : "<<lastProbe[i]<<endl;
-**/     
-    (Global<key, value>::nodemgr)->finalProbes(finalProbe);   
+    //CProxy_NodeManager<key, value> nodemgr = CProxy_NodeManager<key, value>(nodeMgrID);   
+    //nodemgr.finalProbes(finalProbe);
+    //(Global<key, value>::nodemgr)->finalProbes(finalProbe);   
   }
 }
 
@@ -232,7 +207,7 @@ void Sorter<key, value>::recvSample(array_msg<key>* am){
 template <class key, class value>
 inline int Sorter<key, value>::checkGoal(int splitterInd, uint64_t histCount){
     uint64_t goal = (nElements * splitterInd)/nNodes;
-    uint64_t margin = (nElements * 20)/(100 * nNodes); //5%
+    uint64_t margin = (nElements * 5)/(100 * nNodes); //5%
     //ckout<<nElements<<" : "<<splitterInd<<" : "<<nBuckets<<endl;
     //ckout<<goal<<" : "<<margin<<" : "<<goal-margin<<" : "<<goal + margin<<endl;
     return (histCount < goal-margin ? -1 : (histCount > goal+margin ? 1 : 0));
@@ -327,11 +302,19 @@ void Sorter<key, value>::nextProbes(std::vector<std::pair<key, int> > &newachv, 
     int lastunresolved = -1;
     ckout<<"Next Probes, UnachievedSplitters : "<<nNodes+1 - achievedSplitters<<" "<<params->probe_max<<endl;
 
+/*** To be removed later **/
+    if(nNodes+1 - achievedSplitters > 0){
+       CkAbort("Not achieved in the first step \n");
+       CkExit();
+    }
+/***/
+
 
     c2 = CmiWallTimer();
     CkPrintf("\nCompleted in %lf seconds.\n", (c2-c1));
-    mainproxy.Exit();
-    return;
+
+//    mainproxy.Exit();
+//    return;
 
 
     typename std::map<key, uint64_t>::iterator it, previt; 

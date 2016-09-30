@@ -12,8 +12,8 @@ Bucket<key, value>::Bucket(CkMigrateMessage *msg){}
 
 ///initialize Bucket (create data)
 template <class key, class value>
-Bucket<key, value>::Bucket(tuning_params par, key min, key max, int nuBuckets_):
-	minkey(min), maxkey(max), nBuckets(nuBuckets_){
+Bucket<key, value>::Bucket(tuning_params par, key min, key max, int nuBuckets_, CkNodeGroupID _nodeMgrID):
+	minkey(min), maxkey(max), nBuckets(nuBuckets_), nodeMgrID(_nodeMgrID){
 	CkPrintf("Creating chare %d of bucket chare array\n", this->thisIndex);
 	params = new tuning_params;
 	*params = par;
@@ -32,7 +32,7 @@ Bucket<key, value>::Bucket(tuning_params par, key min, key max, int nuBuckets_):
 	//std::pair<int, int> pp =  grtstPow2(params->probe_max * indexFactor + 1);
 	indices = new int[2 * (maxprobe * indexFactor + 1)];
 
-	numChunks = nBuckets;
+	numChunks = 1;//nBuckets;
 	sepCounts = new int[numChunks+2];
 	sepKeys = new key[numChunks+2];
 	sorted = new bool[numChunks+2];
@@ -76,13 +76,16 @@ void Bucket<key, value>::Reset(){
 template <class key, class value>
 void Bucket<key, value>::SetData(CProxy_Sorter<key, value> _sorter_proxy, CProxy_Main<key, value> _main_proxy){
 	DEBUGPRINTF("Set data of chare %d of bucket chare array\n", this->thisIndex);
-	nodemgr = *(Global<key, value>::nodemgr);
+	//nodemgr = *(Global<key, value>::nodemgr);
+	nodemgr = CProxy_NodeManager<key, value>(nodeMgrID); 
 
 	numElem = in_elems;
 	sorter_proxy = _sorter_proxy;
 	main_proxy = _main_proxy;
 	//CkAssert(num_elements > 0);
 	bucket_data = (kv_pair<key, value>*)dataIn;
+
+        CkPrintf("Registering local chare array [%d], nodemgrID: %d \n", CkMyPe(), nodeMgrID);
 	nodemgr[CkMyNode()].registerLocalChare(numElem, CkMyPe(),  
 										   this->thisProxy, sorter_proxy);
 
@@ -110,18 +113,14 @@ void Bucket<key, value>::SetData(CProxy_Sorter<key, value> _sorter_proxy, CProxy
 //	this->contribute(2*sizeof(uint64_t), minmax, minmax_uint64_t_type, 
 //		CkCallback(CkIndex_Sorter<key,value>::globalMinMax(NULL), sorter_proxy)); 
 
-	//Since, we are not "chunking" bucket_data, 
-	// work around for localProbe() to work correctly
-    sepCounts[0] = 0;
 
-
-	#if VERBOSE
+#if VERBOSE
 	double sum = 0; int keysum = 0;
 	for(int i = 0; i < numElem; i++) 
 	keysum += (int)(bucket_data[i].k % 1009);  
 	this->contribute(sizeof(int), &keysum, CkReduction::sum_int,
 	CkCallback(CkIndex_Main<key, value>::init_isum(NULL),main_proxy));
-	#endif
+#endif
 }
 
 
@@ -141,6 +140,19 @@ void Bucket<key, value>::SetData(CProxy_Sorter<key, value> _sorter_proxy, CProxy
 **********************************************************************************/
 
 
+template<class key, class value>
+void Bucket<key, value>::sortAll(){
+	//Since, we are not "chunking" bucket_data, 
+	// work around for localProbe() to work correctly
+        numChunks = 1;
+        sepKeys[0] = mymin ;
+        sepKeys[1] = maxkey ;
+        sepCounts[0] = 0;
+        sepCounts[1] = numElem;
+        std::sort(bucket_data, bucket_data + numElem);
+        lastSortedChunk = 1;
+}
+
 
 
 
@@ -154,6 +166,7 @@ void Bucket<key, value>::genSample(array_msg<int>  *am){
 	sample->numElem = am->numElem;
 	nodemgr[CkMyNode()].collectSamples(sample);
 	delete(am);
+ 	this->thisProxy[this->thisIndex].sortAll();
 	/****  Undo this, after fixing the chunks ***/
 	//this->thisProxy[this->thisIndex].stepSort();
 }
@@ -360,6 +373,8 @@ void Bucket<key, value>::histCountProbes(probeMessage<key> *pm){
 
 	if(lastProbeSize <= 1){
 		//ckout<<"Splitters have been determined  - "<<CkMyPe()<<endl;	
+		this->contribute(CkCallback(CkIndex_Sorter<key, value>::Done(NULL), sorter_proxy));
+		return;
 		//Not required, I think
 		//if(lastSortedChunk == numChunks && numSent == nBuckets)
 		//	MergingWork();

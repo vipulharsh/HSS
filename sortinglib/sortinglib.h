@@ -16,6 +16,9 @@
 
 #define UINT64_MAX (18446744073709551615ULL)
 
+/*readonly*/ CkNodeGroupID nodeMgrID;
+
+
 template <class key, class value>
 class kv_pair {
   public:
@@ -35,7 +38,7 @@ __thread CkCallback *CB;  __thread bool callBackSet;
 
 #include "HistSort.decl.h"
 
-
+/*
 template <class key, class value> 
 class Global {
 public:    
@@ -46,9 +49,12 @@ private:
     Global(const Global& rhs) {}
     void operator=(const Global& rhs) {}
 };
+*/
 
+/*
 template <class key, class value> 
 CProxy_NodeManager<key, value> * Global<key, value>::nodemgr = new CProxy_NodeManager<key, value>;
+*/
 
 #include "Sorter.h"
 #include "Bucket.h"
@@ -123,15 +129,14 @@ class Main : public CBase_Main<key, value> {
 
       pars.reuse_probe_results = true;
   
-      //*(Global<key, value>::nodemgr) = CProxy_NodeManager<key, value>::ckNew();
-      CProxy_NodeManager<key, value>::ckNew();
+      CkNodeGroupID nodeMgrID = CProxy_NodeManager<uint64_t, int>::ckNew();
 
       bucket_arr = CProxy_Bucket<key, value>::ckNew(pars, 0,
-                       UINT64_MAX,  num_buckets, opts);
+                       UINT64_MAX,  num_buckets, nodeMgrID, opts);
       
       // maxkey should be MAXINT - c * p
       sorter = CProxy_Sorter<key, value>::ckNew(bucket_arr, num_buckets, 0, 
-                      UINT64_MAX-1000000000, pars, this->thisProxy);
+                     UINT64_MAX-1000000000, pars, this->thisProxy, nodeMgrID);
 
     }
     //migration constructor

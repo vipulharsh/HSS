@@ -1,10 +1,13 @@
 #ifndef __NODEMANAGER_H__
 #define __NODEMANAGER_H__
 
+
+const int SAMPLE_FACTOR = 20;
+
 int maxSampleSize(){
       int lognnodes = 1, numnodes = CkNumNodes();
       while((1<<lognnodes) <= numnodes) lognnodes++;
-      int sampleSize = (20 *  numnodes * lognnodes);
+      int sampleSize = (SAMPLE_FACTOR *  numnodes * lognnodes);
       return sampleSize + 2;
 }
 
@@ -12,7 +15,7 @@ int maxSampleSize(){
 int sampleSizePerPe(){
       int lognnodes = 1, numnodes = CkNumNodes(), numpes = CkNodeSize(CkMyNode());
       while((1<<lognnodes) <= numnodes) lognnodes++;
-      int sampleSize = (20 * lognnodes)/numpes;
+      int sampleSize = (SAMPLE_FACTOR * lognnodes)/numpes;
       return sampleSize;
 }
 
@@ -32,7 +35,6 @@ private:
 
 public:    
   NodeManager(){
-      *(Global<key, value>::nodemgr) = this->thisProxy;
       ckout<<"Node Manager created at "<<CkMyNode()<<endl;
       numnodes = CkNumNodes();
       numpes = CkNodeSize(CkMyNode());
@@ -43,7 +45,8 @@ public:
   void registerLocalChare(int nElem, int pe, CProxy_Bucket<key, value> _bucket_arr,
                           CProxy_Sorter<key, value> _sorter){
       ckout<<"registerLocalchare called from PE "<<pe<<" at "<<CkMyNode()<<endl;
-      ckout<<"numnodes :"<<numnodes<<" numpes:"<<numpes<<endl;
+      //ckout<<"numnodes :"<<numnodes<<" numpes:"<<numpes<<endl;
+      //!This should be a bucket_proxy ID
       bucket_arr = _bucket_arr;
       sorter = _sorter;
       static int currnpes = 0;
@@ -53,7 +56,7 @@ public:
       while((1<<lognnodes) <= numnodes) lognnodes <<= 1;
       if(currnpes == numpes){ //all PE's registered
           sampleSize = sampleSizePerPe();
-          ckout<<"sample size: "<<sampleSize<<endl;
+          //ckout<<"sample size: "<<sampleSize<<endl;
           genSampleIndices();
       }
   }
@@ -70,7 +73,7 @@ public:
       myclock::duration d = myclock::now() - beginning;
       unsigned seed = d.count();
       seed = CkMyNode();
-      ckout<<"Seed is "<<seed<<endl;
+      //ckout<<"Seed is "<<seed<<endl;
 
       std::default_random_engine generator(seed);
       std::uniform_int_distribution<int> distribution(0,cum-1);
@@ -99,8 +102,8 @@ public:
           for(int i=0; i<am->numElem; i++){
             am->data[i] = randIndices[cumIndex+i] - cumFreq;
           }
-          ckout<<"Sending randIndices["<<cumIndex<<","<<ub<<") - ";
-          ckout<<cumFreq<<" to PE "<<pelist[i]<<endl;
+          //ckout<<"Sending randIndices["<<cumIndex<<","<<ub<<") - ";
+          //ckout<<cumFreq<<" to PE "<<pelist[i]<<endl;
           bucket_arr[pelist[i]].genSample(am);
           cumIndex = ub;
           cumFreq += numElem[i];
@@ -114,26 +117,10 @@ public:
     count++;
     //can enter here twice, check on the basis of number of msgs received
     if(count == numpes){
-      //ckout<<"Sending ******************* to Sorter **************from "<<CkMyNode()<<endl;
+      ckout<<"Sending ******************* to Sorter **************from "<<CkMyNode()<<endl;
       //for(int i=0; i<sample->numElem; i++)
       //    ckout<<"From nodemgr "<<CkMyNode()<<" : "<<sample->data[i]<<endl;
       sorter.recvSample(sample);
-    }
-  }
-
-
-  void finalProbes(array_msg<key> *s){
-    //ckout<<"Recieved final probes from sorter, size "<<s->numElem<<" : "<<CkMyNode()<<endl;
-    //for(int i=0; i<s->numElem; i++)
-    //    ckout<<"Probe #"<<i<<" : "<<s->data[i]<<"  "<<CkMyNode()<<endl;
-    for(int i=0; i<numpes; i++){
-        //Send probes to pelist[i]
-        //This is totally a waste, find another way to circumvent around this
-        ckout<<"Sending finalprobes to bucket ::::: "<<pelist[i]<<endl;
-        array_msg<key>* prb = new(s->numElem) array_msg<key>;
-        prb->numElem = s->numElem;
-        memcpy(prb->data, s->data, s->numElem * sizeof(key));
-        bucket_arr[pelist[i]].finalProbes(prb);
     }
   }
 

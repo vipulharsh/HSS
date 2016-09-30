@@ -93,6 +93,7 @@ class Bucket : public CBase_Bucket<key, value> {
     int dummyCount, dummyCount2;
 
     CProxy_NodeManager<key, value>  nodemgr;
+    CkNodeGroupID nodeMgrID;
 
    	void Reset(); 
    	void localProbe();
@@ -109,10 +110,11 @@ class Bucket : public CBase_Bucket<key, value> {
     void postMerging();
   public:
     Bucket(CkMigrateMessage *);
-	  Bucket(tuning_params par, key _min, key _max, int nBuckets_);
+	  Bucket(tuning_params par, key _min, key _max, int nBuckets_, CkNodeGroupID _nodeMgrID);
 	  void SetData(CProxy_Sorter<key, value> _sorter_proxy, CProxy_Main<key, value> _main_proxy);
 	  void genSample(array_msg<int>  *am);
     void finalProbes(array_msg<key>* finalprb);
+    void sortAll();
 
 
 

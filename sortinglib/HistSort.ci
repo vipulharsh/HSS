@@ -2,6 +2,8 @@ module HistSort{
   include "defs.h";
   initnode void register_sum_uint64_t(void);
   initnode void register_minmax_uint64_t(void);
+
+  //readonly CkNodeGroupID nodeMgrID;
   
 
   template <class key, class value> chare Main {
@@ -37,10 +39,10 @@ module HistSort{
   template <class key, class value> chare Sorter {
     entry Sorter();
     entry Sorter(const CkArrayID &bucketArr, int num_chares, key min, key max,  
-                 tuning_params par, CProxy_Main<key, value> mainproxy);
-    entry void Begin();
+                 tuning_params par, CProxy_Main<key, value> mainproxy, CkNodeGroupID _nodeMgrID);
+    //entry void Begin();
     entry [expedited] void Histogram(CkReductionMsg *msg);
-    entry [expedited] void globalMinMax(CkReductionMsg *msg);
+    //entry [expedited] void globalMinMax(CkReductionMsg *msg);
     entry void Done(CkReductionMsg *msg);
     entry void SanityCheck(CkReductionMsg *msg);
     entry void recvSample(array_msg<key> *am);
@@ -48,14 +50,15 @@ module HistSort{
 
 
   template <class key, class value> array [1D] Bucket {
-    entry Bucket(tuning_params par, key _min, key _max, int nBuckets_);	  
+    entry Bucket(tuning_params par, key _min, key _max, int nBuckets_, CkNodeGroupID _nodeMgrID);	  
     //entry void SetCallback(const CkCallback &cb);
     entry void SetData(CProxy_Sorter<key, value> _sorter_proxy, CProxy_Main<key, value> _main_proxy);
     entry void genSample(array_msg<int>  *am);
     entry void firstProbe(key firstkey, key lastkey, key stepSize, int probeSize);
     entry [expedited] void firstLocalProbe(int lastProbeSize);
     entry [expedited] void histCountProbes(probeMessage<key> *pm);
-  	entry void stepSort();
+    entry void sortAll();
+    entry void stepSort();
     entry void Load(data_msg<key, value>* msg);
     entry void MergingWork();
     entry void partialSendOne();
@@ -75,7 +78,6 @@ module HistSort{
                   CProxy_Sorter<key, value> _sorter
                   );
       entry [exclusive, expedited] void collectSamples(array_msg<key>* sample);
-      entry void finalProbes(array_msg<key> *s);            
   };
 };
 

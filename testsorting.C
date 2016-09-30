@@ -1,7 +1,7 @@
 //standard header files
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <time.h>
 #include "testsorting.decl.h"
 
 //header files for libraries in Charm
@@ -12,11 +12,22 @@
 uint64_t m_w= 110101011;
 uint64_t m_z= 1234567891;
 
+
+uint64_t getRandom(){
+    if (sizeof(int) < sizeof(long))
+        return (static_cast<long>(rand()) << (sizeof(int) * 8)) |
+               rand();
+    return rand();
+}
+
+
+/*
 uint64_t getRandom(){
     m_z = 36969 * (m_z & 65535) + (m_z >> 16);
     m_w = 18000 * (m_w & 65535) + (m_w >> 16);
     return (m_z << 16) + m_w; 
 }
+*/
 
 uint64_t getRandom(uint64_t value){
     value *= 1664525;
@@ -26,18 +37,22 @@ uint64_t getRandom(uint64_t value){
     value ^= value >> 27;
     value *= 1103515245;
     value += 12345;
-    return value;
+    return value ^ getRandom();
 }
 
 
 class testsorting : public CBase_testsorting{
   public:
     testsorting(CkArgMsg *m){
+        srand (time(NULL));
         int num_elems = atoi(m->argv[1]);
         int rand_seed = atoi(m->argv[2]);
         int probe_max = -1;
         if(m->argc > 2)
             probe_max = atoi(m->argv[3]);
+ 
+  	//Create this Node Mgr
+        //*(Global<key, value>::nodemgr) = CProxy_NodeManager<key, value>::ckNew();
         //Call dataManager
         CProxy_dataManager dMProxy = CProxy_dataManager::ckNew(CkNumPes() ,num_elems, probe_max);
     }
