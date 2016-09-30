@@ -4,7 +4,7 @@
 
 extern CkReduction::reducerType sum_uint64_t_type; 
 extern CkReduction::reducerType minmax_uint64_t_type; 
-
+int maxSampleSize();
 
 
 template <class key, class value>
@@ -18,18 +18,19 @@ Bucket<key, value>::Bucket(tuning_params par, key min, key max, int nuBuckets_):
 	params = new tuning_params;
 	*params = par;
 	nNodes = CkNumNodes();
-	lastProbe = new key[params->probe_max+1];
-	finalSplitters = new key[nBuckets+2]; //required size is nBuckets+2
+        int maxprobe = std::max(params->probe_max, maxSampleSize());
+	lastProbe = new key[maxprobe];
+	finalSplitters = new key[maxprobe]; //required size is nBuckets+2
 	achieved = new bool[nBuckets+2];
 	achievedCounts = new uint64_t[nBuckets+2];
 
-	cumHist = new int[params->probe_max+1];
+	cumHist = new int[maxprobe+1];
 
-	histCounts = new int[params->probe_max +1];
-	longhistCounts = new uint64_t[params->probe_max +1];
+	histCounts = new int[maxprobe +1];
+	longhistCounts = new uint64_t[maxprobe +1];
 
 	//std::pair<int, int> pp =  grtstPow2(params->probe_max * indexFactor + 1);
-	indices = new int[2 * (params->probe_max * indexFactor + 1)];
+	indices = new int[2 * (maxprobe * indexFactor + 1)];
 
 	numChunks = nBuckets;
 	sepCounts = new int[numChunks+2];
@@ -109,7 +110,9 @@ void Bucket<key, value>::SetData(CProxy_Sorter<key, value> _sorter_proxy, CProxy
 //	this->contribute(2*sizeof(uint64_t), minmax, minmax_uint64_t_type, 
 //		CkCallback(CkIndex_Sorter<key,value>::globalMinMax(NULL), sorter_proxy)); 
 
-
+	//Since, we are not "chunking" bucket_data, 
+	// work around for localProbe() to work correctly
+    sepCounts[0] = 0;
 
 
 	#if VERBOSE
@@ -151,7 +154,7 @@ void Bucket<key, value>::genSample(array_msg<int>  *am){
 	sample->numElem = am->numElem;
 	nodemgr[CkMyNode()].collectSamples(sample);
 	delete(am);
-	/****  Undo this ***/
+	/****  Undo this, after fixing the chunks ***/
 	//this->thisProxy[this->thisIndex].stepSort();
 }
 
@@ -159,10 +162,10 @@ void Bucket<key, value>::genSample(array_msg<int>  *am){
 
 template <class key, class value>
 void Bucket<key, value>::finalProbes(array_msg<key>* finalprb){
-	//ckout<<"bucket "<<CkMyPe()<<" got the final probes "<<endl;
+	ckout<<"bucket "<<CkMyPe()<<" got the final probes "<<endl;
 	memcpy(lastProbe, finalprb->data, finalprb->numElem * sizeof(key));
 	lastProbeSize = finalprb->numElem;
-	//ckout<<"lastProbeSize :  "<<lastProbeSize<<"  :  "<<CkMyPe()<<"  "<<endl;
+	ckout<<"lastProbeSize :  "<<lastProbeSize<<"  :  "<<CkMyPe()<<"  "<<endl;
 	localProbe();
 }
 

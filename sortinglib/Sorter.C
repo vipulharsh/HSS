@@ -118,6 +118,9 @@ template<class key, class value>
 void Sorter<key, value>::Begin(){
 
 
+    CkAbort("Should not come here");
+    CkExit();
+
     ckout<<"Sorter Constructor : "<<endl; 
     ckout<<"Params->probe_max: "<<params->probe_max<<endl;
     ckout<<"nBuckets: "<<nBuckets<<endl;;
@@ -171,7 +174,7 @@ template<class key, class value>
 void Sorter<key, value>::recvSample(array_msg<key>* am){
   static int msgReceived = 0;
 
-  //ckout<<"Received msg number "<<msgReceived<<" at "<<CkMyNode()<<endl;
+  ckout<<"Received msg number "<<msgReceived<<" at "<<CkMyNode()<<endl;
   //ckout<<"Elts. recved "<<am->numElem<<endl;
   //for(int i=0; i<am->numElem; i++)
   //    ckout<<am->data[i]<<endl;
@@ -180,6 +183,19 @@ void Sorter<key, value>::recvSample(array_msg<key>* am){
   delete(am); 
   if(msgReceived == CkNumNodes()){
     std::sort(collectedSample.begin(), collectedSample.end());
+    array_msg<key> *finalProbe = new (collectedSample.size() + 1) array_msg<key>;
+    finalProbe->numElem = collectedSample.size() + 1;
+    lastProbe = new key[finalProbe->numElem];
+    memcpy(finalProbe->data, &collectedSample[0], collectedSample.size() * sizeof(key));
+    ckout<<" maxkey: "<<maxkey<<endl;
+    finalProbe->data[finalProbe->numElem-1] = maxkey;
+    memcpy(lastProbe, finalProbe->data, finalProbe->numElem * sizeof(key));
+    lastProbeSize = finalProbe->numElem;
+
+    for(int i=0; i<lastProbeSize; i++)
+	ckout<<"Sample #"<<i<<" : "<<lastProbe[i]<<endl;
+
+/**
     //what if CkNumNodes = 1? : do something different 
     int factor = 1; //take 2*factor + 1 samples at every index   
     //take factor * p samples from this
@@ -201,9 +217,11 @@ void Sorter<key, value>::recvSample(array_msg<key>* am){
     finalProbe->numElem = prbsize;
     lastProbeSize = prbsize;
     memcpy(lastProbe, finalProbe->data, finalProbe->numElem * sizeof(key));
-    for(int i=0; i<lastProbeSize; i++)
-        ckout<<"Probe #"<<i<<" : "<<lastProbe[i]<<endl;
-
+  
+    ckout<<"probe size: "<<lastProbeSize<<endl;
+    //for(int i=0; i<lastProbeSize; i++)
+    //    ckout<<"Probe #"<<i<<" : "<<lastProbe[i]<<endl;
+**/     
     (Global<key, value>::nodemgr)->finalProbes(finalProbe);   
   }
 }
@@ -281,7 +299,7 @@ void Sorter<key, value>::Histogram(CkReductionMsg *msg){
       }
 
       uint64_t goal = (nElements * spltridx)/nNodes;
-      ckout<<lastProbe[i]<<" :-: "<<histCounts[i]<<",   Goal: "<<goal<<", "<<achieved[spltridx]<<endl;
+      //ckout<<lastProbe[i]<<" :-: "<<histCounts[i]<<",   Goal: "<<goal<<", "<<achieved[spltridx]<<endl;
     }
 
 //**********************************************

@@ -7,7 +7,7 @@
 //header files for libraries in Charm
 #include "sortinglib/sortinglib.h"
 
-#define DEBUG(a) 
+#define DEBUG(a) a
 
 uint64_t m_w= 110101011;
 uint64_t m_z= 1234567891;

@@ -1,7 +1,20 @@
 #ifndef __NODEMANAGER_H__
 #define __NODEMANAGER_H__
 
+int maxSampleSize(){
+      int lognnodes = 1, numnodes = CkNumNodes();
+      while((1<<lognnodes) <= numnodes) lognnodes++;
+      int sampleSize = (20 *  numnodes * lognnodes);
+      return sampleSize + 2;
+}
 
+
+int sampleSizePerPe(){
+      int lognnodes = 1, numnodes = CkNumNodes(), numpes = CkNodeSize(CkMyNode());
+      while((1<<lognnodes) <= numnodes) lognnodes++;
+      int sampleSize = (20 * lognnodes)/numpes;
+      return sampleSize;
+}
 
 
 template <class key, class value>
@@ -36,8 +49,11 @@ public:
       static int currnpes = 0;
       pelist[currnpes] = pe;
       numElem[currnpes++] = nElem;
+      int lognnodes = 1;
+      while((1<<lognnodes) <= numnodes) lognnodes <<= 1;
       if(currnpes == numpes){ //all PE's registered
-          sampleSize = 2 * numnodes;
+          sampleSize = sampleSizePerPe();
+          ckout<<"sample size: "<<sampleSize<<endl;
           genSampleIndices();
       }
   }
@@ -113,7 +129,7 @@ public:
     for(int i=0; i<numpes; i++){
         //Send probes to pelist[i]
         //This is totally a waste, find another way to circumvent around this
-        //ckout<<"Sending finalprobes to bucket ::::: "<<pelist[i]<<endl;
+        ckout<<"Sending finalprobes to bucket ::::: "<<pelist[i]<<endl;
         array_msg<key>* prb = new(s->numElem) array_msg<key>;
         prb->numElem = s->numElem;
         memcpy(prb->data, s->data, s->numElem * sizeof(key));
