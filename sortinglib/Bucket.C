@@ -20,7 +20,7 @@ Bucket<key, value>::Bucket(tuning_params par, key min, key max, int nuBuckets_, 
 	nNodes = CkNumNodes();
         int maxprobe = std::max(params->probe_max, maxSampleSize());
 	lastProbe = new key[maxprobe];
-	finalSplitters = new key[maxprobe]; //required size is nBuckets+2
+	finalSplitters = new key[nBuckets+2]; //required size is nBuckets+2
 	achieved = new bool[nBuckets+2];
 	achievedCounts = new uint64_t[nBuckets+2];
 
@@ -373,7 +373,8 @@ void Bucket<key, value>::histCountProbes(probeMessage<key> *pm){
 
 	if(lastProbeSize <= 1){
 		//ckout<<"Splitters have been determined  - "<<CkMyPe()<<endl;	
-		this->contribute(CkCallback(CkIndex_Sorter<key, value>::Done(NULL), sorter_proxy));
+		sendAll();
+		//this->contribute(CkCallback(CkIndex_Sorter<key, value>::Done(NULL), sorter_proxy));
 		return;
 		//Not required, I think
 		//if(lastSortedChunk == numChunks && numSent == nBuckets)
@@ -385,6 +386,41 @@ void Bucket<key, value>::histCountProbes(probeMessage<key> *pm){
 	}
 	delete(pm);
 }
+
+
+
+
+//assumes all splitters have been achieved and local sorting is complete
+template <class key, class value>
+void Bucket<key, value>::sendAll(){
+	//randomize it
+	int prev = 0;
+	for(int i = 1; i <= nNodes; i++){
+		//better randomization
+		int bkt = (i + this->thisIndex)%nNodes + 1; 
+		key sep1 = finalSplitters[bkt-1];
+		key sep2 = finalSplitters[bkt];
+		//find keys and send
+		kv_pair<key, value> comp;
+		comp.k = sep1;
+		int ind1 = std::lower_bound(bucket_data + prev,
+					bucket_data + numElem, comp) - bucket_data;
+		comp.k = sep2;
+		int ind2 = std::lower_bound(bucket_data + prev,
+					bucket_data + numElem, comp) - bucket_data;
+		//ckout<<"Sending ["<< this->thisIndex<<"] "<<ind1<<"-"<<ind2<<" to "<<bkt-1<<endl;
+		nodemgr[CkMyNode()].loadkeys(bkt-1, sendInfo(bucket_data, ind1, ind2));
+/*
+		data_msg<key, value> *dm = new (ind2-ind1) data_msg<key,value>;
+		memcpy(dm->data, bucket_data + ind1, (ind2-ind1)*sizeof(kv_pair<key, value>));
+		dm->num_vals = ind2-ind1;
+		dm->sorted = true;
+		this->thisProxy[bkt-1].Load(dm);
+		numSent++;
+*/
+	}
+}
+
 
 
 

@@ -136,7 +136,7 @@ class Main : public CBase_Main<key, value> {
       
       // maxkey should be MAXINT - c * p
       sorter = CProxy_Sorter<key, value>::ckNew(bucket_arr, num_buckets, 0, 
-                     UINT64_MAX-1000000000, pars, this->thisProxy, nodeMgrID);
+                     UINT64_MAX, pars, this->thisProxy, nodeMgrID);
 
     }
     //migration constructor

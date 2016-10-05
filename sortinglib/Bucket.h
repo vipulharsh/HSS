@@ -115,7 +115,7 @@ class Bucket : public CBase_Bucket<key, value> {
 	  void genSample(array_msg<int>  *am);
     void finalProbes(array_msg<key>* finalprb);
     void sortAll();
-
+    void sendAll();
 
 
     void stepSort();

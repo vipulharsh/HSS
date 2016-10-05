@@ -84,12 +84,14 @@ void Sorter<key, value>::globalMinMax(CkReductionMsg *msg){
 */
 
 
+extern int maxSampleSize();
 
 
 template<class key, class value>
 void Sorter<key, value>::Init(){
-        lastProbe = new key[params->probe_max+1];
-        scratch = new key[params->probe_max+1];
+	int maxprobe = std::max(params->probe_max, maxSampleSize());
+        lastProbe = new key[maxprobe+1];
+        scratch = new key[maxprobe+1];
         finalSplitters = new key[nNodes+2]; //required size is nBuckets+2
         achieved = new bool[nNodes+2];
         achievedCounts = new uint64_t[nNodes+2];
@@ -192,6 +194,7 @@ void Sorter<key, value>::recvSample(array_msg<key>* am){
 
     for(int i=0; i<lastProbeSize; i++)
 	ckout<<"Sample #"<<i<<" : "<<lastProbe[i]<<endl;
+
 
     buckets.finalProbes(finalProbe);
 
@@ -302,14 +305,6 @@ void Sorter<key, value>::nextProbes(std::vector<std::pair<key, int> > &newachv, 
     int lastunresolved = -1;
     ckout<<"Next Probes, UnachievedSplitters : "<<nNodes+1 - achievedSplitters<<" "<<params->probe_max<<endl;
 
-/*** To be removed later **/
-    if(nNodes+1 - achievedSplitters > 0){
-       CkAbort("Not achieved in the first step \n");
-       CkExit();
-    }
-/***/
-
-
     c2 = CmiWallTimer();
     CkPrintf("\nCompleted in %lf seconds.\n", (c2-c1));
 
@@ -358,10 +353,19 @@ void Sorter<key, value>::nextProbes(std::vector<std::pair<key, int> > &newachv, 
       lastunresolved = unresolved;
       unresolved = 0;
     }
-   scratch[scratchInd++] = maxkey + 1;   
-   ckout<<"Probes are **************************: "<<scratchInd<<endl;
-   for(int i=0; i<scratchInd; i++)
-      ckout<<scratch[i]<<endl;
+   scratch[scratchInd++] = maxkey;   
+
+   ckout<<"Probes are **************************: "<<scratchInd<< " ::: maxkey ::: " << maxkey << " - "<< CkMyPe() << endl;
+   //for(int i=0; i<scratchInd; i++)
+   //   ckout<<scratch[i]<<endl;
+
+
+/*/ To be removed later
+    if(nNodes+1 - achievedSplitters > 0){
+       CkAbort("Not achieved in the first step \n");
+       CkExit();
+    }
+/*/
 
    //swap lastProbe and scratch
    key *temp = lastProbe;
@@ -371,10 +375,11 @@ void Sorter<key, value>::nextProbes(std::vector<std::pair<key, int> > &newachv, 
    
    int r = newachv.size();
    probeMessage<key> *pm = new (lastProbeSize, r, r, r) probeMessage<key>;
+
    pm->probeSize = lastProbeSize;
    pm->num_newachv = r;
    memcpy(pm->probe, lastProbe, lastProbeSize * sizeof(key));
-   //ckout<<"r is :"<<r<<" lastprobeSize: "<<lastProbeSize<<endl;
+   ckout<<"r is :"<<r<<" lastprobeSize: "<<lastProbeSize<<endl;
    for(int i=0; i<r; i++){
 	   pm->newachv_key[i] = newachv[i].first;
      pm->newachv_id[i] = newachv[i].second;
@@ -384,7 +389,7 @@ void Sorter<key, value>::nextProbes(std::vector<std::pair<key, int> > &newachv, 
    buckets.histCountProbes(pm);
 
    if(lastProbeSize==1){
-     ckout<<"Done Histogramming in "<<CmiWallTimer()-c1<<" seconds"<<endl;
+     ckout<<"Done Histogramming in "<<CmiWallTimer()-c1<<" seconds, numprobes: "<< numProbes << endl;
      for(int i=0; i<=nNodes; i++)
        ckout<<"Splitter "<<i<<": "<<finalSplitters[i]<<" "<<achieved[i]<<" : "<<achievedCounts[i]<<endl;
    }

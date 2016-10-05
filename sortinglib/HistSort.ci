@@ -68,6 +68,7 @@ module HistSort{
   };
 
 
+  class sendInfo;
 
   template <class key, class value> nodegroup NodeManager{
       entry NodeManager();
@@ -78,6 +79,10 @@ module HistSort{
                   CProxy_Sorter<key, value> _sorter
                   );
       entry [exclusive, expedited] void collectSamples(array_msg<key>* sample);
+      entry [exclusive, expedited] void loadkeys(int dest, sendInfo inf);
+      entry [expedited] void sendOne(int dest);
+      entry [expedited, exclusive] void recvOne(data_msg<key, value> *dm);
+      entry [expedited] void handleOne(data_msg<key, value> *dm);
   };
 };
 
