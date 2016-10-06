@@ -2,6 +2,8 @@
 #define __NODEMANAGER_H__
 
 
+#include <map>
+
 const int SAMPLE_FACTOR = 20;
 
 int maxSampleSize(){
@@ -18,6 +20,30 @@ int sampleSizePerNode(){
 	int sampleSize = (SAMPLE_FACTOR * lognnodes);
 	return sampleSize;
 }
+
+
+int ls_getMaxSampleSize(){
+	uint64_t elemsPerNode = numTotalElems/CkNumNodes();
+	uint64_t npes = CkNodeSize(CkMyNode());
+	return (2 * npes * npes * npes);
+}
+int ls_getSampleSize(int locElems){
+	uint64_t elemsPerNode = numTotalElems/CkNumNodes();
+	uint64_t npes = CkNodeSize(CkMyNode());
+	return (npes * npes * npes * locElems)/elemsPerNode;
+}
+
+
+class wrap_ptr{
+public:
+	void *ptr;
+	wrap_ptr() {} 
+	wrap_ptr(void *_ptr): ptr(_ptr) {}
+	void pup(PUP::er &p){
+		pup_bytes(&p, this, sizeof(*this));
+	}
+};
+
 
 
 class sendInfo{
@@ -44,21 +70,39 @@ class NodeManager : public CBase_NodeManager<key, value> {
 		CProxy_Sorter<key, value> sorter;
 		CProxy_Bucket<key, value> bucket_arr;
 		array_msg<key> *sample;
+		key minkey, maxkey;
 		int samplesRcvd;
-		int numRecvd;
+		int numSent, numRecvd, numFinished;
+		key* ls_sample; //ls_ :: localsort
+		key* splitters;
+		int ls_numTotSamples; 
+		int numDeposited;
 		//assemble info
 		std::vector<std::vector<sendInfo> > ainfo;
 		std::vector<data_msg<key, value> *> recvdMsgs;
+		std::vector<data_msg<key, value> *> bufMsgs;
+		std::map<int, uint64_t*> histLocCounts; //one for each pe
+		uint64_t* finalHistCounts;
+      Bucket<key, value>* getLocalBucket(){
+			for(int i=0; i<numpes; i++){
+				Bucket<key, value> *obj = bucket_arr[pelist[i]].ckLocal();
+				if(obj != NULL) return obj;
+			}
+			CkAbort("GetLocalBucket, getLocalBucket not found \n");
+		}
+
 
 	public:    
-		NodeManager(){
+		NodeManager(key _minkey, key _maxkey): minkey(_minkey), maxkey(_maxkey){
 			ckout<<"Node Manager created at "<<CkMyNode()<<endl;
 			numnodes = CkNumNodes();
 			numpes = CkNodeSize(CkMyNode());
 			numElem = new int[numpes];
 			pelist = new int[numpes];
+			splitters = new key[numpes];
 			ainfo.resize(numnodes);
-			numRecvd = 0;
+			numRecvd = numFinished = numDeposited = numSent = 0;
+			ls_numTotSamples=0;
 		}
 
 		void registerLocalChare(int nElem, int pe, CProxy_Bucket<key, value> _bucket_arr,
@@ -105,7 +149,6 @@ class NodeManager : public CBase_NodeManager<key, value> {
 				distribution.reset();
 			}
 
-
 			sample= new (sampleSize) array_msg<key>;
 			sample->numElem = sampleSize;
 
@@ -137,20 +180,23 @@ class NodeManager : public CBase_NodeManager<key, value> {
 			//can enter here twice, check on the basis of number of msgs received
 			if(count == numpes){
 				ckout<<"Sending ******************* to Sorter ************** size: "<< s->numElem << "from "<<CkMyNode()<<endl;
-				for(int i=0; i<sample->numElem; i++)
-					ckout<<"From nodemgr "<<CkMyNode()<<" : "<<sample->data[i]<<endl;
+				//for(int i=0; i<sample->numElem; i++)
+				//	ckout<<"From nodemgr "<<CkMyNode()<<" : "<<sample->data[i]<<endl;
 				sorter.recvSample(sample);
 			}
 		}
 		void loadkeys(int dest, sendInfo inf){
 			ainfo[dest].push_back(inf);	
 			if(ainfo[dest].size() == numpes){
+				numSent++;
 				this->thisProxy[CkMyNode()].sendOne(dest);
+				if(numSent == CkNumNodes())
+					this->thisProxy[CkMyNode()].releaseBufMsgs();
 			}
 		}
 
 		void sendOne(int dest){
-			CkPrintf("[%d][%d] sendOne to node: %d \n", CkMyNode(), CkMyPe(), dest);
+			//CkPrintf("[%d][%d] sendOne to node: %d \n", CkMyNode(), CkMyPe(), dest);
 			int numelem = 0;
 			for(int i=0; i<ainfo[dest].size(); i++)
 				numelem += ainfo[dest][i].ind2 - ainfo[dest][i].ind1;
@@ -168,17 +214,162 @@ class NodeManager : public CBase_NodeManager<key, value> {
 		}
 
 
+		void releaseBufMsgs(){
+			for(int i=0; i<bufMsgs.size(); i++)
+				recvOne(bufMsgs[i]);
+			bufMsgs.clear();
+		}
+
+
 		void recvOne(data_msg<key, value> *dm){
 			//CkPrintf("[%d] message received of size: %d \n", CkMyNode(), dm->num_vals);
 			//for(int i=0; i<dm->num_vals; i++)
 			//	ckout<<"message  "<<i<<" : "<<dm->data[i].k<<endl;
+			if(numSent != CkNumNodes()){
+				bufMsgs.push_back(dm);
+				return;
+				CkAbort("Haven't sent all messages yet");
+			}
+				
+			if(recvdMsgs.size() == 0){
+				Bucket<key, value> *obj = getLocalBucket();
+				obj->setTotalKeys();
+				//ckout<<" bucket obj : "<<obj<<"   pelist[0]: "<< pelist[0]<<" "<<numTotalElems<<endl;
+				ls_sample = new key[ls_getMaxSampleSize()];	
+			}
+			int numsamples = ls_getSampleSize(dm->num_vals);
 			recvdMsgs.push_back(dm);
-			this->thisProxy[CkMyNode()]->handleOne(dm);
-			if(++numRecvd == CkNumNodes())
-				CkPrintf("[%d] Received all messages \n", CkMyNode());
+			ls_numTotSamples += numsamples;
+			if(ls_numTotSamples >= ls_getMaxSampleSize()) {
+				CkPrintf("[%d] *** maxsamplesize: %d *** ls_numTotSamples: %d \n", CkMyNode(), ls_getMaxSampleSize(), ls_numTotSamples);
+				CmiAbort("sample size exceeds expectations");
+			}	
+			this->thisProxy[CkMyNode()].handleOne(recvdMsgs.size()-1, ls_numTotSamples - numsamples, numsamples);
+			++numRecvd;
+			//if(numRecvd == CkNumNodes())
+			//	CkPrintf("[%d] Received all messages \n", CkMyNode());
 		}
 
 
+		void handleOne(int ind, int sampleInd, int numsamples){
+			//CkPrintf("[%d, %d]handleOne,  numSamples: %d \n", CkMyNode(), CkMyPe(), numsamples);
+			data_msg<key, value> *dm = recvdMsgs[ind];
+
+			typedef std::chrono::high_resolution_clock myclock;
+			myclock::time_point beginning = myclock::now();
+			myclock::duration d = myclock::now() - beginning;
+			unsigned seed = d.count();
+			seed = CkMyNode();
+			//ckout<<"Seed is "<<seed<<endl;
+			std::default_random_engine generator(seed);
+			std::uniform_int_distribution<int> distribution(0,dm->num_vals-1);
+			distribution(generator);
+			int randIndex;
+			for(int i=0; i<numsamples; i++){
+				randIndex = distribution(generator);
+				ls_sample[sampleInd + i] = dm->data[randIndex].k;
+				//ckout<<"randIndex "<<randIndex<<endl;
+				distribution.reset();
+			}
+			std::sort(dm->data, dm->data + dm->num_vals);
+			this->thisProxy[CkMyNode()].finishOne();
+		}
+
+
+		void finishOne(){
+			if(++numFinished == CkNumNodes()){ //all messages have been received, processed
+				ls_sample[ls_numTotSamples++] = maxkey;
+				std::sort(ls_sample, ls_sample + ls_numTotSamples); //sort all sampled keys
+				for(int i=0; i<numpes-1; i++){
+					splitters[i] = ls_sample[((i+1) * ls_numTotSamples)/numpes];
+				}
+				splitters[numpes-1] = maxkey;
+				std::sort(pelist, pelist + numpes);
+				//for(int i=0; i<numpes; i++){
+				//	CkPrintf("[%d] Splitterss #%d: %llu\n", CkMyNode(), i, splitters[i]);
+				//}
+				//CkPrintf("[%d] RecvdMsgs.size: %d\n", CkMyNode(), recvdMsgs.size());
+				for(int i=0; i<recvdMsgs.size(); i++){
+					//for(int j=0; j<recvdMsgs[i]->num_vals; j++)
+					//	CkPrintf("[%d] recvdmsg[%d] #(%d): %llu\n", CkMyNode(), i, j, recvdMsgs[i]->data[j].k);
+					this->thisProxy[CkMyNode()].sendToBuckets(recvdMsgs[i]);
+				}
+				//CkPrintf("[%d] Finished sorting, sampling from all messages \n", CkMyNode());
+				//for(int i=0; i<recvdMsgs.size(); i++){
+				//	this->thisProxy[CkMyNode()].localhist(recvdMsgs[i]);
+				//}
+			}
+		}
+
+		void localhist(data_msg<key, value>* dm){
+		   	uint64_t* histCounts;
+		  	if(histLocCounts.find(CkMyPe()) == histLocCounts.end()){
+				histCounts = new uint64_t[ls_numTotSamples+1];	
+				memset(histCounts, 0, (ls_numTotSamples+1) * sizeof(uint64_t));
+				histLocCounts[CkMyPe()] = histCounts;
+			}
+			else
+				histCounts = (histLocCounts.find(CkMyPe()))->second;
+			//CkPrintf("localhist [%d, %d] histCounts: %p \n", CkMyNode(), CkMyPe(), histCounts);
+			//for(int i=0; i<dm->num_vals; i++)
+			//	CkPrintf("dm->val[%d]: %llu \n", i, dm->data[i].k);	
+			int cumCount = 0;
+			kv_pair<key, value> comp;
+			int prb = -1;
+			do{
+				prb++;
+				comp.k = ls_sample[prb];
+				int cnt = std::lower_bound(dm->data + cumCount,
+						dm->data + dm->num_vals, comp) - dm->data;
+				histCounts[prb] += cnt - cumCount;
+				cumCount = cnt;
+			}while(prb<ls_numTotSamples-1);  //the second condition from Bucket.C is not necessary
+			this->thisProxy[CkMyNode()].depositHist();
+	  }
+
+	  //how will this be an entry method
+	  void depositHist(){
+		numDeposited++;
+		if(numDeposited == CkNumNodes()){
+			int numHists = histLocCounts.size();
+			uint64_t *histograms[numHists];
+			std::map<int, uint64_t*>::iterator it;
+			int i;
+			for(i=0,it = histLocCounts.begin(); it != histLocCounts.end(); it++, i++)
+				histograms[i] = it->second;
+			uint64_t cum = 0;
+			for(int i=0; i<ls_numTotSamples; i++){
+				for(int j=1; j<numHists; j++)
+					histograms[0][i] += histograms[j][i];
+				cum += histograms[0][i];
+				//CkPrintf("[%d] FinalHist[%llu]: %llu \n",  CkMyNode(), ls_sample[i], cum);
+			}
+			CkPrintf("[%d] FinalHist: %llu, sample-size: %d \n",  CkMyNode(),  cum, ls_numTotSamples);
+			finalHistCounts	= histograms[0];
+			CkPrintf("Deposited [%d] All localsort hists deposited \n", CkMyNode());
+		}
+	  }
+
+
+	void sendToBuckets(data_msg<key, value>* dm){
+	    	key prev = minkey;	
+		for(int i=0; i<numpes; i++){
+                	key sep1 = prev;
+                        key sep2 = splitters[i];
+                	//find keys and send
+                	kv_pair<key, value> comp;
+                	comp.k = sep1;
+                	int ind1 = std::lower_bound(dm->data,
+                                        dm->data + dm->num_vals, comp) - dm->data;
+                	comp.k = sep2;
+                	int ind2 = std::lower_bound(dm->data,
+                                        dm->data + dm->num_vals, comp) - dm->data;
+               		 //ckout<<"Finalsending ["<< CkMyNode() <<"] "<<ind1<<"-"<<ind2<<" to "<<pelist[i]<<endl;
+                	bucket_arr[pelist[i]].recvFinalKeys(i, sendInfo(dm->data, ind1, ind2));
+			prev = splitters[i];
+	
+		}	
+	}
 
 };
 

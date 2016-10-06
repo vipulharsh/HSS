@@ -33,7 +33,7 @@ class kv_pair {
 __thread int in_elems, *out_elems;
 __thread void* dataIn, **dataOut;
 __thread CkCallback *CB;  __thread bool callBackSet;
-
+uint64_t numTotalElems;
 
 
 #include "HistSort.decl.h"
@@ -129,7 +129,7 @@ class Main : public CBase_Main<key, value> {
 
       pars.reuse_probe_results = true;
   
-      CkNodeGroupID nodeMgrID = CProxy_NodeManager<uint64_t, int>::ckNew();
+      CkNodeGroupID nodeMgrID = CProxy_NodeManager<key, value>::ckNew(0, UINT64_MAX);
 
       bucket_arr = CProxy_Bucket<key, value>::ckNew(pars, 0,
                        UINT64_MAX,  num_buckets, nodeMgrID, opts);

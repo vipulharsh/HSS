@@ -192,8 +192,8 @@ void Sorter<key, value>::recvSample(array_msg<key>* am){
     memcpy(lastProbe, finalProbe->data, finalProbe->numElem * sizeof(key));
     lastProbeSize = finalProbe->numElem;
 
-    for(int i=0; i<lastProbeSize; i++)
-	ckout<<"Sample #"<<i<<" : "<<lastProbe[i]<<endl;
+    //for(int i=0; i<lastProbeSize; i++)
+    //	 ckout<<"Sample #"<<i<<" : "<<lastProbe[i]<<endl;
 
 
     buckets.finalProbes(finalProbe);
@@ -390,8 +390,11 @@ void Sorter<key, value>::nextProbes(std::vector<std::pair<key, int> > &newachv, 
 
    if(lastProbeSize==1){
      ckout<<"Done Histogramming in "<<CmiWallTimer()-c1<<" seconds, numprobes: "<< numProbes << endl;
-     for(int i=0; i<=nNodes; i++)
-       ckout<<"Splitter "<<i<<": "<<finalSplitters[i]<<" "<<achieved[i]<<" : "<<achievedCounts[i]<<endl;
+     uint64_t cum = 0;
+     for(int i=0; i<=nNodes; i++){
+       ckout<<"Splitter "<<i<<": "<<finalSplitters[i]<<" "<<achieved[i]<<" : "<<achievedCounts[i] - cum<<endl;
+       cum = achievedCounts[i];
+     }
    }
    
    //ckout<<"Sent !!"<<endl;

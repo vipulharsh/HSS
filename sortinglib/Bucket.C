@@ -1,6 +1,8 @@
 #include <algorithm>
 #include "assert.h"
 #include "sortinglib.h"
+#include "nodemanager.h"
+
 
 extern CkReduction::reducerType sum_uint64_t_type; 
 extern CkReduction::reducerType minmax_uint64_t_type; 
@@ -372,7 +374,7 @@ void Bucket<key, value>::histCountProbes(probeMessage<key> *pm){
 
 
 	if(lastProbeSize <= 1){
-		//ckout<<"Splitters have been determined  - "<<CkMyPe()<<endl;	
+		ckout<<"Splitters have been determined  - "<<CkMyPe()<<endl;	
 		sendAll();
 		//this->contribute(CkCallback(CkIndex_Sorter<key, value>::Done(NULL), sorter_proxy));
 		return;
@@ -420,6 +422,38 @@ void Bucket<key, value>::sendAll(){
 */
 	}
 }
+
+
+
+template <class key, class value>
+void Bucket<key, value>::recvFinalKeys(int srcnode, sendInfo s){
+	recvData.push_back(s);
+	if(recvData.size() == CkNumNodes()){
+		int out_num = 0;
+		for(int i=0; i<recvData.size(); i++)
+			out_num += recvData[i].ind2 - recvData[i].ind1;
+		kv_pair<key, value> *out_data = new kv_pair<key, value>[out_num];
+		int prev = 0;
+		for(int i=0; i<recvData.size(); i++){
+			int n = recvData[i].ind2 - recvData[i].ind1;
+			//CkPrintf("[%d] recvFinalKeys, size: %d \n", CkMyPe(), n);
+			void *base = (void *)(((char *)recvData[i].base) + sizeof(kv_pair<key, value>) * recvData[i].ind1);
+			memcpy(out_data + prev, base, n * sizeof(kv_pair<key, value>));
+			prev += n;
+		}
+		std::sort(out_data, out_data + out_num);
+		ckout<<" Finished sorting, out_elems: "<<out_num<<" - "<<CkMyPe()<<endl;
+		//for(int i=0; i<out_num; i++){
+		//	ckout<<"out_data["<<i<<"]: "<<out_data[i].k<<" : "<<CkMyPe()<<endl;
+		//}
+		*dataOut = out_data;
+		*out_elems = out_num;	
+		postMerging();
+	}
+}
+
+
+
 
 
 

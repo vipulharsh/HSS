@@ -49,6 +49,8 @@ module HistSort{
   };
 
 
+  class sendInfo;
+
   template <class key, class value> array [1D] Bucket {
     entry Bucket(tuning_params par, key _min, key _max, int nBuckets_, CkNodeGroupID _nodeMgrID);	  
     //entry void SetCallback(const CkCallback &cb);
@@ -60,6 +62,7 @@ module HistSort{
     entry void sortAll();
     entry void stepSort();
     entry void Load(data_msg<key, value>* msg);
+    entry void recvFinalKeys(int srcnode, sendInfo s);
     entry void MergingWork();
     entry void partialSendOne();
     entry void finalProbes(array_msg<key>* finalprb);
@@ -68,10 +71,10 @@ module HistSort{
   };
 
 
-  class sendInfo;
+  class wrap_ptr;
 
   template <class key, class value> nodegroup NodeManager{
-      entry NodeManager();
+      entry NodeManager(key _minkey, key _maxkey);
       entry [exclusive] void registerLocalChare(
                   int nElem,
                   int pe,
@@ -81,8 +84,13 @@ module HistSort{
       entry [exclusive, expedited] void collectSamples(array_msg<key>* sample);
       entry [exclusive, expedited] void loadkeys(int dest, sendInfo inf);
       entry [expedited] void sendOne(int dest);
-      entry [expedited, exclusive] void recvOne(data_msg<key, value> *dm);
-      entry [expedited] void handleOne(data_msg<key, value> *dm);
+      entry [exclusive] void releaseBufMsgs();
+      entry [exclusive] void recvOne(data_msg<key, value> *dm);
+      entry void handleOne(int ind, int sampleInd, int numsamples);
+      entry void finishOne();
+      entry void localhist(data_msg<key, value> *dm);
+      entry [exclusive] void depositHist();
+      entry [expedited] void sendToBuckets(data_msg<key, value>* dm);
   };
 };
 

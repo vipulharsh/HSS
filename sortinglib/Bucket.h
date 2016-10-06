@@ -108,6 +108,8 @@ class Bucket : public CBase_Bucket<key, value> {
                         kv_pair<key, value> *first2, kv_pair<key, value> *last2,
                         kv_pair<key, value> *result);
     void postMerging();
+
+    std::vector<sendInfo> recvData;
   public:
     Bucket(CkMigrateMessage *);
 	  Bucket(tuning_params par, key _min, key _max, int nBuckets_, CkNodeGroupID _nodeMgrID);
@@ -116,7 +118,11 @@ class Bucket : public CBase_Bucket<key, value> {
     void finalProbes(array_msg<key>* finalprb);
     void sortAll();
     void sendAll();
-
+    void recvFinalKeys(int srcnode, sendInfo s);
+    inline void setTotalKeys(){
+	CkAssert(achieved[nNodes]);
+	numTotalElems = achievedCounts[nNodes];
+    }
 
     void stepSort();
 	  void firstProbe(key firstkey, key lastkey, key step, int probeSize);
