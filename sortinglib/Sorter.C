@@ -174,7 +174,7 @@ template<class key, class value>
 void Sorter<key, value>::recvSample(array_msg<key>* am){
   static int msgReceived = 0;
 
-  ckout<<"Received msg number "<<msgReceived<<" at "<<CkMyNode()<<endl;
+  //ckout<<"Received msg number "<<msgReceived<<" at "<<CkMyNode()<<endl;
   //ckout<<"Elts. recved "<<am->numElem<<endl;
   //for(int i=0; i<am->numElem; i++)
   //    ckout<<am->data[i]<<endl;
@@ -306,7 +306,7 @@ void Sorter<key, value>::nextProbes(std::vector<std::pair<key, int> > &newachv, 
     ckout<<"Next Probes, UnachievedSplitters : "<<nNodes+1 - achievedSplitters<<" "<<params->probe_max<<endl;
 
     c2 = CmiWallTimer();
-    CkPrintf("\nCompleted in %lf seconds.\n", (c2-c1));
+    //CkPrintf("\nCompleted in %lf seconds.\n", (c2-c1));
 
 //    mainproxy.Exit();
 //    return;

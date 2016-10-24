@@ -131,6 +131,7 @@ class Bucket : public CBase_Bucket<key, value> {
 	  void Load(data_msg<key, value>* msg);
     void MergingWork();
     void partialSendOne();
+    void finish();
 };
 
 //need to include .C file in order to have it instantiated when the .h file is included externally

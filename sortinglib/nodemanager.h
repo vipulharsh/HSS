@@ -1,6 +1,8 @@
 #ifndef __NODEMANAGER_H__
 #define __NODEMANAGER_H__
 
+#include <chrono>
+#include <random>
 
 #include <map>
 
@@ -83,6 +85,7 @@ class NodeManager : public CBase_NodeManager<key, value> {
 		std::vector<data_msg<key, value> *> bufMsgs;
 		std::map<int, uint64_t*> histLocCounts; //one for each pe
 		uint64_t* finalHistCounts;
+		int firstprintrand;
       Bucket<key, value>* getLocalBucket(){
 			for(int i=0; i<numpes; i++){
 				Bucket<key, value> *obj = bucket_arr[pelist[i]].ckLocal();
@@ -94,7 +97,7 @@ class NodeManager : public CBase_NodeManager<key, value> {
 
 	public:    
 		NodeManager(key _minkey, key _maxkey): minkey(_minkey), maxkey(_maxkey){
-			ckout<<"Node Manager created at "<<CkMyNode()<<endl;
+			//ckout<<"Node Manager created at "<<CkMyNode()<<endl;
 			numnodes = CkNumNodes();
 			numpes = CkNodeSize(CkMyNode());
 			numElem = new int[numpes];
@@ -103,11 +106,12 @@ class NodeManager : public CBase_NodeManager<key, value> {
 			ainfo.resize(numnodes);
 			numRecvd = numFinished = numDeposited = numSent = 0;
 			ls_numTotSamples=0;
+			firstprintrand = 0;
 		}
 
 		void registerLocalChare(int nElem, int pe, CProxy_Bucket<key, value> _bucket_arr,
 				CProxy_Sorter<key, value> _sorter){
-			ckout<<"registerLocalchare called from PE "<<pe<<" at "<<CkMyNode()<<endl;
+			//ckout<<"registerLocalchare called from PE "<<pe<<" at "<<CkMyNode()<<endl;
 			//ckout<<"numnodes :"<<numnodes<<" numpes:"<<numpes<<endl;
 			//!This should be a bucket_proxy ID
 			bucket_arr = _bucket_arr;
@@ -161,11 +165,11 @@ class NodeManager : public CBase_NodeManager<key, value> {
 				//send  randIndices[cumIndex, ub) - cumFreq to PE pelist[i]
 				array_msg<int> *am = new (ub-cumIndex) array_msg<int>;
 				am->numElem = ub-cumIndex;
-				for(int i=0; i<am->numElem; i++){
-					am->data[i] = randIndices[cumIndex+i] - cumFreq;
+				for(int j=0; j<am->numElem; j++){
+					am->data[j] = randIndices[cumIndex+j] - cumFreq;
 				}
-				ckout<<"Sending randIndices["<<cumIndex<<","<<ub<<") - ";
-				ckout<<cumFreq<<" to PE "<<pelist[i]<<endl;
+				//ckout<<"Sending randIndices["<<cumIndex<<","<<ub<<") - ";
+				//ckout<<cumFreq<<" to PE "<<pelist[i]<<endl;
 				bucket_arr[pelist[i]].genSample(am);
 				cumIndex = ub;
 				cumFreq += numElem[i];
@@ -179,14 +183,14 @@ class NodeManager : public CBase_NodeManager<key, value> {
 			count++;
 			//can enter here twice, check on the basis of number of msgs received
 			if(count == numpes){
-				ckout<<"Sending ******************* to Sorter ************** size: "<< s->numElem << "from "<<CkMyNode()<<endl;
+				//ckout<<"Sending ******************* to Sorter ************** size: "<< s->numElem << "from "<<CkMyNode()<<endl;
 				//for(int i=0; i<sample->numElem; i++)
 				//	ckout<<"From nodemgr "<<CkMyNode()<<" : "<<sample->data[i]<<endl;
 				sorter.recvSample(sample);
 			}
 		}
 		void loadkeys(int dest, sendInfo inf){
-			ainfo[dest].push_back(inf);	
+			ainfo[dest].push_back(inf);   //This will cause synchronization problems.	
 			if(ainfo[dest].size() == numpes){
 				numSent++;
 				this->thisProxy[CkMyNode()].sendOne(dest);
@@ -217,6 +221,7 @@ class NodeManager : public CBase_NodeManager<key, value> {
 		void releaseBufMsgs(){
 			for(int i=0; i<bufMsgs.size(); i++)
 				recvOne(bufMsgs[i]);
+				//this->thisProxy[CkMyNode()].recvOne(bufMsgs[i]); //not required
 			bufMsgs.clear();
 		}
 
@@ -227,6 +232,7 @@ class NodeManager : public CBase_NodeManager<key, value> {
 			//	ckout<<"message  "<<i<<" : "<<dm->data[i].k<<endl;
 			if(numSent != CkNumNodes()){
 				bufMsgs.push_back(dm);
+				//CkPrintf("[%d, %d] Haven't sent all messages yet\n", CkMyNode(), CkMyPe());
 				return;
 				CkAbort("Haven't sent all messages yet");
 			}
@@ -234,7 +240,7 @@ class NodeManager : public CBase_NodeManager<key, value> {
 			if(recvdMsgs.size() == 0){
 				Bucket<key, value> *obj = getLocalBucket();
 				obj->setTotalKeys();
-				//ckout<<" bucket obj : "<<obj<<"   pelist[0]: "<< pelist[0]<<" "<<numTotalElems<<endl;
+				ckout<<" ["<<CkMyNode()<<"] bucket obj : "<<obj<<"   pelist[0]: "<< pelist[0]<<" "<<numTotalElems<<" ls_getMaxSampleSize: "<<ls_getMaxSampleSize()<<endl;
 				ls_sample = new key[ls_getMaxSampleSize()];	
 			}
 			int numsamples = ls_getSampleSize(dm->num_vals);
@@ -243,33 +249,44 @@ class NodeManager : public CBase_NodeManager<key, value> {
 			if(ls_numTotSamples >= ls_getMaxSampleSize()) {
 				CkPrintf("[%d] *** maxsamplesize: %d *** ls_numTotSamples: %d \n", CkMyNode(), ls_getMaxSampleSize(), ls_numTotSamples);
 				CmiAbort("sample size exceeds expectations");
-			}	
-			this->thisProxy[CkMyNode()].handleOne(recvdMsgs.size()-1, ls_numTotSamples - numsamples, numsamples);
+			}
+			CkPrintf("[%d, %d] Calling handleOne, dm->num_vals: %d, ind: %d, sampleInd: %d, numsamples: %d\n", CkMyNode(), CkMyPe(), dm->num_vals, recvdMsgs.size()-1, ls_numTotSamples - numsamples, numsamples);	
+			this->thisProxy[CkMyNode()].handleOne(wrap_ptr(dm), ls_numTotSamples - numsamples, numsamples);
 			++numRecvd;
-			//if(numRecvd == CkNumNodes())
-			//	CkPrintf("[%d] Received all messages \n", CkMyNode());
+			if(numRecvd == CkNumNodes())
+				CkPrintf("[%d] Received all messages \n", CkMyNode());
 		}
 
 
-		void handleOne(int ind, int sampleInd, int numsamples){
-			//CkPrintf("[%d, %d]handleOne,  numSamples: %d \n", CkMyNode(), CkMyPe(), numsamples);
-			data_msg<key, value> *dm = recvdMsgs[ind];
+		void handleOne(wrap_ptr msg, int sampleInd, int numsamples){
+			//this->thisProxy[CkMyNode()].finishOne();
+			//return;
+			data_msg<key, value> *dm = (data_msg<key, value> *)msg.ptr;
+			//data_msg<key, value> *dm = recvdMsgs[ind];
+			//if(firstprintrand == 0)
+			//CkPrintf("[%d, %d]handleOne,  numSamples: %d, msgsize: %d, sampleInd: %d, firstprintrand:%d \n", CkMyNode(), CkMyPe(), numsamples, dm->num_vals, sampleInd, firstprintrand);
+			//firstprintrand++;
 
-			typedef std::chrono::high_resolution_clock myclock;
-			myclock::time_point beginning = myclock::now();
-			myclock::duration d = myclock::now() - beginning;
-			unsigned seed = d.count();
-			seed = CkMyNode();
-			//ckout<<"Seed is "<<seed<<endl;
-			std::default_random_engine generator(seed);
-			std::uniform_int_distribution<int> distribution(0,dm->num_vals-1);
-			distribution(generator);
-			int randIndex;
-			for(int i=0; i<numsamples; i++){
-				randIndex = distribution(generator);
-				ls_sample[sampleInd + i] = dm->data[randIndex].k;
-				//ckout<<"randIndex "<<randIndex<<endl;
-				distribution.reset();
+
+			if(dm->num_vals > 0){
+				typedef std::chrono::high_resolution_clock myclock;
+				myclock::time_point beginning = myclock::now();
+				myclock::duration d = myclock::now() - beginning;
+				unsigned seed = d.count();
+				seed = CkMyNode();
+				//ckout<<"Seed is "<<seed<<endl;
+				std::default_random_engine generator(seed);
+				std::uniform_int_distribution<int> distribution(0,dm->num_vals-1);
+				distribution(generator);
+				int randIndex;
+				if(sampleInd+numsamples >= ls_getMaxSampleSize())
+					CkAbort("Numsamples exceeds expectations\n"); 
+				for(int i=0; i<numsamples; i++){
+					randIndex = distribution(generator);
+					ls_sample[sampleInd + i] = dm->data[randIndex].k;
+					//ckout<<"randIndex "<<randIndex<<endl;
+					distribution.reset();
+				}
 			}
 			std::sort(dm->data, dm->data + dm->num_vals);
 			this->thisProxy[CkMyNode()].finishOne();
@@ -277,7 +294,14 @@ class NodeManager : public CBase_NodeManager<key, value> {
 
 
 		void finishOne(){
-			if(++numFinished == CkNumNodes()){ //all messages have been received, processed
+			++numFinished;	
+			if(numFinished == CkNumNodes()){ //all messages have been received, processed
+				
+				//for(int i=0; i<numpes; i++){
+				//	 bucket_arr[pelist[i]].finish();				
+				//}
+				//return;
+
 				ls_sample[ls_numTotSamples++] = maxkey;
 				std::sort(ls_sample, ls_sample + ls_numTotSamples); //sort all sampled keys
 				for(int i=0; i<numpes-1; i++){

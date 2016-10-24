@@ -7,7 +7,7 @@
 //header files for libraries in Charm
 #include "sortinglib/sortinglib.h"
 
-#define DEBUG(a) a
+#define DEBUG(a) //a
 
 uint64_t m_w= 110101011;
 uint64_t m_z= 1234567891;
@@ -90,8 +90,10 @@ class dataManager : public CBase_dataManager{
         delete[] dataIn;
         delete[] dataOut;
         endTime = CmiWallTimer();
-        //if(!CkMyPe())
-        //  printf("Time taken in first sorting %lf s\n", endTime - startTime);
+        if(!CkMyPe()){
+          printf("Time taken in first sorting %lf s\n", endTime - startTime);
+  	  CkExit();
+	}
     }
 };
 

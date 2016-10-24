@@ -16,7 +16,7 @@ Bucket<key, value>::Bucket(CkMigrateMessage *msg){}
 template <class key, class value>
 Bucket<key, value>::Bucket(tuning_params par, key min, key max, int nuBuckets_, CkNodeGroupID _nodeMgrID):
 	minkey(min), maxkey(max), nBuckets(nuBuckets_), nodeMgrID(_nodeMgrID){
-	CkPrintf("Creating chare %d of bucket chare array\n", this->thisIndex);
+	//CkPrintf("Creating chare %d of bucket chare array\n", this->thisIndex);
 	params = new tuning_params;
 	*params = par;
 	nNodes = CkNumNodes();
@@ -87,7 +87,7 @@ void Bucket<key, value>::SetData(CProxy_Sorter<key, value> _sorter_proxy, CProxy
 	//CkAssert(num_elements > 0);
 	bucket_data = (kv_pair<key, value>*)dataIn;
 
-        CkPrintf("Registering local chare array [%d], nodemgrID: %d \n", CkMyPe(), nodeMgrID);
+        //CkPrintf("Registering local chare array [%d], nodemgrID: %d \n", CkMyPe(), nodeMgrID);
 	nodemgr[CkMyNode()].registerLocalChare(numElem, CkMyPe(),  
 										   this->thisProxy, sorter_proxy);
 
@@ -177,10 +177,10 @@ void Bucket<key, value>::genSample(array_msg<int>  *am){
 
 template <class key, class value>
 void Bucket<key, value>::finalProbes(array_msg<key>* finalprb){
-	ckout<<"bucket "<<CkMyPe()<<" got the final probes "<<endl;
+	//ckout<<"bucket "<<CkMyPe()<<" got the final probes "<<endl;
 	memcpy(lastProbe, finalprb->data, finalprb->numElem * sizeof(key));
 	lastProbeSize = finalprb->numElem;
-	ckout<<"lastProbeSize :  "<<lastProbeSize<<"  :  "<<CkMyPe()<<"  "<<endl;
+	//ckout<<"lastProbeSize :  "<<lastProbeSize<<"  :  "<<CkMyPe()<<"  "<<endl;
 	localProbe();
 }
 
@@ -291,8 +291,6 @@ void Bucket<key, value>::localProbe(){
 		
 		std::pair<int, key> p2= grtstPow2((mymax-currmin)/numIndices + 1);
 
-
-
 		//ckout<<currmin<<" : "<<mymax<<" - "<<CkMyPe()<<endl;
 		indexStep = p2.second * 2;
 		int indexStepLog = p2.first + 1;
@@ -374,7 +372,7 @@ void Bucket<key, value>::histCountProbes(probeMessage<key> *pm){
 
 
 	if(lastProbeSize <= 1){
-		ckout<<"Splitters have been determined  - "<<CkMyPe()<<endl;	
+		//ckout<<"Splitters have been determined  - "<<CkMyPe()<<endl;	
 		sendAll();
 		//this->contribute(CkCallback(CkIndex_Sorter<key, value>::Done(NULL), sorter_proxy));
 		return;
@@ -658,14 +656,21 @@ void Bucket<key, value>::postMerging(){
 	//	ckout<<loadBuffer[0]->data[i].k<<" : ";
 	//uint64_t cnt = achievedCounts[this->thisIndex+1] - achievedCounts[this->thisIndex];
 	//ckout<<*out_elems<<"  "<<dummyCount<<"  "<<dummyCount2<<" Done at "<<"  "<<CkMyPe()<<endl;
-	if(callBackSet)
-		CB->send();
+	/** !TODO **/
+	//if(callBackSet)
+	//	CB->send();
+	#ifndef VERBOSE
 	this->contribute(CkCallback(CkIndex_Sorter<key, value>::Done(NULL), sorter_proxy));
+	#endif
 }
 
 
 
 
+template <class key, class value>
+void Bucket<key, value>::finish(){
+	this->contribute(CkCallback(CkIndex_Sorter<key, value>::Done(NULL), sorter_proxy));
+}
 
 
 

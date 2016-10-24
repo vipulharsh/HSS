@@ -56,6 +56,21 @@ template <class key, class value>
 CProxy_NodeManager<key, value> * Global<key, value>::nodemgr = new CProxy_NodeManager<key, value>;
 */
 
+
+template <class key>
+std::pair<int, key> grtstPow2(key n){
+  key ret = 1;
+  int cnt = 0;
+  while(ret < n){
+    ret *= 2;
+    cnt++;
+  }
+  return std::pair<int, key>(cnt-1, ret>>1);
+}
+
+template<int> std::pair<int, int> grtstPow2(int);
+
+
 #include "Sorter.h"
 #include "Bucket.h"
 
@@ -81,7 +96,7 @@ void HistSorting(int input_elems_, kv_pair<key, value>* dataIn_,
     callBackSet = true;
   }
 
-  CkPrintf("[%d] HistSorting on, First Elt. %ld \n",CkMyPe(), ((kv_pair<key, value>*) dataIn)[0]);
+  //CkPrintf("[%d] HistSorting on, First Elt. %ld \n",CkMyPe(), ((kv_pair<key, value>*) dataIn)[0]);
 
   if(CkMyPe() == 0) {
 #if DEBUG
@@ -161,7 +176,8 @@ class Main : public CBase_Main<key, value> {
     }
     void final_isum(CkReductionMsg *msg) {
       printf("Final key sum %d\n",*((int *) msg->getData()));
-      delete msg;
+      //delete msg;
+      sorter.Done(msg);
     }
 };
 
@@ -215,20 +231,6 @@ void registerSortingLib() {
   CMessage_array_msg<key>::__register("array_msg<key >", sizeof(array_msg<key >),(CkPackFnPtr) array_msg<key >::pack,(CkUnpackFnPtr) array_msg<key >::unpack);
 
 }
-
-
-template <class key>
-std::pair<int, key> grtstPow2(key n){
-  key ret = 1;
-  int cnt = 0;
-  while(ret < n){
-    ret *= 2;
-    cnt++;
-  }
-  return std::pair<int, key>(cnt-1, ret>>1);
-}
-
-template<int> std::pair<int, int> grtstPow2(int);
 
 
 //template <class key, class value>
