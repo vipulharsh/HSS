@@ -3,7 +3,7 @@
 
 #include <chrono>
 #include <random>
-
+#include <queue>
 #include <map>
 
 const int SAMPLE_FACTOR = 20;
@@ -73,6 +73,20 @@ class sendInfo{
 			pup_bytes(&p, this, sizeof(*this));
 		}
 };
+
+
+template<class key>
+class sortItem{
+public:
+	key k;
+	int peId;
+   sortItem(key _k, int _peId): k(_k), peId(_peId) {}
+   friend bool operator<(const sortItem<key>& a, const sortItem<key>& b){
+	   return (a.k > b.k); //emulate min heap
+   }
+};
+
+
 
 
 
@@ -215,6 +229,32 @@ class NodeManager : public CBase_NodeManager<key, value> {
 			}
 		}
 
+		void sortCopyMsg(data_msg<key, value> *dm,  int dest){
+			std::priority_queue<sortItem<key> > heap;
+ 			CkAssert(ainfo[dest].size() == numpes);
+			int first[numpes]; //first element which is not in heap
+			for(int i=0; i<ainfo[dest].size(); i++){
+				first[i] = ainfo[dest][i].ind1;
+				if(first[i] <  ainfo[dest][i].ind2){//not empty
+					kv_pair<key, value>* bucket_data = (kv_pair<key, value>*)ainfo[dest][i].base;
+					heap.push(sortItem<key>(bucket_data[first[i]].k, i));
+					first[i]++;
+				}
+			}
+			for(int i=0; i<dm->num_vals; i++){
+				sortItem<key> sI = heap.top();
+				heap.pop();
+				kv_pair<key, value>* bucket_data = (kv_pair<key, value>*)ainfo[dest][sI.peId].base;
+				dm->data[i] = bucket_data[first[sI.peId] - 1];
+				if(first[sI.peId] <  ainfo[dest][sI.peId].ind2){//not empty
+               heap.push(sortItem<key>(bucket_data[first[sI.peId]].k, sI.peId));
+					first[sI.peId]++;
+				}
+			}
+		}
+
+		
+
 		void sendOne(int dest){
 			//CkPrintf("[%d][%d] sendOne to node: %d \n", CkMyNode(), CkMyPe(), dest);
 			int numelem = 0;
@@ -222,6 +262,10 @@ class NodeManager : public CBase_NodeManager<key, value> {
 				numelem += ainfo[dest][i].ind2 - ainfo[dest][i].ind1;
 			data_msg<key, value> *dm = new (numelem) data_msg<key,value>;
 			dm->num_vals = numelem;
+
+			sortCopyMsg(dm, dest);
+			dm->sorted = true;
+/*
 			dm->sorted = false;
 			int curr = 0;
 			for(int i=0; i<ainfo[dest].size(); i++){
@@ -230,6 +274,7 @@ class NodeManager : public CBase_NodeManager<key, value> {
 				memcpy(dm->data + curr, bucket_data + ind1, (ind2-ind1)*sizeof(kv_pair<key, value>));
 				curr += ind2 - ind1;
 			}
+*/
 			this->thisProxy[dest].recvOne(dm);
 		}
 
@@ -281,7 +326,8 @@ class NodeManager : public CBase_NodeManager<key, value> {
 			data_msg<key, value> *dm = (data_msg<key, value> *)msg.ptr;
 			//CkPrintf("[%d, %d]handleOne,  numSamples: %d, msgsize: %d, sampleInd: %d, firstprintrand:%d \n", CkMyNode(), CkMyPe(), numsamples, dm->num_vals, sampleInd, firstprintrand);
 
-			std::sort(dm->data, dm->data + dm->num_vals);
+			if(!dm->sorted)
+				std::sort(dm->data, dm->data + dm->num_vals);
 
 			if(dm->num_vals > 0){
 				for(int i=stride-1; i<dm->num_vals; i+=stride)
