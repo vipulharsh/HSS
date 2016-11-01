@@ -40,6 +40,7 @@ module HistSort{
     entry Sorter();
     entry Sorter(const CkArrayID &bucketArr, int num_chares, key min, key max,  
                  tuning_params par, CProxy_Main<key, value> mainproxy, CkNodeGroupID _nodeMgrID);
+    entry void finishBarrier(CkReductionMsg *msg);
     //entry void Begin();
     entry [expedited] void Histogram(CkReductionMsg *msg);
     //entry [expedited] void globalMinMax(CkReductionMsg *msg);
@@ -54,7 +55,8 @@ module HistSort{
   template <class key, class value> array [1D] Bucket {
     entry Bucket(tuning_params par, key _min, key _max, int nBuckets_, CkNodeGroupID _nodeMgrID);	  
     //entry void SetCallback(const CkCallback &cb);
-    entry void SetData(CProxy_Sorter<key, value> _sorter_proxy, CProxy_Main<key, value> _main_proxy);
+    entry void startBarrier(CProxy_Sorter<key, value> _sorter_proxy, CProxy_Main<key, value> _main_proxy);
+    entry void SetData();
     entry void genSample(array_msg<int>  *am);
     entry void firstProbe(key firstkey, key lastkey, key stepSize, int probeSize);
     entry [expedited] void firstLocalProbe(int lastProbeSize);

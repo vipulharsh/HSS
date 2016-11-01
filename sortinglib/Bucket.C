@@ -74,16 +74,22 @@ void Bucket<key, value>::Reset(){
 }
 
 
+template <class key, class value>
+void Bucket<key, value>::startBarrier(CProxy_Sorter<key, value> _sorter_proxy, CProxy_Main<key, value> _main_proxy){
+	sorter_proxy = _sorter_proxy;
+	main_proxy = _main_proxy;
+	this->contribute(CkCallback(CkIndex_Sorter<key, value>::finishBarrier(NULL), sorter_proxy));
+}
+
+
 //set bucket data
 template <class key, class value>
-void Bucket<key, value>::SetData(CProxy_Sorter<key, value> _sorter_proxy, CProxy_Main<key, value> _main_proxy){
+void Bucket<key, value>::SetData(){
 	DEBUGPRINTF("Set data of chare %d of bucket chare array\n", this->thisIndex);
 	//nodemgr = *(Global<key, value>::nodemgr);
 	nodemgr = CProxy_NodeManager<key, value>(nodeMgrID); 
 
 	numElem = in_elems;
-	sorter_proxy = _sorter_proxy;
-	main_proxy = _main_proxy;
 	//CkAssert(num_elements > 0);
 	bucket_data = (kv_pair<key, value>*)dataIn;
 

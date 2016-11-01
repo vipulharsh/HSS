@@ -185,7 +185,8 @@ class Main : public CBase_Main<key, value> {
 template <class key, class value>
 void Main<key, value>::DataReady() {
   //There is a possibility of a data race here
-  bucket_arr.SetData(sorter, this->thisProxy);     
+  bucket_arr.startBarrier(sorter, this->thisProxy);     
+  //bucket_arr.SetData(sorter, this->thisProxy);     
   //sorter.Begin();       
 }
 

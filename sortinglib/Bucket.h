@@ -113,7 +113,8 @@ class Bucket : public CBase_Bucket<key, value> {
   public:
     Bucket(CkMigrateMessage *);
 	  Bucket(tuning_params par, key _min, key _max, int nBuckets_, CkNodeGroupID _nodeMgrID);
-	  void SetData(CProxy_Sorter<key, value> _sorter_proxy, CProxy_Main<key, value> _main_proxy);
+    void startBarrier(CProxy_Sorter<key, value> _sorter_proxy, CProxy_Main<key, value> _main_proxy);
+    void SetData();
 	  void genSample(array_msg<int>  *am);
     void finalProbes(array_msg<key>* finalprb);
     void sortAll();

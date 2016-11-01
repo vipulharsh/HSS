@@ -60,6 +60,7 @@ class Sorter : public CBase_Sorter<key, value>  {
     Sorter(){}
     Sorter(const CkArrayID &bucketArr, int num_chares, key min, key max,
          tuning_params par, CProxy_Main<key, value> _mainproxy, CkNodeGroupID _nodeMgrID);
+    void finishBarrier(CkReductionMsg *msg);
     void recvSample(array_msg<key>* am);
     void Init();
     //void Begin();

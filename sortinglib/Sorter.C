@@ -1,6 +1,10 @@
 #include <assert.h>
 /*global*/ CkReduction::reducerType sum_uint64_t_type; 
 
+//epsilon  = 5% error
+#define EPS 5
+
+
 ///reduction for summing arrays of unsigned 64-bit integers
 CkReductionMsg *sum_uint64_t(int nMsg,CkReductionMsg **msgs)
 {
@@ -69,6 +73,14 @@ Sorter<key, value>::Sorter(const CkArrayID &bucketArr, int _nBuckets, key min,
     Init();
 }
 
+
+
+
+template<class key, class value>
+void Sorter<key, value>::finishBarrier(CkReductionMsg *msg){
+    c1 = CmiWallTimer();
+    buckets.SetData();
+}
 
 
 
@@ -210,7 +222,7 @@ void Sorter<key, value>::recvSample(array_msg<key>* am){
 template <class key, class value>
 inline int Sorter<key, value>::checkGoal(int splitterInd, uint64_t histCount){
     uint64_t goal = (nElements * splitterInd)/nNodes;
-    uint64_t margin = (nElements * 5)/(100 * nNodes); //5%
+    uint64_t margin = (nElements * EPS)/(100 * nNodes); //5%
     //ckout<<nElements<<" : "<<splitterInd<<" : "<<nBuckets<<endl;
     //ckout<<goal<<" : "<<margin<<" : "<<goal-margin<<" : "<<goal + margin<<endl;
     return (histCount < goal-margin ? -1 : (histCount > goal+margin ? 1 : 0));
