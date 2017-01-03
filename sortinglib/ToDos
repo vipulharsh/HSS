@@ -1,0 +1,13 @@
+Bug: nodemanager nodegroup should not get created before registerLib is called
+
+
+Don't allocate histcounts array for every msg, one for every pe instead is a better idea.
+
+Don't send achievedcounts with probes. That is useless now.
+
+
+check corner cases
+	- what happens when one of the probes is equal to one of the numbers. check.
+	- 
+
+

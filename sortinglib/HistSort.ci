@@ -24,6 +24,16 @@ module HistSort{
       uint64_t newachv_count[];
     };
 
+  template <class key>
+    message sampleMessage {
+      key lb[];
+      key ub[];
+      key newachv_key[];
+      int newachv_id[];
+      uint64_t newachv_count[];
+    };
+
+
   template <class key, class value>
     message data_msg {
       kv_pair<key, value> data[];
@@ -50,6 +60,7 @@ module HistSort{
   };
 
 
+  class sampleInfo;  
   class sendInfo;
 
   template <class key, class value> array [1D] Bucket {
@@ -57,10 +68,11 @@ module HistSort{
     //entry void SetCallback(const CkCallback &cb);
     entry void startBarrier(CProxy_Sorter<key, value> _sorter_proxy, CProxy_Main<key, value> _main_proxy);
     entry void SetData();
-    entry void genSample(array_msg<int>  *am);
+    entry void genSample(sampleInfo sI);
     entry void firstProbe(key firstkey, key lastkey, key stepSize, int probeSize);
     entry [expedited] void firstLocalProbe(int lastProbeSize);
     entry [expedited] void histCountProbes(probeMessage<key> *pm);
+    entry [expedited] void genNextSamples(sampleMessage<key> *sm);
     entry void sortAll();
     entry void stepSort();
     entry void Load(data_msg<key, value>* msg);
@@ -84,7 +96,7 @@ module HistSort{
                   CProxy_Bucket<key, value> _bucket_arr,
                   CProxy_Sorter<key, value> _sorter
                   );
-      entry [exclusive, expedited] void collectSamples(array_msg<key>* sample);
+      entry [exclusive, expedited] void collectSamples(sampleInfo sI);
       entry [exclusive] void loadkeys(int dest, sendInfo inf);
       entry void sendOne(int dest);
       entry [exclusive] void releaseBufMsgs();

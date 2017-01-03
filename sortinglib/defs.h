@@ -47,7 +47,6 @@ class tuning_params{
       p | reuse_probe_results;
     }
 
-};
-
+}; 
 
 #endif

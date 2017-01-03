@@ -115,7 +115,7 @@ class Bucket : public CBase_Bucket<key, value> {
 	  Bucket(tuning_params par, key _min, key _max, int nBuckets_, CkNodeGroupID _nodeMgrID);
     void startBarrier(CProxy_Sorter<key, value> _sorter_proxy, CProxy_Main<key, value> _main_proxy);
     void SetData();
-	  void genSample(array_msg<int>  *am);
+	  void genSample(sampleInfo sI);
     void finalProbes(array_msg<key>* finalprb);
     void sortAll();
     void sendAll();
@@ -129,6 +129,7 @@ class Bucket : public CBase_Bucket<key, value> {
 	  void firstProbe(key firstkey, key lastkey, key step, int probeSize);
 	  void firstLocalProbe(int lastProbeSize);
 	  void histCountProbes(probeMessage<key> *pm);
+    void genNextSamples(sampleMessage<key> *sm);
 	  void Load(data_msg<key, value>* msg);
     void MergingWork();
     void partialSendOne();

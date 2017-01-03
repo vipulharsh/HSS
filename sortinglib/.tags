@@ -1,0 +1,1126 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+Bucket	Bucket.C	/^Bucket<key, value>::Bucket(CkMigrateMessage *msg){}$/;"	f	class:Bucket
+Bucket	Bucket.C	/^Bucket<key, value>::Bucket(tuning_params par, key min, key max, int nuBuckets_, CkNodeGroupID _nodeMgrID):$/;"	f	class:Bucket
+Bucket	Bucket.h	/^class Bucket : public CBase_Bucket<key, value> {$/;"	c
+Bucket_SDAG_CODE	HistSort.decl.h	1607;"	d
+CB	sortinglib.h	/^__thread CkCallback *CB;  __thread bool callBackSet;$/;"	v
+CBase_Bucket	HistSort.def.h	/^  CBase_Bucket() : thisProxy(this)$/;"	f	struct:CBase_Bucket
+CBase_Bucket	HistSort.def.h	/^  CBase_Bucket(Args... args) : thisProxy(this)$/;"	f	struct:CBase_Bucket
+CBase_Bucket	HistSort.def.h	/^  CBase_Bucket(CkMigrateMessage* m) : thisProxy(this)$/;"	f	struct:CBase_Bucket
+CBase_Bucket	HistSort.def.h	/^struct CBase_Bucket : public ArrayElementT<CkIndex1D>, virtual CBase$/;"	s
+CBase_Main	HistSort.def.h	/^  CBase_Main() : thisProxy(this)$/;"	f	struct:CBase_Main
+CBase_Main	HistSort.def.h	/^  CBase_Main(Args... args) : thisProxy(this)$/;"	f	struct:CBase_Main
+CBase_Main	HistSort.def.h	/^  CBase_Main(CkMigrateMessage* m) : thisProxy(this)$/;"	f	struct:CBase_Main
+CBase_Main	HistSort.def.h	/^struct CBase_Main : public Chare, virtual CBase$/;"	s
+CBase_NodeManager	HistSort.def.h	/^  CBase_NodeManager() : thisProxy(this)$/;"	f	struct:CBase_NodeManager
+CBase_NodeManager	HistSort.def.h	/^  CBase_NodeManager(Args... args) : thisProxy(this)$/;"	f	struct:CBase_NodeManager
+CBase_NodeManager	HistSort.def.h	/^  CBase_NodeManager(CkMigrateMessage* m) : thisProxy(this)$/;"	f	struct:CBase_NodeManager
+CBase_NodeManager	HistSort.def.h	/^struct CBase_NodeManager : public NodeGroup, virtual CBase$/;"	s
+CBase_Sorter	HistSort.def.h	/^  CBase_Sorter() : thisProxy(this)$/;"	f	struct:CBase_Sorter
+CBase_Sorter	HistSort.def.h	/^  CBase_Sorter(Args... args) : thisProxy(this)$/;"	f	struct:CBase_Sorter
+CBase_Sorter	HistSort.def.h	/^  CBase_Sorter(CkMigrateMessage* m) : thisProxy(this)$/;"	f	struct:CBase_Sorter
+CBase_Sorter	HistSort.def.h	/^struct CBase_Sorter : public Chare, virtual CBase$/;"	s
+CK_TEMPLATES_ONLY	sortinglib.h	198;"	d
+CK_TEMPLATES_ONLY	sortinglib.h	200;"	d
+CMessage_array_msg	HistSort.decl.h	/^template < class key > class CMessage_array_msg:public CkMessage{$/;"	c
+CMessage_array_msg	HistSort.def.h	/^template < class key >  CMessage_array_msg < key > ::CMessage_array_msg() {$/;"	f	class:CMessage_array_msg
+CMessage_data_msg	HistSort.decl.h	/^template < class key, class value > class CMessage_data_msg:public CkMessage{$/;"	c
+CMessage_data_msg	HistSort.def.h	/^template < class key, class value >  CMessage_data_msg < key, value > ::CMessage_data_msg() {$/;"	f	class:CMessage_data_msg
+CMessage_probeMessage	HistSort.decl.h	/^template < class key > class CMessage_probeMessage:public CkMessage{$/;"	c
+CMessage_probeMessage	HistSort.def.h	/^template < class key >  CMessage_probeMessage < key > ::CMessage_probeMessage() {$/;"	f	class:CMessage_probeMessage
+CProxyElement_Bucket	HistSort.decl.h	/^    CProxyElement_Bucket(const ArrayElement *e) : CProxyElement_ArrayElement(e){$/;"	f	class:CProxyElement_Bucket
+CProxyElement_Bucket	HistSort.decl.h	/^    CProxyElement_Bucket(const CkArrayID &aid,const CkArrayIndex &idx)$/;"	f	class:CProxyElement_Bucket
+CProxyElement_Bucket	HistSort.decl.h	/^    CProxyElement_Bucket(const CkArrayID &aid,const CkArrayIndex &idx,CK_DELCTOR_PARAM)$/;"	f	class:CProxyElement_Bucket
+CProxyElement_Bucket	HistSort.decl.h	/^    CProxyElement_Bucket(const CkArrayID &aid,const CkArrayIndex1D &idx)$/;"	f	class:CProxyElement_Bucket
+CProxyElement_Bucket	HistSort.decl.h	/^    CProxyElement_Bucket(const CkArrayID &aid,const CkArrayIndex1D &idx,CK_DELCTOR_PARAM)$/;"	f	class:CProxyElement_Bucket
+CProxyElement_Bucket	HistSort.decl.h	/^    CProxyElement_Bucket(void) {$/;"	f	class:CProxyElement_Bucket
+CProxyElement_Bucket	HistSort.decl.h	/^template < class key, class value >  class CProxyElement_Bucket : public CProxyElement_ArrayElement{$/;"	c
+CProxyElement_NodeManager	HistSort.decl.h	/^    CProxyElement_NodeManager(CkGroupID _gid,int _onPE) : CProxyElement_NodeGroup(_gid,_onPE){$/;"	f	class:CProxyElement_NodeManager
+CProxyElement_NodeManager	HistSort.decl.h	/^    CProxyElement_NodeManager(CkGroupID _gid,int _onPE,CK_DELCTOR_PARAM) : CProxyElement_NodeGroup(_gid,_onPE,CK_DELCTOR_ARGS){$/;"	f	class:CProxyElement_NodeManager
+CProxyElement_NodeManager	HistSort.decl.h	/^    CProxyElement_NodeManager(const IrrGroup *g) : CProxyElement_NodeGroup(g){$/;"	f	class:CProxyElement_NodeManager
+CProxyElement_NodeManager	HistSort.decl.h	/^    CProxyElement_NodeManager(void) {$/;"	f	class:CProxyElement_NodeManager
+CProxyElement_NodeManager	HistSort.decl.h	/^template < class key, class value > class CProxyElement_NodeManager: public CProxyElement_NodeGroup{$/;"	c
+CProxySection_Bucket	HistSort.decl.h	/^    CProxySection_Bucket(const CkArrayID &aid, CkArrayIndex *elems, int nElems) $/;"	f	class:CProxySection_Bucket
+CProxySection_Bucket	HistSort.decl.h	/^    CProxySection_Bucket(const CkArrayID &aid, CkArrayIndex *elems, int nElems, CK_DELCTOR_PARAM) $/;"	f	class:CProxySection_Bucket
+CProxySection_Bucket	HistSort.decl.h	/^    CProxySection_Bucket(const CkSectionID &sid)       :CProxySection_ArrayElement(sid) {}$/;"	f	class:CProxySection_Bucket
+CProxySection_Bucket	HistSort.decl.h	/^    CProxySection_Bucket(int n, const CkArrayID *aid, CkArrayIndex const * const *elems, const int *nElems) $/;"	f	class:CProxySection_Bucket
+CProxySection_Bucket	HistSort.decl.h	/^    CProxySection_Bucket(int n, const CkArrayID *aid, CkArrayIndex const * const *elems, const int *nElems, CK_DELCTOR_PARAM) $/;"	f	class:CProxySection_Bucket
+CProxySection_Bucket	HistSort.decl.h	/^    CProxySection_Bucket(void) {$/;"	f	class:CProxySection_Bucket
+CProxySection_Bucket	HistSort.decl.h	/^template < class key, class value >  class CProxySection_Bucket : public CProxySection_ArrayElement{$/;"	c
+CProxySection_NodeManager	HistSort.decl.h	/^    CProxySection_NodeManager(const CkGroupID &_gid,const int *_pelist,int _npes) : CProxySection_NodeGroup(_gid,_pelist,_npes){  }$/;"	f	class:CProxySection_NodeManager
+CProxySection_NodeManager	HistSort.decl.h	/^    CProxySection_NodeManager(const CkGroupID &_gid,const int *_pelist,int _npes,CK_DELCTOR_PARAM) : CProxySection_NodeGroup(_gid,_pelist,_npes,CK_DELCTOR_ARGS){  }$/;"	f	class:CProxySection_NodeManager
+CProxySection_NodeManager	HistSort.decl.h	/^    CProxySection_NodeManager(const IrrGroup *g) : CProxySection_NodeGroup(g){$/;"	f	class:CProxySection_NodeManager
+CProxySection_NodeManager	HistSort.decl.h	/^    CProxySection_NodeManager(int n,const CkGroupID *_gid, int const * const *_pelist,const int *_npes) : CProxySection_NodeGroup(n,_gid,_pelist,_npes){  }$/;"	f	class:CProxySection_NodeManager
+CProxySection_NodeManager	HistSort.decl.h	/^    CProxySection_NodeManager(int n,const CkGroupID *_gid, int const * const *_pelist,const int *_npes,CK_DELCTOR_PARAM) : CProxySection_NodeGroup(n,_gid,_pelist,_npes,CK_DELCTOR_ARGS){  }$/;"	f	class:CProxySection_NodeManager
+CProxySection_NodeManager	HistSort.decl.h	/^    CProxySection_NodeManager(void) {$/;"	f	class:CProxySection_NodeManager
+CProxySection_NodeManager	HistSort.decl.h	/^template < class key, class value > class CProxySection_NodeManager: public CProxySection_NodeGroup{$/;"	c
+CProxy_Bucket	HistSort.decl.h	/^    CProxy_Bucket(const ArrayElement *e) : CProxy_ArrayElement(e){$/;"	f	class:CProxy_Bucket
+CProxy_Bucket	HistSort.decl.h	/^    CProxy_Bucket(const CkArrayID &aid) $/;"	f	class:CProxy_Bucket
+CProxy_Bucket	HistSort.decl.h	/^    CProxy_Bucket(const CkArrayID &aid,CK_DELCTOR_PARAM) $/;"	f	class:CProxy_Bucket
+CProxy_Bucket	HistSort.decl.h	/^    CProxy_Bucket(void) {$/;"	f	class:CProxy_Bucket
+CProxy_Bucket	HistSort.decl.h	/^template < class key, class value >  class CProxy_Bucket : public CProxy_ArrayElement{$/;"	c
+CProxy_Main	HistSort.decl.h	/^    CProxy_Main(CkChareID __cid) : CProxy_Chare(__cid){  }$/;"	f	class:CProxy_Main
+CProxy_Main	HistSort.decl.h	/^    CProxy_Main(const Chare *c) : CProxy_Chare(c){  }$/;"	f	class:CProxy_Main
+CProxy_Main	HistSort.decl.h	/^    CProxy_Main(void) {};$/;"	f	class:CProxy_Main
+CProxy_Main	HistSort.decl.h	/^template < class key, class value > class CProxy_Main:public CProxy_Chare{$/;"	c
+CProxy_Main	HistSort.def.h	/^  CProxy_Main < key, value > ::CProxy_Main(int num_buckets_, int probe_max, int impl_onPE, const CkEntryOptions *impl_e_opts)$/;"	f	class:CProxy_Main
+CProxy_NodeManager	HistSort.decl.h	/^    CProxy_NodeManager(CkGroupID _gid) : CProxy_NodeGroup(_gid){  }$/;"	f	class:CProxy_NodeManager
+CProxy_NodeManager	HistSort.decl.h	/^    CProxy_NodeManager(CkGroupID _gid,CK_DELCTOR_PARAM) : CProxy_NodeGroup(_gid,CK_DELCTOR_ARGS){  }$/;"	f	class:CProxy_NodeManager
+CProxy_NodeManager	HistSort.decl.h	/^    CProxy_NodeManager(const IrrGroup *g) : CProxy_NodeGroup(g){$/;"	f	class:CProxy_NodeManager
+CProxy_NodeManager	HistSort.decl.h	/^    CProxy_NodeManager(void) {$/;"	f	class:CProxy_NodeManager
+CProxy_NodeManager	HistSort.decl.h	/^template < class key, class value > class CProxy_NodeManager: public CProxy_NodeGroup{$/;"	c
+CProxy_NodeManager	HistSort.def.h	/^  CProxy_NodeManager < key, value > ::CProxy_NodeManager(const key &_minkey, const key &_maxkey, const CkEntryOptions *impl_e_opts)$/;"	f	class:CProxy_NodeManager
+CProxy_Sorter	HistSort.decl.h	/^    CProxy_Sorter(CkChareID __cid) : CProxy_Chare(__cid){  }$/;"	f	class:CProxy_Sorter
+CProxy_Sorter	HistSort.decl.h	/^    CProxy_Sorter(const Chare *c) : CProxy_Chare(c){  }$/;"	f	class:CProxy_Sorter
+CProxy_Sorter	HistSort.decl.h	/^    CProxy_Sorter(void) {};$/;"	f	class:CProxy_Sorter
+CProxy_Sorter	HistSort.decl.h	/^template < class key, class value > class CProxy_Sorter:public CProxy_Chare{$/;"	c
+CProxy_Sorter	HistSort.def.h	/^  CProxy_Sorter < key, value > ::CProxy_Sorter(const CkArrayID &bucketArr, int num_chares, const key &min, const key &max, const tuning_params &par, const CProxy_Main<key,value > &mainproxy, const CkNodeGroupID &_nodeMgrID, int impl_onPE, const CkEntryOptions *impl_e_opts)$/;"	f	class:CProxy_Sorter
+CkIndex_Bucket	HistSort.decl.h	/^template < class key, class value > class CkIndex_Bucket:public CkIndex_ArrayElement{$/;"	c
+CkIndex_Main	HistSort.decl.h	/^template < class key, class value > class CkIndex_Main:public CkIndex_Chare{$/;"	c
+CkIndex_NodeManager	HistSort.decl.h	/^template < class key, class value > class CkIndex_NodeManager:public CkIndex_NodeGroup{$/;"	c
+CkIndex_Sorter	HistSort.decl.h	/^template < class key, class value > class CkIndex_Sorter:public CkIndex_Chare{$/;"	c
+Closure_Bucket	HistSort.decl.h	/^template < class key, class value > class Closure_Bucket {$/;"	c
+Closure_Main	HistSort.decl.h	/^template < class key, class value > class Closure_Main {$/;"	c
+Closure_NodeManager	HistSort.decl.h	/^template < class key, class value > class Closure_NodeManager {$/;"	c
+Closure_Sorter	HistSort.decl.h	/^template < class key, class value > class Closure_Sorter {$/;"	c
+DEBUGPRINTF	defs.h	10;"	d
+DEBUGPRINTF	defs.h	12;"	d
+DataReady	HistSort.decl.h	/^    static int DataReady(void) { return idx_DataReady_void(); }$/;"	f	class:CkIndex_Main
+DataReady	HistSort.def.h	/^void CProxy_Main < key, value > ::DataReady(void)$/;"	f	class:CProxy_Main
+DataReady	sortinglib.h	/^void Main<key, value>::DataReady() {$/;"	f	class:Main
+DataReady_3_closure	HistSort.def.h	/^      DataReady_3_closure() {$/;"	f	struct:Closure_Main::DataReady_3_closure
+DataReady_3_closure	HistSort.def.h	/^      DataReady_3_closure(CkMigrateMessage*) {$/;"	f	struct:Closure_Main::DataReady_3_closure
+DataReady_3_closure	HistSort.def.h	/^    struct Closure_Main < key, value > ::DataReady_3_closure : public SDAG::Closure {$/;"	s	class:Closure_Main
+Done	HistSort.decl.h	/^    static int Done(CkReductionMsg* impl_msg) { return idx_Done_CkReductionMsg(); }$/;"	f	class:CkIndex_Sorter
+Done	HistSort.def.h	/^void CProxy_Sorter < key, value > ::Done(CkReductionMsg* impl_msg)$/;"	f	class:CProxy_Sorter
+Done	Sorter.C	/^void Sorter<key, value>::Done(CkReductionMsg *msg){ $/;"	f	class:Sorter
+EPS	Sorter.C	5;"	d	file:
+Exit	HistSort.decl.h	/^    static int Exit(void) { return idx_Exit_void(); }$/;"	f	class:CkIndex_Main
+Exit	HistSort.def.h	/^void CProxy_Main < key, value > ::Exit(void)$/;"	f	class:CProxy_Main
+Exit	sortinglib.h	/^    void Exit() {$/;"	f	class:Main
+Exit_2_closure	HistSort.def.h	/^      Exit_2_closure() {$/;"	f	struct:Closure_Main::Exit_2_closure
+Exit_2_closure	HistSort.def.h	/^      Exit_2_closure(CkMigrateMessage*) {$/;"	f	struct:Closure_Main::Exit_2_closure
+Exit_2_closure	HistSort.def.h	/^    struct Closure_Main < key, value > ::Exit_2_closure : public SDAG::Closure {$/;"	s	class:Closure_Main
+HistSorting	sortinglib.h	/^void HistSorting(int input_elems_, kv_pair<key, value>* dataIn_, $/;"	f
+Histogram	HistSort.decl.h	/^    static int Histogram(CkReductionMsg* impl_msg) { return idx_Histogram_CkReductionMsg(); }$/;"	f	class:CkIndex_Sorter
+Histogram	HistSort.def.h	/^void CProxy_Sorter < key, value > ::Histogram(CkReductionMsg* impl_msg)$/;"	f	class:CProxy_Sorter
+Histogram	Sorter.C	/^void Sorter<key, value>::Histogram(CkReductionMsg *msg){$/;"	f	class:Sorter
+Init	Sorter.C	/^void Sorter<key, value>::Init(){$/;"	f	class:Sorter
+LS_EPS	nodemanager.h	11;"	d
+Load	Bucket.C	/^void Bucket<key, value>::Load(data_msg<key, value>* msg){$/;"	f	class:Bucket
+Load	HistSort.decl.h	/^    static int Load(data_msg<key,value >* impl_msg) { return idx_Load_data_msg(); }$/;"	f	class:CkIndex_Bucket
+Load	HistSort.def.h	/^void CProxyElement_Bucket < key, value > ::Load(data_msg<key,value >* impl_msg) $/;"	f	class:CProxyElement_Bucket
+Load	HistSort.def.h	/^void CProxySection_Bucket < key, value > ::Load(data_msg<key,value >* impl_msg) $/;"	f	class:CProxySection_Bucket
+Load	HistSort.def.h	/^void CProxy_Bucket < key, value > ::Load(data_msg<key,value >* impl_msg) $/;"	f	class:CProxy_Bucket
+Main	sortinglib.h	/^    Main (CkMigrateMessage *m) { }$/;"	f	class:Main
+Main	sortinglib.h	/^    Main (int num_buckets_, int probe_max) {$/;"	f	class:Main
+Main	sortinglib.h	/^class Main : public CBase_Main<key, value> {$/;"	c
+Main_SDAG_CODE	HistSort.decl.h	278;"	d
+MergingWork	Bucket.C	/^void Bucket<key, value>::MergingWork(){$/;"	f	class:Bucket
+MergingWork	HistSort.decl.h	/^    static int MergingWork(void) { return idx_MergingWork_void(); }$/;"	f	class:CkIndex_Bucket
+MergingWork	HistSort.def.h	/^void CProxyElement_Bucket < key, value > ::MergingWork(void) $/;"	f	class:CProxyElement_Bucket
+MergingWork	HistSort.def.h	/^void CProxySection_Bucket < key, value > ::MergingWork(void) $/;"	f	class:CProxySection_Bucket
+MergingWork	HistSort.def.h	/^void CProxy_Bucket < key, value > ::MergingWork(void) $/;"	f	class:CProxy_Bucket
+MergingWork_12_closure	HistSort.def.h	/^      MergingWork_12_closure() {$/;"	f	struct:Closure_Bucket::MergingWork_12_closure
+MergingWork_12_closure	HistSort.def.h	/^      MergingWork_12_closure(CkMigrateMessage*) {$/;"	f	struct:Closure_Bucket::MergingWork_12_closure
+MergingWork_12_closure	HistSort.def.h	/^    struct Closure_Bucket < key, value > ::MergingWork_12_closure : public SDAG::Closure {$/;"	s	class:Closure_Bucket
+NodeManager	nodemanager.h	/^		NodeManager(key _minkey, key _maxkey): minkey(_minkey), maxkey(_maxkey){$/;"	f	class:NodeManager
+NodeManager	nodemanager.h	/^class NodeManager : public CBase_NodeManager<key, value> {$/;"	c
+NodeManager_SDAG_CODE	HistSort.decl.h	2318;"	d
+Reset	Bucket.C	/^void Bucket<key, value>::Reset(){$/;"	f	class:Bucket
+SAMPLE_FACTOR	nodemanager.h	/^const int SAMPLE_FACTOR = 20;$/;"	v
+SanityCheck	HistSort.decl.h	/^    static int SanityCheck(CkReductionMsg* impl_msg) { return idx_SanityCheck_CkReductionMsg(); }$/;"	f	class:CkIndex_Sorter
+SanityCheck	HistSort.def.h	/^void CProxy_Sorter < key, value > ::SanityCheck(CkReductionMsg* impl_msg)$/;"	f	class:CProxy_Sorter
+SanityCheck	Sorter.C	/^void Sorter<key, value>::SanityCheck(CkReductionMsg *msg){$/;"	f	class:Sorter
+SetData	Bucket.C	/^void Bucket<key, value>::SetData(){$/;"	f	class:Bucket
+SetData	HistSort.decl.h	/^    static int SetData(void) { return idx_SetData_void(); }$/;"	f	class:CkIndex_Bucket
+SetData	HistSort.def.h	/^void CProxyElement_Bucket < key, value > ::SetData(void) $/;"	f	class:CProxyElement_Bucket
+SetData	HistSort.def.h	/^void CProxySection_Bucket < key, value > ::SetData(void) $/;"	f	class:CProxySection_Bucket
+SetData	HistSort.def.h	/^void CProxy_Bucket < key, value > ::SetData(void) $/;"	f	class:CProxy_Bucket
+SetData_3_closure	HistSort.def.h	/^      SetData_3_closure() {$/;"	f	struct:Closure_Bucket::SetData_3_closure
+SetData_3_closure	HistSort.def.h	/^      SetData_3_closure(CkMigrateMessage*) {$/;"	f	struct:Closure_Bucket::SetData_3_closure
+SetData_3_closure	HistSort.def.h	/^    struct Closure_Bucket < key, value > ::SetData_3_closure : public SDAG::Closure {$/;"	s	class:Closure_Bucket
+Sorter	Sorter.C	/^Sorter<key, value>::Sorter(CkMigrateMessage *msg){}$/;"	f	class:Sorter
+Sorter	Sorter.C	/^Sorter<key, value>::Sorter(const CkArrayID &bucketArr, int _nBuckets, key min,$/;"	f	class:Sorter
+Sorter	Sorter.h	/^    Sorter(){}$/;"	f	class:Sorter
+Sorter	Sorter.h	/^class Sorter : public CBase_Sorter<key, value>  {$/;"	c
+Sorter_SDAG_CODE	HistSort.decl.h	654;"	d
+UINT64_MAX	sortinglib.h	17;"	d
+VERBOSE	defs.h	16;"	d
+VERBOSEPRINTF	defs.h	19;"	d
+VERBOSEPRINTF	defs.h	21;"	d
+_DECL_HistSort_H_	HistSort.decl.h	2;"	d
+__BUCKET_H__	Bucket.h	2;"	d
+__DEFS_H__	defs.h	2;"	d
+__NODEMANAGER_H__	nodemanager.h	2;"	d
+__SORTER_H__	Sorter.h	2;"	d
+__SORTING_LIB_H__	sortinglib.h	2;"	d
+__idx	HistSort.decl.h	/^    static int __idx;$/;"	m	class:CMessage_array_msg
+__idx	HistSort.decl.h	/^    static int __idx;$/;"	m	class:CMessage_data_msg
+__idx	HistSort.decl.h	/^    static int __idx;$/;"	m	class:CMessage_probeMessage
+__idx	HistSort.decl.h	/^    static int __idx;$/;"	m	class:CkIndex_Bucket
+__idx	HistSort.decl.h	/^    static int __idx;$/;"	m	class:CkIndex_Main
+__idx	HistSort.decl.h	/^    static int __idx;$/;"	m	class:CkIndex_NodeManager
+__idx	HistSort.decl.h	/^    static int __idx;$/;"	m	class:CkIndex_Sorter
+__idx	HistSort.def.h	/^template < class key >  int CMessage_array_msg < key > ::__idx=0;$/;"	m	class:CMessage_array_msg
+__idx	HistSort.def.h	/^template < class key >  int CMessage_probeMessage < key > ::__idx=0;$/;"	m	class:CMessage_probeMessage
+__idx	HistSort.def.h	/^template < class key, class value >  int CMessage_data_msg < key, value > ::__idx=0;$/;"	m	class:CMessage_data_msg
+__idx	HistSort.def.h	/^template < class key, class value >  int CkIndex_Bucket < key, value > ::__idx=0;$/;"	m	class:CkIndex_Bucket
+__idx	HistSort.def.h	/^template < class key, class value >  int CkIndex_Main < key, value > ::__idx=0;$/;"	m	class:CkIndex_Main
+__idx	HistSort.def.h	/^template < class key, class value >  int CkIndex_NodeManager < key, value > ::__idx=0;$/;"	m	class:CkIndex_NodeManager
+__idx	HistSort.def.h	/^template < class key, class value >  int CkIndex_Sorter < key, value > ::__idx=0;$/;"	m	class:CkIndex_Sorter
+__register	HistSort.decl.h	/^    static void __register(const char *s, size_t size, CkPackFnPtr pack, CkUnpackFnPtr unpack) {$/;"	f	class:CMessage_array_msg
+__register	HistSort.decl.h	/^    static void __register(const char *s, size_t size, CkPackFnPtr pack, CkUnpackFnPtr unpack) {$/;"	f	class:CMessage_data_msg
+__register	HistSort.decl.h	/^    static void __register(const char *s, size_t size, CkPackFnPtr pack, CkUnpackFnPtr unpack) {$/;"	f	class:CMessage_probeMessage
+__register	HistSort.def.h	/^template < class key, class value > void CkIndex_Bucket < key, value > ::__register(const char *s, size_t size) {$/;"	f	class:CkIndex_Bucket
+__register	HistSort.def.h	/^template < class key, class value > void CkIndex_Main < key, value > ::__register(const char *s, size_t size) {$/;"	f	class:CkIndex_Main
+__register	HistSort.def.h	/^template < class key, class value > void CkIndex_NodeManager < key, value > ::__register(const char *s, size_t size) {$/;"	f	class:CkIndex_NodeManager
+__register	HistSort.def.h	/^template < class key, class value > void CkIndex_Sorter < key, value > ::__register(const char *s, size_t size) {$/;"	f	class:CkIndex_Sorter
+_bucket_arr	HistSort.def.h	/^      CProxy_Bucket<key,value > _bucket_arr;$/;"	m	struct:Closure_NodeManager::registerLocalChare_2_closure
+_call_Bucket_CkMigrateMessage	HistSort.def.h	/^void CkIndex_Bucket < key, value > ::_call_Bucket_CkMigrateMessage(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_Bucket
+_call_Bucket_marshall1	HistSort.def.h	/^void CkIndex_Bucket < key, value > ::_call_Bucket_marshall1(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_Bucket
+_call_DataReady_void	HistSort.def.h	/^void CkIndex_Main < key, value > ::_call_DataReady_void(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_Main
+_call_Done_CkReductionMsg	HistSort.def.h	/^void CkIndex_Sorter < key, value > ::_call_Done_CkReductionMsg(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_Sorter
+_call_Exit_void	HistSort.def.h	/^void CkIndex_Main < key, value > ::_call_Exit_void(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_Main
+_call_Histogram_CkReductionMsg	HistSort.def.h	/^void CkIndex_Sorter < key, value > ::_call_Histogram_CkReductionMsg(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_Sorter
+_call_Load_data_msg	HistSort.def.h	/^void CkIndex_Bucket < key, value > ::_call_Load_data_msg(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_Bucket
+_call_Main_marshall1	HistSort.def.h	/^void CkIndex_Main < key, value > ::_call_Main_marshall1(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_Main
+_call_MergingWork_void	HistSort.def.h	/^void CkIndex_Bucket < key, value > ::_call_MergingWork_void(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_Bucket
+_call_NodeManager_marshall1	HistSort.def.h	/^void CkIndex_NodeManager < key, value > ::_call_NodeManager_marshall1(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_NodeManager
+_call_SanityCheck_CkReductionMsg	HistSort.def.h	/^void CkIndex_Sorter < key, value > ::_call_SanityCheck_CkReductionMsg(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_Sorter
+_call_SetData_void	HistSort.def.h	/^void CkIndex_Bucket < key, value > ::_call_SetData_void(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_Bucket
+_call_Sorter_marshall2	HistSort.def.h	/^void CkIndex_Sorter < key, value > ::_call_Sorter_marshall2(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_Sorter
+_call_Sorter_void	HistSort.def.h	/^void CkIndex_Sorter < key, value > ::_call_Sorter_void(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_Sorter
+_call_collectSamples_array_msg	HistSort.def.h	/^void CkIndex_NodeManager < key, value > ::_call_collectSamples_array_msg(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_NodeManager
+_call_depositHist_void	HistSort.def.h	/^void CkIndex_NodeManager < key, value > ::_call_depositHist_void(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_NodeManager
+_call_finalProbes_array_msg	HistSort.def.h	/^void CkIndex_Bucket < key, value > ::_call_finalProbes_array_msg(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_Bucket
+_call_final_dsum_CkReductionMsg	HistSort.def.h	/^void CkIndex_Main < key, value > ::_call_final_dsum_CkReductionMsg(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_Main
+_call_final_isum_CkReductionMsg	HistSort.def.h	/^void CkIndex_Main < key, value > ::_call_final_isum_CkReductionMsg(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_Main
+_call_finishBarrier_CkReductionMsg	HistSort.def.h	/^void CkIndex_Sorter < key, value > ::_call_finishBarrier_CkReductionMsg(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_Sorter
+_call_finishOne_void	HistSort.def.h	/^void CkIndex_NodeManager < key, value > ::_call_finishOne_void(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_NodeManager
+_call_finish_void	HistSort.def.h	/^void CkIndex_Bucket < key, value > ::_call_finish_void(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_Bucket
+_call_firstLocalProbe_marshall6	HistSort.def.h	/^void CkIndex_Bucket < key, value > ::_call_firstLocalProbe_marshall6(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_Bucket
+_call_firstProbe_marshall5	HistSort.def.h	/^void CkIndex_Bucket < key, value > ::_call_firstProbe_marshall5(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_Bucket
+_call_genSample_array_msg	HistSort.def.h	/^void CkIndex_Bucket < key, value > ::_call_genSample_array_msg(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_Bucket
+_call_handleOne_marshall8	HistSort.def.h	/^void CkIndex_NodeManager < key, value > ::_call_handleOne_marshall8(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_NodeManager
+_call_histCountProbes_probeMessage	HistSort.def.h	/^void CkIndex_Bucket < key, value > ::_call_histCountProbes_probeMessage(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_Bucket
+_call_init_dsum_CkReductionMsg	HistSort.def.h	/^void CkIndex_Main < key, value > ::_call_init_dsum_CkReductionMsg(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_Main
+_call_init_isum_CkReductionMsg	HistSort.def.h	/^void CkIndex_Main < key, value > ::_call_init_isum_CkReductionMsg(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_Main
+_call_loadkeys_marshall4	HistSort.def.h	/^void CkIndex_NodeManager < key, value > ::_call_loadkeys_marshall4(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_NodeManager
+_call_localhist_data_msg	HistSort.def.h	/^void CkIndex_NodeManager < key, value > ::_call_localhist_data_msg(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_NodeManager
+_call_partialSendOne_void	HistSort.def.h	/^void CkIndex_Bucket < key, value > ::_call_partialSendOne_void(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_Bucket
+_call_recvFinalKeys_marshall11	HistSort.def.h	/^void CkIndex_Bucket < key, value > ::_call_recvFinalKeys_marshall11(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_Bucket
+_call_recvOne_data_msg	HistSort.def.h	/^void CkIndex_NodeManager < key, value > ::_call_recvOne_data_msg(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_NodeManager
+_call_recvSample_array_msg	HistSort.def.h	/^void CkIndex_Sorter < key, value > ::_call_recvSample_array_msg(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_Sorter
+_call_registerLocalChare_marshall2	HistSort.def.h	/^void CkIndex_NodeManager < key, value > ::_call_registerLocalChare_marshall2(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_NodeManager
+_call_releaseBufMsgs_void	HistSort.def.h	/^void CkIndex_NodeManager < key, value > ::_call_releaseBufMsgs_void(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_NodeManager
+_call_sendOne_marshall5	HistSort.def.h	/^void CkIndex_NodeManager < key, value > ::_call_sendOne_marshall5(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_NodeManager
+_call_sendToBuckets_data_msg	HistSort.def.h	/^void CkIndex_NodeManager < key, value > ::_call_sendToBuckets_data_msg(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_NodeManager
+_call_sortAll_void	HistSort.def.h	/^void CkIndex_Bucket < key, value > ::_call_sortAll_void(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_Bucket
+_call_startBarrier_marshall2	HistSort.def.h	/^void CkIndex_Bucket < key, value > ::_call_startBarrier_marshall2(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_Bucket
+_call_stepSort_void	HistSort.def.h	/^void CkIndex_Bucket < key, value > ::_call_stepSort_void(void* impl_msg, void* impl_obj_void)$/;"	f	class:CkIndex_Bucket
+_callmarshall_Bucket_marshall1	HistSort.def.h	/^int CkIndex_Bucket < key, value > ::_callmarshall_Bucket_marshall1(char* impl_buf, void* impl_obj_void) {$/;"	f	class:CkIndex_Bucket
+_callmarshall_Main_marshall1	HistSort.def.h	/^int CkIndex_Main < key, value > ::_callmarshall_Main_marshall1(char* impl_buf, void* impl_obj_void) {$/;"	f	class:CkIndex_Main
+_callmarshall_NodeManager_marshall1	HistSort.def.h	/^int CkIndex_NodeManager < key, value > ::_callmarshall_NodeManager_marshall1(char* impl_buf, void* impl_obj_void) {$/;"	f	class:CkIndex_NodeManager
+_callmarshall_Sorter_marshall2	HistSort.def.h	/^int CkIndex_Sorter < key, value > ::_callmarshall_Sorter_marshall2(char* impl_buf, void* impl_obj_void) {$/;"	f	class:CkIndex_Sorter
+_callmarshall_firstLocalProbe_marshall6	HistSort.def.h	/^int CkIndex_Bucket < key, value > ::_callmarshall_firstLocalProbe_marshall6(char* impl_buf, void* impl_obj_void) {$/;"	f	class:CkIndex_Bucket
+_callmarshall_firstProbe_marshall5	HistSort.def.h	/^int CkIndex_Bucket < key, value > ::_callmarshall_firstProbe_marshall5(char* impl_buf, void* impl_obj_void) {$/;"	f	class:CkIndex_Bucket
+_callmarshall_handleOne_marshall8	HistSort.def.h	/^int CkIndex_NodeManager < key, value > ::_callmarshall_handleOne_marshall8(char* impl_buf, void* impl_obj_void) {$/;"	f	class:CkIndex_NodeManager
+_callmarshall_recvFinalKeys_marshall11	HistSort.def.h	/^int CkIndex_Bucket < key, value > ::_callmarshall_recvFinalKeys_marshall11(char* impl_buf, void* impl_obj_void) {$/;"	f	class:CkIndex_Bucket
+_callmarshall_sendOne_marshall5	HistSort.def.h	/^int CkIndex_NodeManager < key, value > ::_callmarshall_sendOne_marshall5(char* impl_buf, void* impl_obj_void) {$/;"	f	class:CkIndex_NodeManager
+_callmarshall_startBarrier_marshall2	HistSort.def.h	/^int CkIndex_Bucket < key, value > ::_callmarshall_startBarrier_marshall2(char* impl_buf, void* impl_obj_void) {$/;"	f	class:CkIndex_Bucket
+_main_proxy	HistSort.def.h	/^      CProxy_Main<key,value > _main_proxy;$/;"	m	struct:Closure_Bucket::startBarrier_2_closure
+_marshallmessagepup_Bucket_marshall1	HistSort.def.h	/^void CkIndex_Bucket < key, value > ::_marshallmessagepup_Bucket_marshall1(PUP::er &implDestP,void *impl_msg) {$/;"	f	class:CkIndex_Bucket
+_marshallmessagepup_Main_marshall1	HistSort.def.h	/^void CkIndex_Main < key, value > ::_marshallmessagepup_Main_marshall1(PUP::er &implDestP,void *impl_msg) {$/;"	f	class:CkIndex_Main
+_marshallmessagepup_NodeManager_marshall1	HistSort.def.h	/^void CkIndex_NodeManager < key, value > ::_marshallmessagepup_NodeManager_marshall1(PUP::er &implDestP,void *impl_msg) {$/;"	f	class:CkIndex_NodeManager
+_marshallmessagepup_Sorter_marshall2	HistSort.def.h	/^void CkIndex_Sorter < key, value > ::_marshallmessagepup_Sorter_marshall2(PUP::er &implDestP,void *impl_msg) {$/;"	f	class:CkIndex_Sorter
+_marshallmessagepup_firstLocalProbe_marshall6	HistSort.def.h	/^void CkIndex_Bucket < key, value > ::_marshallmessagepup_firstLocalProbe_marshall6(PUP::er &implDestP,void *impl_msg) {$/;"	f	class:CkIndex_Bucket
+_marshallmessagepup_firstProbe_marshall5	HistSort.def.h	/^void CkIndex_Bucket < key, value > ::_marshallmessagepup_firstProbe_marshall5(PUP::er &implDestP,void *impl_msg) {$/;"	f	class:CkIndex_Bucket
+_marshallmessagepup_handleOne_marshall8	HistSort.def.h	/^void CkIndex_NodeManager < key, value > ::_marshallmessagepup_handleOne_marshall8(PUP::er &implDestP,void *impl_msg) {$/;"	f	class:CkIndex_NodeManager
+_marshallmessagepup_loadkeys_marshall4	HistSort.def.h	/^void CkIndex_NodeManager < key, value > ::_marshallmessagepup_loadkeys_marshall4(PUP::er &implDestP,void *impl_msg) {$/;"	f	class:CkIndex_NodeManager
+_marshallmessagepup_recvFinalKeys_marshall11	HistSort.def.h	/^void CkIndex_Bucket < key, value > ::_marshallmessagepup_recvFinalKeys_marshall11(PUP::er &implDestP,void *impl_msg) {$/;"	f	class:CkIndex_Bucket
+_marshallmessagepup_registerLocalChare_marshall2	HistSort.def.h	/^void CkIndex_NodeManager < key, value > ::_marshallmessagepup_registerLocalChare_marshall2(PUP::er &implDestP,void *impl_msg) {$/;"	f	class:CkIndex_NodeManager
+_marshallmessagepup_sendOne_marshall5	HistSort.def.h	/^void CkIndex_NodeManager < key, value > ::_marshallmessagepup_sendOne_marshall5(PUP::er &implDestP,void *impl_msg) {$/;"	f	class:CkIndex_NodeManager
+_marshallmessagepup_startBarrier_marshall2	HistSort.def.h	/^void CkIndex_Bucket < key, value > ::_marshallmessagepup_startBarrier_marshall2(PUP::er &implDestP,void *impl_msg) {$/;"	f	class:CkIndex_Bucket
+_registerHistSort	HistSort.def.h	/^void _registerHistSort(void)$/;"	f
+_sdag_pup	HistSort.def.h	/^  void _sdag_pup(PUP::er &p) { }$/;"	f	struct:CBase_Bucket
+_sdag_pup	HistSort.def.h	/^  void _sdag_pup(PUP::er &p) { }$/;"	f	struct:CBase_Main
+_sdag_pup	HistSort.def.h	/^  void _sdag_pup(PUP::er &p) { }$/;"	f	struct:CBase_NodeManager
+_sdag_pup	HistSort.def.h	/^  void _sdag_pup(PUP::er &p) { }$/;"	f	struct:CBase_Sorter
+_sorter	HistSort.def.h	/^      CProxy_Sorter<key,value > _sorter;$/;"	m	struct:Closure_NodeManager::registerLocalChare_2_closure
+_sorter_proxy	HistSort.def.h	/^      CProxy_Sorter<key,value > _sorter_proxy;$/;"	m	struct:Closure_Bucket::startBarrier_2_closure
+achieved	Bucket.h	/^	bool* achieved;$/;"	m	class:Bucket
+achieved	Sorter.h	/^    bool* achieved;$/;"	m	class:Sorter
+achievedCounts	Bucket.h	/^	uint64_t* achievedCounts;$/;"	m	class:Bucket
+achievedCounts	Sorter.h	/^    uint64_t* achievedCounts;$/;"	m	class:Sorter
+achievedSplitters	Bucket.h	/^    int achievedSplitters;$/;"	m	class:Bucket
+achievedSplitters	Sorter.h	/^    int achievedSplitters;$/;"	m	class:Sorter
+ainfo	nodemanager.h	/^		std::vector<std::vector<sendInfo> > ainfo;$/;"	m	class:NodeManager
+allPreviousProbes	Sorter.h	/^    std::map<key, uint64_t> allPreviousProbes;$/;"	m	class:Sorter
+alloc	HistSort.def.h	/^template < class key >  void* CMessage_array_msg < key > ::alloc(int msgnum, size_t sz, int *sizes, int pb) {$/;"	f	class:CMessage_array_msg
+alloc	HistSort.def.h	/^template < class key >  void* CMessage_probeMessage < key > ::alloc(int msgnum, size_t sz, int *sizes, int pb) {$/;"	f	class:CMessage_probeMessage
+alloc	HistSort.def.h	/^template < class key, class value >  void* CMessage_data_msg < key, value > ::alloc(int msgnum, size_t sz, int *sizes, int pb) {$/;"	f	class:CMessage_data_msg
+array_msg	Bucket.h	/^class array_msg : public CMessage_array_msg<key> {$/;"	c
+backward_merge	Bucket.C	/^void Bucket<key, value>::backward_merge(kv_pair<key, value> *first1, kv_pair<key, value> *last1,$/;"	f	class:Bucket
+base	nodemanager.h	/^		void* base;$/;"	m	class:sendInfo
+bucket_arr	nodemanager.h	/^		CProxy_Bucket<key, value> bucket_arr;$/;"	m	class:NodeManager
+bucket_arr	sortinglib.h	/^    CProxy_Bucket<key, value> bucket_arr;$/;"	m	class:Main
+bucket_data	Bucket.h	/^	kv_pair<key, value>* bucket_data;$/;"	m	class:Bucket
+buckets	Sorter.h	/^    CProxy_Bucket<key, value> buckets;$/;"	m	class:Sorter
+bufMsgs	nodemanager.h	/^		std::vector<data_msg<key, value> *> bufMsgs;$/;"	m	class:NodeManager
+c1	Sorter.h	/^    double c1, c2;$/;"	m	class:Sorter
+c2	Sorter.h	/^    double c1, c2;$/;"	m	class:Sorter
+callBackSet	sortinglib.h	/^__thread CkCallback *CB;  __thread bool callBackSet;$/;"	v
+callPartialSendOne	Bucket.h	/^    bool callPartialSendOne;$/;"	m	class:Bucket
+checkGoal	Sorter.C	/^inline int Sorter<key, value>::checkGoal(int splitterInd, uint64_t histCount){$/;"	f	class:Sorter
+ckBroadcast	HistSort.decl.h	/^    inline void ckBroadcast(CkArrayMessage *m, int ep, int opts=0) const$/;"	f	class:CProxyElement_Bucket
+ckBroadcast	HistSort.decl.h	/^    inline void ckBroadcast(CkArrayMessage *m, int ep, int opts=0) const$/;"	f	class:CProxySection_Bucket
+ckBroadcast	HistSort.decl.h	/^    inline void ckBroadcast(CkArrayMessage *m, int ep, int opts=0) const$/;"	f	class:CProxy_Bucket
+ckCheck	HistSort.decl.h	/^    inline void ckCheck(void) const$/;"	f	class:CProxyElement_Bucket
+ckCheck	HistSort.decl.h	/^    inline void ckCheck(void) const$/;"	f	class:CProxySection_Bucket
+ckCheck	HistSort.decl.h	/^    inline void ckCheck(void) const$/;"	f	class:CProxy_Bucket
+ckCheck	HistSort.decl.h	/^    inline void ckCheck(void) const$/;"	f	class:CProxy_Main
+ckCheck	HistSort.decl.h	/^    inline void ckCheck(void) const$/;"	f	class:CProxy_Sorter
+ckCheck	HistSort.decl.h	/^inline void ckCheck(void) const {CProxyElement_NodeGroup::ckCheck();}$/;"	f	class:CProxyElement_NodeManager
+ckCheck	HistSort.decl.h	/^inline void ckCheck(void) const {CProxySection_NodeGroup::ckCheck();}$/;"	f	class:CProxySection_NodeManager
+ckCheck	HistSort.decl.h	/^inline void ckCheck(void) const {CProxy_NodeGroup::ckCheck();}$/;"	f	class:CProxy_NodeManager
+ckCreateArray	HistSort.decl.h	/^    inline static CkArrayID ckCreateArray(CkArrayMessage *m,int ctor,const CkArrayOptions &opts)$/;"	f	class:CProxyElement_Bucket
+ckCreateArray	HistSort.decl.h	/^    inline static CkArrayID ckCreateArray(CkArrayMessage *m,int ctor,const CkArrayOptions &opts)$/;"	f	class:CProxySection_Bucket
+ckCreateArray	HistSort.decl.h	/^    inline static CkArrayID ckCreateArray(CkArrayMessage *m,int ctor,const CkArrayOptions &opts)$/;"	f	class:CProxy_Bucket
+ckCreateEmptyArray	HistSort.decl.h	/^    inline static CkArrayID ckCreateEmptyArray(CkArrayOptions opts = CkArrayOptions())$/;"	f	class:CProxyElement_Bucket
+ckCreateEmptyArray	HistSort.decl.h	/^    inline static CkArrayID ckCreateEmptyArray(CkArrayOptions opts = CkArrayOptions())$/;"	f	class:CProxySection_Bucket
+ckCreateEmptyArray	HistSort.decl.h	/^    inline static CkArrayID ckCreateEmptyArray(CkArrayOptions opts = CkArrayOptions())$/;"	f	class:CProxy_Bucket
+ckCreateEmptyArrayAsync	HistSort.decl.h	/^    inline static void ckCreateEmptyArrayAsync(CkCallback cb, CkArrayOptions opts = CkArrayOptions())$/;"	f	class:CProxyElement_Bucket
+ckCreateEmptyArrayAsync	HistSort.decl.h	/^    inline static void ckCreateEmptyArrayAsync(CkCallback cb, CkArrayOptions opts = CkArrayOptions())$/;"	f	class:CProxySection_Bucket
+ckCreateEmptyArrayAsync	HistSort.decl.h	/^    inline static void ckCreateEmptyArrayAsync(CkCallback cb, CkArrayOptions opts = CkArrayOptions())$/;"	f	class:CProxy_Bucket
+ckDelegate	HistSort.decl.h	/^    void ckDelegate(CkDelegateMgr *dTo,CkDelegateData *dPtr=NULL)$/;"	f	class:CProxyElement_Bucket
+ckDelegate	HistSort.decl.h	/^    void ckDelegate(CkDelegateMgr *dTo,CkDelegateData *dPtr=NULL)$/;"	f	class:CProxyElement_NodeManager
+ckDelegate	HistSort.decl.h	/^    void ckDelegate(CkDelegateMgr *dTo,CkDelegateData *dPtr=NULL)$/;"	f	class:CProxySection_Bucket
+ckDelegate	HistSort.decl.h	/^    void ckDelegate(CkDelegateMgr *dTo,CkDelegateData *dPtr=NULL)$/;"	f	class:CProxySection_NodeManager
+ckDelegate	HistSort.decl.h	/^    void ckDelegate(CkDelegateMgr *dTo,CkDelegateData *dPtr=NULL)$/;"	f	class:CProxy_Bucket
+ckDelegate	HistSort.decl.h	/^    void ckDelegate(CkDelegateMgr *dTo,CkDelegateData *dPtr=NULL)$/;"	f	class:CProxy_Main
+ckDelegate	HistSort.decl.h	/^    void ckDelegate(CkDelegateMgr *dTo,CkDelegateData *dPtr=NULL)$/;"	f	class:CProxy_NodeManager
+ckDelegate	HistSort.decl.h	/^    void ckDelegate(CkDelegateMgr *dTo,CkDelegateData *dPtr=NULL)$/;"	f	class:CProxy_Sorter
+ckDelegatedIdx	HistSort.decl.h	/^    CkGroupID ckDelegatedIdx(void) const$/;"	f	class:CProxyElement_Bucket
+ckDelegatedIdx	HistSort.decl.h	/^    CkGroupID ckDelegatedIdx(void) const$/;"	f	class:CProxyElement_NodeManager
+ckDelegatedIdx	HistSort.decl.h	/^    CkGroupID ckDelegatedIdx(void) const$/;"	f	class:CProxySection_Bucket
+ckDelegatedIdx	HistSort.decl.h	/^    CkGroupID ckDelegatedIdx(void) const$/;"	f	class:CProxySection_NodeManager
+ckDelegatedIdx	HistSort.decl.h	/^    CkGroupID ckDelegatedIdx(void) const$/;"	f	class:CProxy_Bucket
+ckDelegatedIdx	HistSort.decl.h	/^    CkGroupID ckDelegatedIdx(void) const$/;"	f	class:CProxy_Main
+ckDelegatedIdx	HistSort.decl.h	/^    CkGroupID ckDelegatedIdx(void) const$/;"	f	class:CProxy_NodeManager
+ckDelegatedIdx	HistSort.decl.h	/^    CkGroupID ckDelegatedIdx(void) const$/;"	f	class:CProxy_Sorter
+ckDelegatedPtr	HistSort.decl.h	/^    inline CkDelegateData *ckDelegatedPtr(void) const$/;"	f	class:CProxyElement_Bucket
+ckDelegatedPtr	HistSort.decl.h	/^    inline CkDelegateData *ckDelegatedPtr(void) const$/;"	f	class:CProxyElement_NodeManager
+ckDelegatedPtr	HistSort.decl.h	/^    inline CkDelegateData *ckDelegatedPtr(void) const$/;"	f	class:CProxySection_Bucket
+ckDelegatedPtr	HistSort.decl.h	/^    inline CkDelegateData *ckDelegatedPtr(void) const$/;"	f	class:CProxySection_NodeManager
+ckDelegatedPtr	HistSort.decl.h	/^    inline CkDelegateData *ckDelegatedPtr(void) const$/;"	f	class:CProxy_Bucket
+ckDelegatedPtr	HistSort.decl.h	/^    inline CkDelegateData *ckDelegatedPtr(void) const$/;"	f	class:CProxy_Main
+ckDelegatedPtr	HistSort.decl.h	/^    inline CkDelegateData *ckDelegatedPtr(void) const$/;"	f	class:CProxy_NodeManager
+ckDelegatedPtr	HistSort.decl.h	/^    inline CkDelegateData *ckDelegatedPtr(void) const$/;"	f	class:CProxy_Sorter
+ckDelegatedTo	HistSort.decl.h	/^    inline CkDelegateMgr *ckDelegatedTo(void) const$/;"	f	class:CProxyElement_Bucket
+ckDelegatedTo	HistSort.decl.h	/^    inline CkDelegateMgr *ckDelegatedTo(void) const$/;"	f	class:CProxyElement_NodeManager
+ckDelegatedTo	HistSort.decl.h	/^    inline CkDelegateMgr *ckDelegatedTo(void) const$/;"	f	class:CProxySection_Bucket
+ckDelegatedTo	HistSort.decl.h	/^    inline CkDelegateMgr *ckDelegatedTo(void) const$/;"	f	class:CProxySection_NodeManager
+ckDelegatedTo	HistSort.decl.h	/^    inline CkDelegateMgr *ckDelegatedTo(void) const$/;"	f	class:CProxy_Bucket
+ckDelegatedTo	HistSort.decl.h	/^    inline CkDelegateMgr *ckDelegatedTo(void) const$/;"	f	class:CProxy_Main
+ckDelegatedTo	HistSort.decl.h	/^    inline CkDelegateMgr *ckDelegatedTo(void) const$/;"	f	class:CProxy_NodeManager
+ckDelegatedTo	HistSort.decl.h	/^    inline CkDelegateMgr *ckDelegatedTo(void) const$/;"	f	class:CProxy_Sorter
+ckGetArrayElements	HistSort.decl.h	/^    inline CkArrayIndex *ckGetArrayElements() const$/;"	f	class:CProxySection_Bucket
+ckGetArrayElements	HistSort.decl.h	/^    inline CkArrayIndex *ckGetArrayElements(int i) const$/;"	f	class:CProxySection_Bucket
+ckGetArrayID	HistSort.decl.h	/^    inline CkArrayID ckGetArrayID(void) const$/;"	f	class:CProxyElement_Bucket
+ckGetArrayID	HistSort.decl.h	/^    inline CkArrayID ckGetArrayID(void) const$/;"	f	class:CProxySection_Bucket
+ckGetArrayID	HistSort.decl.h	/^    inline CkArrayID ckGetArrayID(void) const$/;"	f	class:CProxy_Bucket
+ckGetArrayIDn	HistSort.decl.h	/^    inline CkArrayID ckGetArrayIDn(int i) const$/;"	f	class:CProxySection_Bucket
+ckGetChareID	HistSort.decl.h	/^    const CkChareID &ckGetChareID(void) const$/;"	f	class:CProxy_Main
+ckGetChareID	HistSort.decl.h	/^    const CkChareID &ckGetChareID(void) const$/;"	f	class:CProxy_Sorter
+ckGetChareID	HistSort.decl.h	/^CkChareID ckGetChareID(void) const$/;"	f	class:CProxyElement_NodeManager
+ckGetChareID	HistSort.decl.h	/^CkChareID ckGetChareID(void) const$/;"	f	class:CProxySection_NodeManager
+ckGetChareID	HistSort.decl.h	/^CkChareID ckGetChareID(void) const$/;"	f	class:CProxy_NodeManager
+ckGetElements	HistSort.decl.h	/^inline int *ckGetElements() const$/;"	f	class:CProxySection_NodeManager
+ckGetElements	HistSort.decl.h	/^inline int *ckGetElements(int i) const$/;"	f	class:CProxySection_NodeManager
+ckGetGroupID	HistSort.decl.h	/^CkGroupID ckGetGroupID(void) const$/;"	f	class:CProxyElement_NodeManager
+ckGetGroupID	HistSort.decl.h	/^CkGroupID ckGetGroupID(void) const$/;"	f	class:CProxySection_NodeManager
+ckGetGroupID	HistSort.decl.h	/^CkGroupID ckGetGroupID(void) const$/;"	f	class:CProxy_NodeManager
+ckGetGroupIDn	HistSort.decl.h	/^inline CkGroupID ckGetGroupIDn(int i) const$/;"	f	class:CProxySection_NodeManager
+ckGetGroupPe	HistSort.decl.h	/^int ckGetGroupPe(void) const$/;"	f	class:CProxyElement_NodeManager
+ckGetIndex	HistSort.decl.h	/^    inline const CkArrayIndex &ckGetIndex() const$/;"	f	class:CProxyElement_Bucket
+ckGetNumElements	HistSort.decl.h	/^    inline int ckGetNumElements() const$/;"	f	class:CProxySection_Bucket
+ckGetNumElements	HistSort.decl.h	/^    inline int ckGetNumElements(int i) const$/;"	f	class:CProxySection_Bucket
+ckGetNumElements	HistSort.decl.h	/^inline int ckGetNumElements() const$/;"	f	class:CProxySection_NodeManager
+ckGetNumElements	HistSort.decl.h	/^inline int ckGetNumElements(int i) const$/;"	f	class:CProxySection_NodeManager
+ckGetNumSections	HistSort.decl.h	/^inline int ckGetNumSections() const$/;"	f	class:CProxySection_NodeManager
+ckGetSectionID	HistSort.decl.h	/^    inline CkSectionID &ckGetSectionID()$/;"	f	class:CProxySection_Bucket
+ckGetSectionID	HistSort.decl.h	/^    inline CkSectionID &ckGetSectionID(int i)$/;"	f	class:CProxySection_Bucket
+ckGetSectionID	HistSort.decl.h	/^inline CkSectionID &ckGetSectionID()$/;"	f	class:CProxySection_NodeManager
+ckGetSectionID	HistSort.decl.h	/^inline CkSectionID &ckGetSectionID(int i)$/;"	f	class:CProxySection_NodeManager
+ckGetSectionIDs	HistSort.decl.h	/^    inline CkSectionID *ckGetSectionIDs()$/;"	f	class:CProxySection_Bucket
+ckGetSectionIDs	HistSort.decl.h	/^inline CkSectionID *ckGetSectionIDs()$/;"	f	class:CProxySection_NodeManager
+ckGetSectionInfo	HistSort.decl.h	/^    inline CkSectionInfo &ckGetSectionInfo()$/;"	f	class:CProxySection_Bucket
+ckGetSectionInfo	HistSort.decl.h	/^inline CkSectionInfo &ckGetSectionInfo()$/;"	f	class:CProxySection_NodeManager
+ckInsert	HistSort.decl.h	/^    inline void ckInsert(CkArrayMessage *m,int ctor,int onPe)$/;"	f	class:CProxyElement_Bucket
+ckInsertIdx	HistSort.decl.h	/^    inline void ckInsertIdx(CkArrayMessage *m,int ctor,int onPe,const CkArrayIndex &idx)$/;"	f	class:CProxyElement_Bucket
+ckInsertIdx	HistSort.decl.h	/^    inline void ckInsertIdx(CkArrayMessage *m,int ctor,int onPe,const CkArrayIndex &idx)$/;"	f	class:CProxySection_Bucket
+ckInsertIdx	HistSort.decl.h	/^    inline void ckInsertIdx(CkArrayMessage *m,int ctor,int onPe,const CkArrayIndex &idx)$/;"	f	class:CProxy_Bucket
+ckIsDelegated	HistSort.decl.h	/^    int ckIsDelegated(void) const$/;"	f	class:CProxyElement_Bucket
+ckIsDelegated	HistSort.decl.h	/^    int ckIsDelegated(void) const$/;"	f	class:CProxyElement_NodeManager
+ckIsDelegated	HistSort.decl.h	/^    int ckIsDelegated(void) const$/;"	f	class:CProxySection_Bucket
+ckIsDelegated	HistSort.decl.h	/^    int ckIsDelegated(void) const$/;"	f	class:CProxySection_NodeManager
+ckIsDelegated	HistSort.decl.h	/^    int ckIsDelegated(void) const$/;"	f	class:CProxy_Bucket
+ckIsDelegated	HistSort.decl.h	/^    int ckIsDelegated(void) const$/;"	f	class:CProxy_Main
+ckIsDelegated	HistSort.decl.h	/^    int ckIsDelegated(void) const$/;"	f	class:CProxy_NodeManager
+ckIsDelegated	HistSort.decl.h	/^    int ckIsDelegated(void) const$/;"	f	class:CProxy_Sorter
+ckLocMgr	HistSort.decl.h	/^    inline CkLocMgr *ckLocMgr(void) const$/;"	f	class:CProxyElement_Bucket
+ckLocMgr	HistSort.decl.h	/^    inline CkLocMgr *ckLocMgr(void) const$/;"	f	class:CProxySection_Bucket
+ckLocMgr	HistSort.decl.h	/^    inline CkLocMgr *ckLocMgr(void) const$/;"	f	class:CProxy_Bucket
+ckLocal	HistSort.decl.h	/^    Bucket < key, value >  *ckLocal(void) const$/;"	f	class:CProxyElement_Bucket
+ckLocal	HistSort.decl.h	/^    Main < key, value >  *ckLocal(void) const$/;"	f	class:CProxy_Main
+ckLocal	HistSort.decl.h	/^    Sorter < key, value >  *ckLocal(void) const$/;"	f	class:CProxy_Sorter
+ckLocalBranch	HistSort.decl.h	/^    NodeManager < key, value > * ckLocalBranch(void) const {$/;"	f	class:CProxyElement_NodeManager
+ckLocalBranch	HistSort.decl.h	/^    NodeManager < key, value > * ckLocalBranch(void) const {$/;"	f	class:CProxySection_NodeManager
+ckLocalBranch	HistSort.decl.h	/^    NodeManager < key, value > * ckLocalBranch(void) const {$/;"	f	class:CProxy_NodeManager
+ckLocalBranch	HistSort.decl.h	/^    inline CkArray *ckLocalBranch(void) const$/;"	f	class:CProxyElement_Bucket
+ckLocalBranch	HistSort.decl.h	/^    inline CkArray *ckLocalBranch(void) const$/;"	f	class:CProxySection_Bucket
+ckLocalBranch	HistSort.decl.h	/^    inline CkArray *ckLocalBranch(void) const$/;"	f	class:CProxy_Bucket
+ckLocalBranch	HistSort.decl.h	/^    static NodeManager < key, value > * ckLocalBranch(CkGroupID gID) {$/;"	f	class:CProxyElement_NodeManager
+ckLocalBranch	HistSort.decl.h	/^    static NodeManager < key, value > * ckLocalBranch(CkGroupID gID) {$/;"	f	class:CProxySection_NodeManager
+ckLocalBranch	HistSort.decl.h	/^    static NodeManager < key, value > * ckLocalBranch(CkGroupID gID) {$/;"	f	class:CProxy_NodeManager
+ckNew	HistSort.decl.h	/^    static CkArrayID ckNew(CkArrayOptions opts = CkArrayOptions()) { return ckCreateEmptyArray(opts); }$/;"	f	class:CProxy_Bucket
+ckNew	HistSort.decl.h	/^    static CkSectionID ckNew(const CkArrayID &aid, CkArrayIndex *elems, int nElems) {$/;"	f	class:CProxySection_Bucket
+ckNew	HistSort.decl.h	/^    static CkSectionID ckNew(const CkArrayID &aid, CkArrayIndex1D *elems, int nElems) {$/;"	f	class:CProxySection_Bucket
+ckNew	HistSort.decl.h	/^    static CkSectionID ckNew(const CkArrayID &aid, int l, int u, int s) {$/;"	f	class:CProxySection_Bucket
+ckNew	HistSort.decl.h	/^    static int ckNew(CkMigrateMessage* impl_msg) { return idx_Bucket_CkMigrateMessage(); }$/;"	f	class:CkIndex_Bucket
+ckNew	HistSort.decl.h	/^    static int ckNew(const CkArrayID &bucketArr, int num_chares, const key &min, const key &max, const tuning_params &par, const CProxy_Main<key,value > &mainproxy, const CkNodeGroupID &_nodeMgrID) { return idx_Sorter_marshall2(); }$/;"	f	class:CkIndex_Sorter
+ckNew	HistSort.decl.h	/^    static int ckNew(const key &_minkey, const key &_maxkey) { return idx_NodeManager_marshall1(); }$/;"	f	class:CkIndex_NodeManager
+ckNew	HistSort.decl.h	/^    static int ckNew(const tuning_params &par, const key &_min, const key &_max, int nBuckets_, const CkNodeGroupID &_nodeMgrID) { return idx_Bucket_marshall1(); }$/;"	f	class:CkIndex_Bucket
+ckNew	HistSort.decl.h	/^    static int ckNew(int num_buckets_, int probe_max) { return idx_Main_marshall1(); }$/;"	f	class:CkIndex_Main
+ckNew	HistSort.decl.h	/^    static int ckNew(void) { return idx_Sorter_void(); }$/;"	f	class:CkIndex_Sorter
+ckNew	HistSort.decl.h	/^    static void      ckNew(CkCallback cb, CkArrayOptions opts = CkArrayOptions()) { ckCreateEmptyArrayAsync(cb, opts); }$/;"	f	class:CProxy_Bucket
+ckNew	HistSort.def.h	/^CkArrayID CProxy_Bucket < key, value > ::ckNew(const tuning_params &par, const key &_min, const key &_max, int nBuckets_, const CkNodeGroupID &_nodeMgrID, const CkArrayOptions &opts, const CkEntryOptions *impl_e_opts)$/;"	f	class:CProxy_Bucket
+ckNew	HistSort.def.h	/^CkArrayID CProxy_Bucket < key, value > ::ckNew(const tuning_params &par, const key &_min, const key &_max, int nBuckets_, const CkNodeGroupID &_nodeMgrID, const int s1, const CkEntryOptions *impl_e_opts)$/;"	f	class:CProxy_Bucket
+ckNew	HistSort.def.h	/^CkChareID CProxy_Main < key, value > ::ckNew(int num_buckets_, int probe_max, int impl_onPE, const CkEntryOptions *impl_e_opts)$/;"	f	class:CProxy_Main
+ckNew	HistSort.def.h	/^CkChareID CProxy_Sorter < key, value > ::ckNew(const CkArrayID &bucketArr, int num_chares, const key &min, const key &max, const tuning_params &par, const CProxy_Main<key,value > &mainproxy, const CkNodeGroupID &_nodeMgrID, int impl_onPE, const CkEntryOptions *impl_e_opts)$/;"	f	class:CProxy_Sorter
+ckNew	HistSort.def.h	/^CkChareID CProxy_Sorter < key, value > ::ckNew(int impl_onPE)$/;"	f	class:CProxy_Sorter
+ckNew	HistSort.def.h	/^CkGroupID CProxy_NodeManager < key, value > ::ckNew(const key &_minkey, const key &_maxkey, const CkEntryOptions *impl_e_opts)$/;"	f	class:CProxy_NodeManager
+ckNew	HistSort.def.h	/^void CProxy_Bucket < key, value > ::ckNew(const tuning_params &par, const key &_min, const key &_max, int nBuckets_, const CkNodeGroupID &_nodeMgrID, const CkArrayOptions &opts, CkCallback _ck_array_creation_cb, const CkEntryOptions *impl_e_opts)$/;"	f	class:CProxy_Bucket
+ckNew	HistSort.def.h	/^void CProxy_Bucket < key, value > ::ckNew(const tuning_params &par, const key &_min, const key &_max, int nBuckets_, const CkNodeGroupID &_nodeMgrID, const int s1, CkCallback _ck_array_creation_cb, const CkEntryOptions *impl_e_opts)$/;"	f	class:CProxy_Bucket
+ckNew	HistSort.def.h	/^void CProxy_Main < key, value > ::ckNew(int num_buckets_, int probe_max, CkChareID* pcid, int impl_onPE, const CkEntryOptions *impl_e_opts)$/;"	f	class:CProxy_Main
+ckNew	HistSort.def.h	/^void CProxy_Sorter < key, value > ::ckNew(CkChareID* pcid, int impl_onPE)$/;"	f	class:CProxy_Sorter
+ckNew	HistSort.def.h	/^void CProxy_Sorter < key, value > ::ckNew(const CkArrayID &bucketArr, int num_chares, const key &min, const key &max, const tuning_params &par, const CProxy_Main<key,value > &mainproxy, const CkNodeGroupID &_nodeMgrID, CkChareID* pcid, int impl_onPE, const CkEntryOptions *impl_e_opts)$/;"	f	class:CProxy_Sorter
+ckSend	HistSort.decl.h	/^    inline void ckSend(CkArrayMessage *m, int ep, int opts = 0) const$/;"	f	class:CProxyElement_Bucket
+ckSend	HistSort.decl.h	/^    inline void ckSend(CkArrayMessage *m, int ep, int opts = 0)$/;"	f	class:CProxySection_Bucket
+ckSendSync	HistSort.decl.h	/^    inline void *ckSendSync(CkArrayMessage *m, int ep) const$/;"	f	class:CProxyElement_Bucket
+ckSetChareID	HistSort.decl.h	/^    void ckSetChareID(const CkChareID &c)$/;"	f	class:CProxy_Main
+ckSetChareID	HistSort.decl.h	/^    void ckSetChareID(const CkChareID &c)$/;"	f	class:CProxy_Sorter
+ckSetGroupID	HistSort.decl.h	/^    void ckSetGroupID(CkGroupID g) {$/;"	f	class:CProxyElement_NodeManager
+ckSetGroupID	HistSort.decl.h	/^    void ckSetGroupID(CkGroupID g) {$/;"	f	class:CProxySection_NodeManager
+ckSetGroupID	HistSort.decl.h	/^    void ckSetGroupID(CkGroupID g) {$/;"	f	class:CProxy_NodeManager
+ckSetReductionClient	HistSort.decl.h	/^    inline void ckSetReductionClient(CkCallback *cb) const$/;"	f	class:CProxyElement_Bucket
+ckSetReductionClient	HistSort.decl.h	/^    inline void ckSetReductionClient(CkCallback *cb) const$/;"	f	class:CProxyElement_NodeManager
+ckSetReductionClient	HistSort.decl.h	/^    inline void ckSetReductionClient(CkCallback *cb) const$/;"	f	class:CProxySection_Bucket
+ckSetReductionClient	HistSort.decl.h	/^    inline void ckSetReductionClient(CkCallback *cb) const$/;"	f	class:CProxySection_NodeManager
+ckSetReductionClient	HistSort.decl.h	/^    inline void ckSetReductionClient(CkCallback *cb) const$/;"	f	class:CProxy_Bucket
+ckSetReductionClient	HistSort.decl.h	/^    inline void ckSetReductionClient(CkCallback *cb) const$/;"	f	class:CProxy_NodeManager
+ckSetReductionClient	HistSort.decl.h	/^    inline void ckSetReductionClient(CkReductionClientFn fn,void *param=NULL) const$/;"	f	class:CProxyElement_Bucket
+ckSetReductionClient	HistSort.decl.h	/^    inline void ckSetReductionClient(CkReductionClientFn fn,void *param=NULL) const$/;"	f	class:CProxyElement_NodeManager
+ckSetReductionClient	HistSort.decl.h	/^    inline void ckSetReductionClient(CkReductionClientFn fn,void *param=NULL) const$/;"	f	class:CProxySection_Bucket
+ckSetReductionClient	HistSort.decl.h	/^    inline void ckSetReductionClient(CkReductionClientFn fn,void *param=NULL) const$/;"	f	class:CProxySection_NodeManager
+ckSetReductionClient	HistSort.decl.h	/^    inline void ckSetReductionClient(CkReductionClientFn fn,void *param=NULL) const$/;"	f	class:CProxy_Bucket
+ckSetReductionClient	HistSort.decl.h	/^    inline void ckSetReductionClient(CkReductionClientFn fn,void *param=NULL) const$/;"	f	class:CProxy_NodeManager
+ckUndelegate	HistSort.decl.h	/^    void ckUndelegate(void)$/;"	f	class:CProxyElement_Bucket
+ckUndelegate	HistSort.decl.h	/^    void ckUndelegate(void)$/;"	f	class:CProxyElement_NodeManager
+ckUndelegate	HistSort.decl.h	/^    void ckUndelegate(void)$/;"	f	class:CProxySection_Bucket
+ckUndelegate	HistSort.decl.h	/^    void ckUndelegate(void)$/;"	f	class:CProxySection_NodeManager
+ckUndelegate	HistSort.decl.h	/^    void ckUndelegate(void)$/;"	f	class:CProxy_Bucket
+ckUndelegate	HistSort.decl.h	/^    void ckUndelegate(void)$/;"	f	class:CProxy_Main
+ckUndelegate	HistSort.decl.h	/^    void ckUndelegate(void)$/;"	f	class:CProxy_NodeManager
+ckUndelegate	HistSort.decl.h	/^    void ckUndelegate(void)$/;"	f	class:CProxy_Sorter
+collectSamples	HistSort.decl.h	/^    static int collectSamples(array_msg<key >* impl_msg) { return idx_collectSamples_array_msg(); }$/;"	f	class:CkIndex_NodeManager
+collectSamples	HistSort.def.h	/^void CProxyElement_NodeManager < key, value > ::collectSamples(array_msg<key >* impl_msg)$/;"	f	class:CProxyElement_NodeManager
+collectSamples	HistSort.def.h	/^void CProxySection_NodeManager < key, value > ::collectSamples(array_msg<key >* impl_msg)$/;"	f	class:CProxySection_NodeManager
+collectSamples	HistSort.def.h	/^void CProxy_NodeManager < key, value > ::collectSamples(array_msg<key >* impl_msg)$/;"	f	class:CProxy_NodeManager
+collectSamples	nodemanager.h	/^		void collectSamples(array_msg<key> *s){$/;"	f	class:NodeManager
+collectedSample	Sorter.h	/^    std::vector<key> collectedSample;$/;"	m	class:Sorter
+cumHist	Bucket.h	/^	  int* cumHist;$/;"	m	class:Bucket
+data	Bucket.h	/^    key* data;$/;"	m	class:array_msg
+data	Bucket.h	/^    kv_pair<key, value> *data;$/;"	m	class:data_msg
+dataIn	sortinglib.h	/^__thread void* dataIn, **dataOut;$/;"	v
+dataOut	sortinglib.h	/^__thread void* dataIn, **dataOut;$/;"	v
+data_msg	Bucket.h	/^class data_msg : public CMessage_data_msg<key, value> {$/;"	c
+dealloc	HistSort.def.h	/^template < class key >  void CMessage_array_msg < key > ::dealloc(void *p) {$/;"	f	class:CMessage_array_msg
+dealloc	HistSort.def.h	/^template < class key >  void CMessage_probeMessage < key > ::dealloc(void *p) {$/;"	f	class:CMessage_probeMessage
+dealloc	HistSort.def.h	/^template < class key, class value >  void CMessage_data_msg < key, value > ::dealloc(void *p) {$/;"	f	class:CMessage_data_msg
+depositHist	HistSort.decl.h	/^    static int depositHist(void) { return idx_depositHist_void(); }$/;"	f	class:CkIndex_NodeManager
+depositHist	HistSort.def.h	/^void CProxyElement_NodeManager < key, value > ::depositHist(void)$/;"	f	class:CProxyElement_NodeManager
+depositHist	HistSort.def.h	/^void CProxySection_NodeManager < key, value > ::depositHist(void)$/;"	f	class:CProxySection_NodeManager
+depositHist	HistSort.def.h	/^void CProxy_NodeManager < key, value > ::depositHist(void)$/;"	f	class:CProxy_NodeManager
+depositHist	nodemanager.h	/^	  void depositHist(){$/;"	f	class:NodeManager
+depositHist_11_closure	HistSort.def.h	/^      depositHist_11_closure() {$/;"	f	struct:Closure_NodeManager::depositHist_11_closure
+depositHist_11_closure	HistSort.def.h	/^      depositHist_11_closure(CkMigrateMessage*) {$/;"	f	struct:Closure_NodeManager::depositHist_11_closure
+depositHist_11_closure	HistSort.def.h	/^    struct Closure_NodeManager < key, value > ::depositHist_11_closure : public SDAG::Closure {$/;"	s	class:Closure_NodeManager
+dest	HistSort.def.h	/^      int dest;$/;"	m	struct:Closure_NodeManager::loadkeys_4_closure
+dest	HistSort.def.h	/^      int dest;$/;"	m	struct:Closure_NodeManager::sendOne_5_closure
+doneHists	Bucket.h	/^   	bool doneHists;$/;"	m	class:Bucket
+doneInserting	HistSort.decl.h	/^    inline void doneInserting(void)$/;"	f	class:CProxyElement_Bucket
+doneInserting	HistSort.decl.h	/^    inline void doneInserting(void)$/;"	f	class:CProxySection_Bucket
+doneInserting	HistSort.decl.h	/^    inline void doneInserting(void)$/;"	f	class:CProxy_Bucket
+dummyCount	Bucket.h	/^    int dummyCount, dummyCount2;$/;"	m	class:Bucket
+dummyCount2	Bucket.h	/^    int dummyCount, dummyCount2;$/;"	m	class:Bucket
+eager_send	defs.h	/^    int eager_send;$/;"	m	class:tuning_params
+element_t	HistSort.decl.h	/^    typedef CProxyElement_Bucket < key, value >  element_t;$/;"	t	class:CProxyElement_Bucket
+element_t	HistSort.decl.h	/^    typedef CProxyElement_Bucket < key, value >  element_t;$/;"	t	class:CProxySection_Bucket
+element_t	HistSort.decl.h	/^    typedef CProxyElement_Bucket < key, value >  element_t;$/;"	t	class:CProxy_Bucket
+element_t	HistSort.decl.h	/^    typedef CProxyElement_Bucket < key, value >  element_t;$/;"	t	class:CkIndex_Bucket
+element_t	HistSort.decl.h	/^    typedef CProxyElement_NodeManager < key, value >  element_t;$/;"	t	class:CProxyElement_NodeManager
+element_t	HistSort.decl.h	/^    typedef CProxyElement_NodeManager < key, value >  element_t;$/;"	t	class:CProxySection_NodeManager
+element_t	HistSort.decl.h	/^    typedef CProxyElement_NodeManager < key, value >  element_t;$/;"	t	class:CProxy_NodeManager
+element_t	HistSort.decl.h	/^    typedef CProxyElement_NodeManager < key, value >  element_t;$/;"	t	class:CkIndex_NodeManager
+element_t	HistSort.decl.h	/^    typedef CProxy_Main < key, value >  element_t;$/;"	t	class:CProxy_Main
+element_t	HistSort.decl.h	/^    typedef CProxy_Main < key, value >  element_t;$/;"	t	class:CkIndex_Main
+element_t	HistSort.decl.h	/^    typedef CProxy_Sorter < key, value >  element_t;$/;"	t	class:CProxy_Sorter
+element_t	HistSort.decl.h	/^    typedef CProxy_Sorter < key, value >  element_t;$/;"	t	class:CkIndex_Sorter
+finalHistCounts	nodemanager.h	/^		uint64_t* finalHistCounts;$/;"	m	class:NodeManager
+finalProbes	Bucket.C	/^void Bucket<key, value>::finalProbes(array_msg<key>* finalprb){$/;"	f	class:Bucket
+finalProbes	HistSort.decl.h	/^    static int finalProbes(array_msg<key >* impl_msg) { return idx_finalProbes_array_msg(); }$/;"	f	class:CkIndex_Bucket
+finalProbes	HistSort.def.h	/^void CProxyElement_Bucket < key, value > ::finalProbes(array_msg<key >* impl_msg) $/;"	f	class:CProxyElement_Bucket
+finalProbes	HistSort.def.h	/^void CProxySection_Bucket < key, value > ::finalProbes(array_msg<key >* impl_msg) $/;"	f	class:CProxySection_Bucket
+finalProbes	HistSort.def.h	/^void CProxy_Bucket < key, value > ::finalProbes(array_msg<key >* impl_msg) $/;"	f	class:CProxy_Bucket
+finalSplitters	Bucket.h	/^	key* finalSplitters;$/;"	m	class:Bucket
+finalSplitters	Sorter.h	/^    key* finalSplitters;$/;"	m	class:Sorter
+final_dsum	HistSort.decl.h	/^    static int final_dsum(CkReductionMsg* impl_msg) { return idx_final_dsum_CkReductionMsg(); }$/;"	f	class:CkIndex_Main
+final_dsum	HistSort.def.h	/^void CProxy_Main < key, value > ::final_dsum(CkReductionMsg* impl_msg)$/;"	f	class:CProxy_Main
+final_dsum	sortinglib.h	/^    void final_dsum(CkReductionMsg *msg) {$/;"	f	class:Main
+final_isum	HistSort.decl.h	/^    static int final_isum(CkReductionMsg* impl_msg) { return idx_final_isum_CkReductionMsg(); }$/;"	f	class:CkIndex_Main
+final_isum	HistSort.def.h	/^void CProxy_Main < key, value > ::final_isum(CkReductionMsg* impl_msg)$/;"	f	class:CProxy_Main
+final_isum	sortinglib.h	/^    void final_isum(CkReductionMsg *msg) {$/;"	f	class:Main
+finish	Bucket.C	/^void Bucket<key, value>::finish(){$/;"	f	class:Bucket
+finish	HistSort.decl.h	/^    static int finish(void) { return idx_finish_void(); }$/;"	f	class:CkIndex_Bucket
+finish	HistSort.def.h	/^void CProxyElement_Bucket < key, value > ::finish(void) $/;"	f	class:CProxyElement_Bucket
+finish	HistSort.def.h	/^void CProxySection_Bucket < key, value > ::finish(void) $/;"	f	class:CProxySection_Bucket
+finish	HistSort.def.h	/^void CProxy_Bucket < key, value > ::finish(void) $/;"	f	class:CProxy_Bucket
+finishBarrier	HistSort.decl.h	/^    static int finishBarrier(CkReductionMsg* impl_msg) { return idx_finishBarrier_CkReductionMsg(); }$/;"	f	class:CkIndex_Sorter
+finishBarrier	HistSort.def.h	/^void CProxy_Sorter < key, value > ::finishBarrier(CkReductionMsg* impl_msg)$/;"	f	class:CProxy_Sorter
+finishBarrier	Sorter.C	/^void Sorter<key, value>::finishBarrier(CkReductionMsg *msg){$/;"	f	class:Sorter
+finishOne	HistSort.decl.h	/^    static int finishOne(void) { return idx_finishOne_void(); }$/;"	f	class:CkIndex_NodeManager
+finishOne	HistSort.def.h	/^void CProxyElement_NodeManager < key, value > ::finishOne(void)$/;"	f	class:CProxyElement_NodeManager
+finishOne	HistSort.def.h	/^void CProxySection_NodeManager < key, value > ::finishOne(void)$/;"	f	class:CProxySection_NodeManager
+finishOne	HistSort.def.h	/^void CProxy_NodeManager < key, value > ::finishOne(void)$/;"	f	class:CProxy_NodeManager
+finishOne	nodemanager.h	/^		void finishOne(){$/;"	f	class:NodeManager
+finishOne_9_closure	HistSort.def.h	/^      finishOne_9_closure() {$/;"	f	struct:Closure_NodeManager::finishOne_9_closure
+finishOne_9_closure	HistSort.def.h	/^      finishOne_9_closure(CkMigrateMessage*) {$/;"	f	struct:Closure_NodeManager::finishOne_9_closure
+finishOne_9_closure	HistSort.def.h	/^    struct Closure_NodeManager < key, value > ::finishOne_9_closure : public SDAG::Closure {$/;"	s	class:Closure_NodeManager
+finish_15_closure	HistSort.def.h	/^      finish_15_closure() {$/;"	f	struct:Closure_Bucket::finish_15_closure
+finish_15_closure	HistSort.def.h	/^      finish_15_closure(CkMigrateMessage*) {$/;"	f	struct:Closure_Bucket::finish_15_closure
+finish_15_closure	HistSort.def.h	/^    struct Closure_Bucket < key, value > ::finish_15_closure : public SDAG::Closure {$/;"	s	class:Closure_Bucket
+firstLocalProbe	Bucket.C	/^void Bucket<key, value>::firstLocalProbe(int _lastProbeSize){$/;"	f	class:Bucket
+firstLocalProbe	HistSort.decl.h	/^    static int firstLocalProbe(int lastProbeSize) { return idx_firstLocalProbe_marshall6(); }$/;"	f	class:CkIndex_Bucket
+firstLocalProbe	HistSort.def.h	/^void CProxyElement_Bucket < key, value > ::firstLocalProbe(int lastProbeSize, const CkEntryOptions *impl_e_opts) $/;"	f	class:CProxyElement_Bucket
+firstLocalProbe	HistSort.def.h	/^void CProxySection_Bucket < key, value > ::firstLocalProbe(int lastProbeSize, const CkEntryOptions *impl_e_opts) $/;"	f	class:CProxySection_Bucket
+firstLocalProbe	HistSort.def.h	/^void CProxy_Bucket < key, value > ::firstLocalProbe(int lastProbeSize, const CkEntryOptions *impl_e_opts) $/;"	f	class:CProxy_Bucket
+firstLocalProbe_6_closure	HistSort.def.h	/^      firstLocalProbe_6_closure() {$/;"	f	struct:Closure_Bucket::firstLocalProbe_6_closure
+firstLocalProbe_6_closure	HistSort.def.h	/^      firstLocalProbe_6_closure(CkMigrateMessage*) {$/;"	f	struct:Closure_Bucket::firstLocalProbe_6_closure
+firstLocalProbe_6_closure	HistSort.def.h	/^    struct Closure_Bucket < key, value > ::firstLocalProbe_6_closure : public SDAG::Closure {$/;"	s	class:Closure_Bucket
+firstMergingWork	Bucket.h	/^    bool firstMergingWork;$/;"	m	class:Bucket
+firstProbe	Bucket.C	/^void Bucket<key, value>::firstProbe(key firstkey, key lastkey, key step, int probeSize){$/;"	f	class:Bucket
+firstProbe	HistSort.decl.h	/^    static int firstProbe(const key &firstkey, const key &lastkey, const key &stepSize, int probeSize) { return idx_firstProbe_marshall5(); }$/;"	f	class:CkIndex_Bucket
+firstProbe	HistSort.def.h	/^void CProxyElement_Bucket < key, value > ::firstProbe(const key &firstkey, const key &lastkey, const key &stepSize, int probeSize, const CkEntryOptions *impl_e_opts) $/;"	f	class:CProxyElement_Bucket
+firstProbe	HistSort.def.h	/^void CProxySection_Bucket < key, value > ::firstProbe(const key &firstkey, const key &lastkey, const key &stepSize, int probeSize, const CkEntryOptions *impl_e_opts) $/;"	f	class:CProxySection_Bucket
+firstProbe	HistSort.def.h	/^void CProxy_Bucket < key, value > ::firstProbe(const key &firstkey, const key &lastkey, const key &stepSize, int probeSize, const CkEntryOptions *impl_e_opts) $/;"	f	class:CProxy_Bucket
+firstProbe_5_closure	HistSort.def.h	/^      firstProbe_5_closure() {$/;"	f	struct:Closure_Bucket::firstProbe_5_closure
+firstProbe_5_closure	HistSort.def.h	/^      firstProbe_5_closure(CkMigrateMessage*) {$/;"	f	struct:Closure_Bucket::firstProbe_5_closure
+firstProbe_5_closure	HistSort.def.h	/^    struct Closure_Bucket < key, value > ::firstProbe_5_closure : public SDAG::Closure {$/;"	s	class:Closure_Bucket
+firstUse	Sorter.h	/^    bool firstUse;$/;"	m	class:Sorter
+firstkey	HistSort.def.h	/^      key firstkey;$/;"	m	struct:Closure_Bucket::firstProbe_5_closure
+forward_merge	Bucket.C	/^void Bucket<key, value>::forward_merge(kv_pair<key, value> *first1, kv_pair<key, value> *last1,$/;"	f	class:Bucket
+genSample	Bucket.C	/^void Bucket<key, value>::genSample(array_msg<int>  *am){$/;"	f	class:Bucket
+genSample	HistSort.decl.h	/^    static int genSample(array_msg<int >* impl_msg) { return idx_genSample_array_msg(); }$/;"	f	class:CkIndex_Bucket
+genSample	HistSort.def.h	/^void CProxyElement_Bucket < key, value > ::genSample(array_msg<int >* impl_msg) $/;"	f	class:CProxyElement_Bucket
+genSample	HistSort.def.h	/^void CProxySection_Bucket < key, value > ::genSample(array_msg<int >* impl_msg) $/;"	f	class:CProxySection_Bucket
+genSample	HistSort.def.h	/^void CProxy_Bucket < key, value > ::genSample(array_msg<int >* impl_msg) $/;"	f	class:CProxy_Bucket
+genSampleIndices	nodemanager.h	/^		void genSampleIndices(){$/;"	f	class:NodeManager
+getLocalBucket	nodemanager.h	/^      Bucket<key, value>* getLocalBucket(){$/;"	f	class:NodeManager
+getP0	HistSort.def.h	/^      CProxy_Sorter<key,value > & getP0() { return _sorter_proxy;}$/;"	f	struct:Closure_Bucket::startBarrier_2_closure
+getP0	HistSort.def.h	/^      int & getP0() { return dest;}$/;"	f	struct:Closure_NodeManager::loadkeys_4_closure
+getP0	HistSort.def.h	/^      int & getP0() { return dest;}$/;"	f	struct:Closure_NodeManager::sendOne_5_closure
+getP0	HistSort.def.h	/^      int & getP0() { return lastProbeSize;}$/;"	f	struct:Closure_Bucket::firstLocalProbe_6_closure
+getP0	HistSort.def.h	/^      int & getP0() { return nElem;}$/;"	f	struct:Closure_NodeManager::registerLocalChare_2_closure
+getP0	HistSort.def.h	/^      int & getP0() { return srcnode;}$/;"	f	struct:Closure_Bucket::recvFinalKeys_11_closure
+getP0	HistSort.def.h	/^      key & getP0() { return firstkey;}$/;"	f	struct:Closure_Bucket::firstProbe_5_closure
+getP0	HistSort.def.h	/^      wrap_ptr & getP0() { return msg;}$/;"	f	struct:Closure_NodeManager::handleOne_8_closure
+getP1	HistSort.def.h	/^      CProxy_Main<key,value > & getP1() { return _main_proxy;}$/;"	f	struct:Closure_Bucket::startBarrier_2_closure
+getP1	HistSort.def.h	/^      int & getP1() { return pe;}$/;"	f	struct:Closure_NodeManager::registerLocalChare_2_closure
+getP1	HistSort.def.h	/^      int & getP1() { return sampleInd;}$/;"	f	struct:Closure_NodeManager::handleOne_8_closure
+getP1	HistSort.def.h	/^      key & getP1() { return lastkey;}$/;"	f	struct:Closure_Bucket::firstProbe_5_closure
+getP1	HistSort.def.h	/^      sendInfo & getP1() { return inf;}$/;"	f	struct:Closure_NodeManager::loadkeys_4_closure
+getP1	HistSort.def.h	/^      sendInfo & getP1() { return s;}$/;"	f	struct:Closure_Bucket::recvFinalKeys_11_closure
+getP2	HistSort.def.h	/^      CProxy_Bucket<key,value > & getP2() { return _bucket_arr;}$/;"	f	struct:Closure_NodeManager::registerLocalChare_2_closure
+getP2	HistSort.def.h	/^      int & getP2() { return numsamples;}$/;"	f	struct:Closure_NodeManager::handleOne_8_closure
+getP2	HistSort.def.h	/^      key & getP2() { return stepSize;}$/;"	f	struct:Closure_Bucket::firstProbe_5_closure
+getP3	HistSort.def.h	/^      CProxy_Sorter<key,value > & getP3() { return _sorter;}$/;"	f	struct:Closure_NodeManager::registerLocalChare_2_closure
+getP3	HistSort.def.h	/^      int & getP3() { return probeSize;}$/;"	f	struct:Closure_Bucket::firstProbe_5_closure
+globalmax	Sorter.h	/^    key globalmin, globalmax;$/;"	m	class:Sorter
+globalmin	Sorter.h	/^    key globalmin, globalmax;$/;"	m	class:Sorter
+grtstPow2	sortinglib.h	/^std::pair<int, key> grtstPow2(key n){$/;"	f
+handleOne	HistSort.decl.h	/^    static int handleOne(const wrap_ptr &msg, int sampleInd, int numsamples) { return idx_handleOne_marshall8(); }$/;"	f	class:CkIndex_NodeManager
+handleOne	HistSort.def.h	/^void CProxyElement_NodeManager < key, value > ::handleOne(const wrap_ptr &msg, int sampleInd, int numsamples, const CkEntryOptions *impl_e_opts)$/;"	f	class:CProxyElement_NodeManager
+handleOne	HistSort.def.h	/^void CProxySection_NodeManager < key, value > ::handleOne(const wrap_ptr &msg, int sampleInd, int numsamples, const CkEntryOptions *impl_e_opts)$/;"	f	class:CProxySection_NodeManager
+handleOne	HistSort.def.h	/^void CProxy_NodeManager < key, value > ::handleOne(const wrap_ptr &msg, int sampleInd, int numsamples, const CkEntryOptions *impl_e_opts)$/;"	f	class:CProxy_NodeManager
+handleOne	nodemanager.h	/^		void handleOne(wrap_ptr msg, int sampleInd, int numsamples){$/;"	f	class:NodeManager
+handleOne_8_closure	HistSort.def.h	/^      handleOne_8_closure() {$/;"	f	struct:Closure_NodeManager::handleOne_8_closure
+handleOne_8_closure	HistSort.def.h	/^      handleOne_8_closure(CkMigrateMessage*) {$/;"	f	struct:Closure_NodeManager::handleOne_8_closure
+handleOne_8_closure	HistSort.def.h	/^    struct Closure_NodeManager < key, value > ::handleOne_8_closure : public SDAG::Closure {$/;"	s	class:Closure_NodeManager
+histCountProbes	Bucket.C	/^void Bucket<key, value>::histCountProbes(probeMessage<key> *pm){$/;"	f	class:Bucket
+histCountProbes	HistSort.decl.h	/^    static int histCountProbes(probeMessage<key >* impl_msg) { return idx_histCountProbes_probeMessage(); }$/;"	f	class:CkIndex_Bucket
+histCountProbes	HistSort.def.h	/^void CProxyElement_Bucket < key, value > ::histCountProbes(probeMessage<key >* impl_msg) $/;"	f	class:CProxyElement_Bucket
+histCountProbes	HistSort.def.h	/^void CProxySection_Bucket < key, value > ::histCountProbes(probeMessage<key >* impl_msg) $/;"	f	class:CProxySection_Bucket
+histCountProbes	HistSort.def.h	/^void CProxy_Bucket < key, value > ::histCountProbes(probeMessage<key >* impl_msg) $/;"	f	class:CProxy_Bucket
+histCounts	Bucket.h	/^    int* histCounts;$/;"	m	class:Bucket
+histLocCounts	nodemanager.h	/^		std::map<int, uint64_t*> histLocCounts; \/\/one for each pe$/;"	m	class:NodeManager
+hist_thresh	defs.h	/^    int hist_thresh;$/;"	m	class:tuning_params
+idx_Bucket_CkMigrateMessage	HistSort.decl.h	/^    inline static int idx_Bucket_CkMigrateMessage() {$/;"	f	class:CkIndex_Bucket
+idx_Bucket_marshall1	HistSort.decl.h	/^    inline static int idx_Bucket_marshall1() {$/;"	f	class:CkIndex_Bucket
+idx_DataReady	HistSort.decl.h	/^    inline static int idx_DataReady(void (Main < key, value > ::*)(void) ) {$/;"	f	class:CkIndex_Main
+idx_DataReady_void	HistSort.decl.h	/^    inline static int idx_DataReady_void() {$/;"	f	class:CkIndex_Main
+idx_Done	HistSort.decl.h	/^    inline static int idx_Done(void (Sorter < key, value > ::*)(CkReductionMsg* impl_msg) ) {$/;"	f	class:CkIndex_Sorter
+idx_Done_CkReductionMsg	HistSort.decl.h	/^    inline static int idx_Done_CkReductionMsg() {$/;"	f	class:CkIndex_Sorter
+idx_Exit	HistSort.decl.h	/^    inline static int idx_Exit(void (Main < key, value > ::*)(void) ) {$/;"	f	class:CkIndex_Main
+idx_Exit_void	HistSort.decl.h	/^    inline static int idx_Exit_void() {$/;"	f	class:CkIndex_Main
+idx_Histogram	HistSort.decl.h	/^    inline static int idx_Histogram(void (Sorter < key, value > ::*)(CkReductionMsg* impl_msg) ) {$/;"	f	class:CkIndex_Sorter
+idx_Histogram_CkReductionMsg	HistSort.decl.h	/^    inline static int idx_Histogram_CkReductionMsg() {$/;"	f	class:CkIndex_Sorter
+idx_Load	HistSort.decl.h	/^    inline static int idx_Load(void (Bucket < key, value > ::*)(data_msg<key,value >* impl_msg) ) {$/;"	f	class:CkIndex_Bucket
+idx_Load_data_msg	HistSort.decl.h	/^    inline static int idx_Load_data_msg() {$/;"	f	class:CkIndex_Bucket
+idx_Main_marshall1	HistSort.decl.h	/^    inline static int idx_Main_marshall1() {$/;"	f	class:CkIndex_Main
+idx_MergingWork	HistSort.decl.h	/^    inline static int idx_MergingWork(void (Bucket < key, value > ::*)(void) ) {$/;"	f	class:CkIndex_Bucket
+idx_MergingWork_void	HistSort.decl.h	/^    inline static int idx_MergingWork_void() {$/;"	f	class:CkIndex_Bucket
+idx_NodeManager_marshall1	HistSort.decl.h	/^    inline static int idx_NodeManager_marshall1() {$/;"	f	class:CkIndex_NodeManager
+idx_SanityCheck	HistSort.decl.h	/^    inline static int idx_SanityCheck(void (Sorter < key, value > ::*)(CkReductionMsg* impl_msg) ) {$/;"	f	class:CkIndex_Sorter
+idx_SanityCheck_CkReductionMsg	HistSort.decl.h	/^    inline static int idx_SanityCheck_CkReductionMsg() {$/;"	f	class:CkIndex_Sorter
+idx_SetData	HistSort.decl.h	/^    inline static int idx_SetData(void (Bucket < key, value > ::*)(void) ) {$/;"	f	class:CkIndex_Bucket
+idx_SetData_void	HistSort.decl.h	/^    inline static int idx_SetData_void() {$/;"	f	class:CkIndex_Bucket
+idx_Sorter_marshall2	HistSort.decl.h	/^    inline static int idx_Sorter_marshall2() {$/;"	f	class:CkIndex_Sorter
+idx_Sorter_void	HistSort.decl.h	/^    inline static int idx_Sorter_void() {$/;"	f	class:CkIndex_Sorter
+idx_collectSamples	HistSort.decl.h	/^    inline static int idx_collectSamples(void (NodeManager < key, value > ::*)(array_msg<key >* impl_msg) ) {$/;"	f	class:CkIndex_NodeManager
+idx_collectSamples_array_msg	HistSort.decl.h	/^    inline static int idx_collectSamples_array_msg() {$/;"	f	class:CkIndex_NodeManager
+idx_depositHist	HistSort.decl.h	/^    inline static int idx_depositHist(void (NodeManager < key, value > ::*)(void) ) {$/;"	f	class:CkIndex_NodeManager
+idx_depositHist_void	HistSort.decl.h	/^    inline static int idx_depositHist_void() {$/;"	f	class:CkIndex_NodeManager
+idx_finalProbes	HistSort.decl.h	/^    inline static int idx_finalProbes(void (Bucket < key, value > ::*)(array_msg<key >* impl_msg) ) {$/;"	f	class:CkIndex_Bucket
+idx_finalProbes_array_msg	HistSort.decl.h	/^    inline static int idx_finalProbes_array_msg() {$/;"	f	class:CkIndex_Bucket
+idx_final_dsum	HistSort.decl.h	/^    inline static int idx_final_dsum(void (Main < key, value > ::*)(CkReductionMsg* impl_msg) ) {$/;"	f	class:CkIndex_Main
+idx_final_dsum_CkReductionMsg	HistSort.decl.h	/^    inline static int idx_final_dsum_CkReductionMsg() {$/;"	f	class:CkIndex_Main
+idx_final_isum	HistSort.decl.h	/^    inline static int idx_final_isum(void (Main < key, value > ::*)(CkReductionMsg* impl_msg) ) {$/;"	f	class:CkIndex_Main
+idx_final_isum_CkReductionMsg	HistSort.decl.h	/^    inline static int idx_final_isum_CkReductionMsg() {$/;"	f	class:CkIndex_Main
+idx_finish	HistSort.decl.h	/^    inline static int idx_finish(void (Bucket < key, value > ::*)(void) ) {$/;"	f	class:CkIndex_Bucket
+idx_finishBarrier	HistSort.decl.h	/^    inline static int idx_finishBarrier(void (Sorter < key, value > ::*)(CkReductionMsg* impl_msg) ) {$/;"	f	class:CkIndex_Sorter
+idx_finishBarrier_CkReductionMsg	HistSort.decl.h	/^    inline static int idx_finishBarrier_CkReductionMsg() {$/;"	f	class:CkIndex_Sorter
+idx_finishOne	HistSort.decl.h	/^    inline static int idx_finishOne(void (NodeManager < key, value > ::*)(void) ) {$/;"	f	class:CkIndex_NodeManager
+idx_finishOne_void	HistSort.decl.h	/^    inline static int idx_finishOne_void() {$/;"	f	class:CkIndex_NodeManager
+idx_finish_void	HistSort.decl.h	/^    inline static int idx_finish_void() {$/;"	f	class:CkIndex_Bucket
+idx_firstLocalProbe	HistSort.decl.h	/^    inline static int idx_firstLocalProbe(void (Bucket < key, value > ::*)(int lastProbeSize) ) {$/;"	f	class:CkIndex_Bucket
+idx_firstLocalProbe_marshall6	HistSort.decl.h	/^    inline static int idx_firstLocalProbe_marshall6() {$/;"	f	class:CkIndex_Bucket
+idx_firstProbe	HistSort.decl.h	/^    inline static int idx_firstProbe(void (Bucket < key, value > ::*)(const key &firstkey, const key &lastkey, const key &stepSize, int probeSize) ) {$/;"	f	class:CkIndex_Bucket
+idx_firstProbe_marshall5	HistSort.decl.h	/^    inline static int idx_firstProbe_marshall5() {$/;"	f	class:CkIndex_Bucket
+idx_genSample	HistSort.decl.h	/^    inline static int idx_genSample(void (Bucket < key, value > ::*)(array_msg<int >* impl_msg) ) {$/;"	f	class:CkIndex_Bucket
+idx_genSample_array_msg	HistSort.decl.h	/^    inline static int idx_genSample_array_msg() {$/;"	f	class:CkIndex_Bucket
+idx_handleOne	HistSort.decl.h	/^    inline static int idx_handleOne(void (NodeManager < key, value > ::*)(const wrap_ptr &msg, int sampleInd, int numsamples) ) {$/;"	f	class:CkIndex_NodeManager
+idx_handleOne_marshall8	HistSort.decl.h	/^    inline static int idx_handleOne_marshall8() {$/;"	f	class:CkIndex_NodeManager
+idx_histCountProbes	HistSort.decl.h	/^    inline static int idx_histCountProbes(void (Bucket < key, value > ::*)(probeMessage<key >* impl_msg) ) {$/;"	f	class:CkIndex_Bucket
+idx_histCountProbes_probeMessage	HistSort.decl.h	/^    inline static int idx_histCountProbes_probeMessage() {$/;"	f	class:CkIndex_Bucket
+idx_init_dsum	HistSort.decl.h	/^    inline static int idx_init_dsum(void (Main < key, value > ::*)(CkReductionMsg* impl_msg) ) {$/;"	f	class:CkIndex_Main
+idx_init_dsum_CkReductionMsg	HistSort.decl.h	/^    inline static int idx_init_dsum_CkReductionMsg() {$/;"	f	class:CkIndex_Main
+idx_init_isum	HistSort.decl.h	/^    inline static int idx_init_isum(void (Main < key, value > ::*)(CkReductionMsg* impl_msg) ) {$/;"	f	class:CkIndex_Main
+idx_init_isum_CkReductionMsg	HistSort.decl.h	/^    inline static int idx_init_isum_CkReductionMsg() {$/;"	f	class:CkIndex_Main
+idx_loadkeys	HistSort.decl.h	/^    inline static int idx_loadkeys(void (NodeManager < key, value > ::*)(int dest, const sendInfo &inf) ) {$/;"	f	class:CkIndex_NodeManager
+idx_loadkeys_marshall4	HistSort.decl.h	/^    inline static int idx_loadkeys_marshall4() {$/;"	f	class:CkIndex_NodeManager
+idx_localhist	HistSort.decl.h	/^    inline static int idx_localhist(void (NodeManager < key, value > ::*)(data_msg<key,value >* impl_msg) ) {$/;"	f	class:CkIndex_NodeManager
+idx_localhist_data_msg	HistSort.decl.h	/^    inline static int idx_localhist_data_msg() {$/;"	f	class:CkIndex_NodeManager
+idx_partialSendOne	HistSort.decl.h	/^    inline static int idx_partialSendOne(void (Bucket < key, value > ::*)(void) ) {$/;"	f	class:CkIndex_Bucket
+idx_partialSendOne_void	HistSort.decl.h	/^    inline static int idx_partialSendOne_void() {$/;"	f	class:CkIndex_Bucket
+idx_recvFinalKeys	HistSort.decl.h	/^    inline static int idx_recvFinalKeys(void (Bucket < key, value > ::*)(int srcnode, const sendInfo &s) ) {$/;"	f	class:CkIndex_Bucket
+idx_recvFinalKeys_marshall11	HistSort.decl.h	/^    inline static int idx_recvFinalKeys_marshall11() {$/;"	f	class:CkIndex_Bucket
+idx_recvOne	HistSort.decl.h	/^    inline static int idx_recvOne(void (NodeManager < key, value > ::*)(data_msg<key,value >* impl_msg) ) {$/;"	f	class:CkIndex_NodeManager
+idx_recvOne_data_msg	HistSort.decl.h	/^    inline static int idx_recvOne_data_msg() {$/;"	f	class:CkIndex_NodeManager
+idx_recvSample	HistSort.decl.h	/^    inline static int idx_recvSample(void (Sorter < key, value > ::*)(array_msg<key >* impl_msg) ) {$/;"	f	class:CkIndex_Sorter
+idx_recvSample_array_msg	HistSort.decl.h	/^    inline static int idx_recvSample_array_msg() {$/;"	f	class:CkIndex_Sorter
+idx_registerLocalChare	HistSort.decl.h	/^    inline static int idx_registerLocalChare(void (NodeManager < key, value > ::*)(int nElem, int pe, const CProxy_Bucket<key,value > &_bucket_arr, const CProxy_Sorter<key,value > &_sorter) ) {$/;"	f	class:CkIndex_NodeManager
+idx_registerLocalChare_marshall2	HistSort.decl.h	/^    inline static int idx_registerLocalChare_marshall2() {$/;"	f	class:CkIndex_NodeManager
+idx_releaseBufMsgs	HistSort.decl.h	/^    inline static int idx_releaseBufMsgs(void (NodeManager < key, value > ::*)(void) ) {$/;"	f	class:CkIndex_NodeManager
+idx_releaseBufMsgs_void	HistSort.decl.h	/^    inline static int idx_releaseBufMsgs_void() {$/;"	f	class:CkIndex_NodeManager
+idx_sendOne	HistSort.decl.h	/^    inline static int idx_sendOne(void (NodeManager < key, value > ::*)(int dest) ) {$/;"	f	class:CkIndex_NodeManager
+idx_sendOne_marshall5	HistSort.decl.h	/^    inline static int idx_sendOne_marshall5() {$/;"	f	class:CkIndex_NodeManager
+idx_sendToBuckets	HistSort.decl.h	/^    inline static int idx_sendToBuckets(void (NodeManager < key, value > ::*)(data_msg<key,value >* impl_msg) ) {$/;"	f	class:CkIndex_NodeManager
+idx_sendToBuckets_data_msg	HistSort.decl.h	/^    inline static int idx_sendToBuckets_data_msg() {$/;"	f	class:CkIndex_NodeManager
+idx_sortAll	HistSort.decl.h	/^    inline static int idx_sortAll(void (Bucket < key, value > ::*)(void) ) {$/;"	f	class:CkIndex_Bucket
+idx_sortAll_void	HistSort.decl.h	/^    inline static int idx_sortAll_void() {$/;"	f	class:CkIndex_Bucket
+idx_startBarrier	HistSort.decl.h	/^    inline static int idx_startBarrier(void (Bucket < key, value > ::*)(const CProxy_Sorter<key,value > &_sorter_proxy, const CProxy_Main<key,value > &_main_proxy) ) {$/;"	f	class:CkIndex_Bucket
+idx_startBarrier_marshall2	HistSort.decl.h	/^    inline static int idx_startBarrier_marshall2() {$/;"	f	class:CkIndex_Bucket
+idx_stepSort	HistSort.decl.h	/^    inline static int idx_stepSort(void (Bucket < key, value > ::*)(void) ) {$/;"	f	class:CkIndex_Bucket
+idx_stepSort_void	HistSort.decl.h	/^    inline static int idx_stepSort_void() {$/;"	f	class:CkIndex_Bucket
+in_elems	sortinglib.h	/^__thread int in_elems, *out_elems;$/;"	v
+incomingMsgBuffer	Bucket.h	/^   	std::vector < data_msg<key, value>* > incomingMsgBuffer;$/;"	m	class:Bucket
+ind1	nodemanager.h	/^		int ind1, ind2;$/;"	m	class:sendInfo
+ind2	nodemanager.h	/^		int ind1, ind2;$/;"	m	class:sendInfo
+indexFactor	Bucket.h	/^	static const int indexFactor = 3;$/;"	m	class:Bucket
+index_t	HistSort.decl.h	/^    typedef CkIndex_Bucket < key, value >  index_t;$/;"	t	class:CProxyElement_Bucket
+index_t	HistSort.decl.h	/^    typedef CkIndex_Bucket < key, value >  index_t;$/;"	t	class:CProxySection_Bucket
+index_t	HistSort.decl.h	/^    typedef CkIndex_Bucket < key, value >  index_t;$/;"	t	class:CProxy_Bucket
+index_t	HistSort.decl.h	/^    typedef CkIndex_Bucket < key, value >  index_t;$/;"	t	class:CkIndex_Bucket
+index_t	HistSort.decl.h	/^    typedef CkIndex_Main < key, value >  index_t;$/;"	t	class:CProxy_Main
+index_t	HistSort.decl.h	/^    typedef CkIndex_Main < key, value >  index_t;$/;"	t	class:CkIndex_Main
+index_t	HistSort.decl.h	/^    typedef CkIndex_NodeManager < key, value >  index_t;$/;"	t	class:CProxyElement_NodeManager
+index_t	HistSort.decl.h	/^    typedef CkIndex_NodeManager < key, value >  index_t;$/;"	t	class:CProxySection_NodeManager
+index_t	HistSort.decl.h	/^    typedef CkIndex_NodeManager < key, value >  index_t;$/;"	t	class:CProxy_NodeManager
+index_t	HistSort.decl.h	/^    typedef CkIndex_NodeManager < key, value >  index_t;$/;"	t	class:CkIndex_NodeManager
+index_t	HistSort.decl.h	/^    typedef CkIndex_Sorter < key, value >  index_t;$/;"	t	class:CProxy_Sorter
+index_t	HistSort.decl.h	/^    typedef CkIndex_Sorter < key, value >  index_t;$/;"	t	class:CkIndex_Sorter
+indices	Bucket.h	/^	  int* indices;$/;"	m	class:Bucket
+inf	HistSort.def.h	/^      sendInfo inf;$/;"	m	struct:Closure_NodeManager::loadkeys_4_closure
+init_dsum	HistSort.decl.h	/^    static int init_dsum(CkReductionMsg* impl_msg) { return idx_init_dsum_CkReductionMsg(); }$/;"	f	class:CkIndex_Main
+init_dsum	HistSort.def.h	/^void CProxy_Main < key, value > ::init_dsum(CkReductionMsg* impl_msg)$/;"	f	class:CProxy_Main
+init_dsum	sortinglib.h	/^    void init_dsum(CkReductionMsg *msg) {$/;"	f	class:Main
+init_isum	HistSort.decl.h	/^    static int init_isum(CkReductionMsg* impl_msg) { return idx_init_isum_CkReductionMsg(); }$/;"	f	class:CkIndex_Main
+init_isum	HistSort.def.h	/^void CProxy_Main < key, value > ::init_isum(CkReductionMsg* impl_msg)$/;"	f	class:CProxy_Main
+init_isum	sortinglib.h	/^    void init_isum(CkReductionMsg *msg) {$/;"	f	class:Main
+insert	HistSort.def.h	/^void CProxyElement_Bucket < key, value > ::insert(const tuning_params &par, const key &_min, const key &_max, int nBuckets_, const CkNodeGroupID &_nodeMgrID, int onPE, const CkEntryOptions *impl_e_opts)$/;"	f	class:CProxyElement_Bucket
+k	nodemanager.h	/^	key k;$/;"	m	class:sortItem
+k	sortinglib.h	/^    key k;$/;"	m	class:kv_pair
+kv_pair	sortinglib.h	/^class kv_pair {$/;"	c
+lastProbe	Bucket.h	/^    key* lastProbe;$/;"	m	class:Bucket
+lastProbe	Sorter.h	/^    key* lastProbe;$/;"	m	class:Sorter
+lastProbeSize	Bucket.h	/^    int lastProbeSize;$/;"	m	class:Bucket
+lastProbeSize	HistSort.def.h	/^      int lastProbeSize;$/;"	m	struct:Closure_Bucket::firstLocalProbe_6_closure
+lastProbeSize	Sorter.h	/^    int lastProbeSize;$/;"	m	class:Sorter
+lastSortedChunk	Bucket.h	/^    int lastSortedChunk;$/;"	m	class:Bucket
+lastUsed	Bucket.h	/^   	int lastUsed;$/;"	m	class:Bucket
+lastkey	HistSort.def.h	/^      key lastkey;$/;"	m	struct:Closure_Bucket::firstProbe_5_closure
+lb_struct	Bucket.h	/^struct lb_struct{$/;"	s
+loadBuffer	Bucket.h	/^   	std::vector <lb_struct<key, value> > loadBuffer;	$/;"	m	class:Bucket
+loadkeys	HistSort.decl.h	/^    static int loadkeys(int dest, const sendInfo &inf) { return idx_loadkeys_marshall4(); }$/;"	f	class:CkIndex_NodeManager
+loadkeys	HistSort.def.h	/^void CProxyElement_NodeManager < key, value > ::loadkeys(int dest, const sendInfo &inf, const CkEntryOptions *impl_e_opts)$/;"	f	class:CProxyElement_NodeManager
+loadkeys	HistSort.def.h	/^void CProxySection_NodeManager < key, value > ::loadkeys(int dest, const sendInfo &inf, const CkEntryOptions *impl_e_opts)$/;"	f	class:CProxySection_NodeManager
+loadkeys	HistSort.def.h	/^void CProxy_NodeManager < key, value > ::loadkeys(int dest, const sendInfo &inf, const CkEntryOptions *impl_e_opts)$/;"	f	class:CProxy_NodeManager
+loadkeys	nodemanager.h	/^		void loadkeys(int dest, sendInfo inf){$/;"	f	class:NodeManager
+loadkeys_4_closure	HistSort.def.h	/^      loadkeys_4_closure() {$/;"	f	struct:Closure_NodeManager::loadkeys_4_closure
+loadkeys_4_closure	HistSort.def.h	/^      loadkeys_4_closure(CkMigrateMessage*) {$/;"	f	struct:Closure_NodeManager::loadkeys_4_closure
+loadkeys_4_closure	HistSort.def.h	/^    struct Closure_NodeManager < key, value > ::loadkeys_4_closure : public SDAG::Closure {$/;"	s	class:Closure_NodeManager
+localProbe	Bucket.C	/^void Bucket<key, value>::localProbe(){$/;"	f	class:Bucket
+local_t	HistSort.decl.h	/^    typedef Bucket < key, value >  local_t;$/;"	t	class:CProxyElement_Bucket
+local_t	HistSort.decl.h	/^    typedef Bucket < key, value >  local_t;$/;"	t	class:CProxySection_Bucket
+local_t	HistSort.decl.h	/^    typedef Bucket < key, value >  local_t;$/;"	t	class:CProxy_Bucket
+local_t	HistSort.decl.h	/^    typedef Bucket < key, value >  local_t;$/;"	t	class:CkIndex_Bucket
+local_t	HistSort.decl.h	/^    typedef Main < key, value >  local_t;$/;"	t	class:CProxy_Main
+local_t	HistSort.decl.h	/^    typedef Main < key, value >  local_t;$/;"	t	class:CkIndex_Main
+local_t	HistSort.decl.h	/^    typedef NodeManager < key, value >  local_t;$/;"	t	class:CProxyElement_NodeManager
+local_t	HistSort.decl.h	/^    typedef NodeManager < key, value >  local_t;$/;"	t	class:CProxySection_NodeManager
+local_t	HistSort.decl.h	/^    typedef NodeManager < key, value >  local_t;$/;"	t	class:CProxy_NodeManager
+local_t	HistSort.decl.h	/^    typedef NodeManager < key, value >  local_t;$/;"	t	class:CkIndex_NodeManager
+local_t	HistSort.decl.h	/^    typedef Sorter < key, value >  local_t;$/;"	t	class:CProxy_Sorter
+local_t	HistSort.decl.h	/^    typedef Sorter < key, value >  local_t;$/;"	t	class:CkIndex_Sorter
+localhist	HistSort.decl.h	/^    static int localhist(data_msg<key,value >* impl_msg) { return idx_localhist_data_msg(); }$/;"	f	class:CkIndex_NodeManager
+localhist	HistSort.def.h	/^void CProxyElement_NodeManager < key, value > ::localhist(data_msg<key,value >* impl_msg)$/;"	f	class:CProxyElement_NodeManager
+localhist	HistSort.def.h	/^void CProxySection_NodeManager < key, value > ::localhist(data_msg<key,value >* impl_msg)$/;"	f	class:CProxySection_NodeManager
+localhist	HistSort.def.h	/^void CProxy_NodeManager < key, value > ::localhist(data_msg<key,value >* impl_msg)$/;"	f	class:CProxy_NodeManager
+localhist	nodemanager.h	/^		void localhist(data_msg<key, value>* dm){$/;"	f	class:NodeManager
+longhistCounts	Bucket.h	/^    uint64_t *longhistCounts;$/;"	m	class:Bucket
+ls_getMaxSampleSize	nodemanager.h	/^int ls_getMaxSampleSize(){$/;"	f
+ls_getSampleSize	nodemanager.h	/^int ls_getSampleSize(int locElems){$/;"	f
+ls_getStride	nodemanager.h	/^int ls_getStride(){$/;"	f
+ls_numTotSamples	nodemanager.h	/^		int ls_numTotSamples; $/;"	m	class:NodeManager
+ls_sample	nodemanager.h	/^		key* ls_sample; \/\/ls_ :: localsort$/;"	m	class:NodeManager
+main_proxy	Bucket.h	/^	CProxy_Main<key, value> main_proxy;$/;"	m	class:Bucket
+mainproxy	Sorter.h	/^    CProxy_Main<key, value> mainproxy;$/;"	m	class:Sorter
+maxSampleSize	nodemanager.h	/^int maxSampleSize(){$/;"	f
+maxkey	Bucket.h	/^	key minkey, maxkey;$/;"	m	class:Bucket
+maxkey	Sorter.h	/^    key minkey, maxkey;$/;"	m	class:Sorter
+maxkey	nodemanager.h	/^		key minkey, maxkey;$/;"	m	class:NodeManager
+mergeAt	Bucket.C	/^void Bucket<key, value>::mergeAt(int n){$/;"	f	class:Bucket
+mergingDone	Bucket.h	/^    bool mergingDone;$/;"	m	class:Bucket
+minkey	Bucket.h	/^	key minkey, maxkey;$/;"	m	class:Bucket
+minkey	Sorter.h	/^    key minkey, maxkey;$/;"	m	class:Sorter
+minkey	nodemanager.h	/^		key minkey, maxkey;$/;"	m	class:NodeManager
+minmax_uint64_t	Sorter.C	/^CkReductionMsg *minmax_uint64_t(int nMsg,CkReductionMsg **msgs){$/;"	f
+minmax_uint64_t_type	Sorter.C	/^CkReduction::reducerType minmax_uint64_t_type;$/;"	v
+msg	Bucket.h	/^    data_msg<key, value>* msg;$/;"	m	struct:lb_struct
+msg	HistSort.def.h	/^      wrap_ptr msg;$/;"	m	struct:Closure_NodeManager::handleOne_8_closure
+mymax	Bucket.h	/^	key mymin, mymax;$/;"	m	class:Bucket
+mymin	Bucket.h	/^	key mymin, mymax;$/;"	m	class:Bucket
+nBuckets	Bucket.h	/^	int nBuckets;$/;"	m	class:Bucket
+nBuckets	Sorter.h	/^    int nBuckets, nNodes;$/;"	m	class:Sorter
+nElem	HistSort.def.h	/^      int nElem;$/;"	m	struct:Closure_NodeManager::registerLocalChare_2_closure
+nElements	Sorter.h	/^    uint64_t nElements;$/;"	m	class:Sorter
+nNodes	Bucket.h	/^  int nNodes;$/;"	m	class:Bucket
+nNodes	Sorter.h	/^    int nBuckets, nNodes;$/;"	m	class:Sorter
+newachv_count	Sorter.h	/^    uint64_t* newachv_count;$/;"	m	class:probeMessage
+newachv_id	Sorter.h	/^    int* newachv_id;$/;"	m	class:probeMessage
+newachv_key	Sorter.h	/^    key* newachv_key;$/;"	m	class:probeMessage
+nextProbes	Sorter.C	/^void Sorter<key, value>::nextProbes(std::vector<std::pair<key, int> > &newachv, uint64_t* histCounts, CkReductionMsg *msg){$/;"	f	class:Sorter
+noMergingWork	Bucket.h	/^    bool noMergingWork;$/;"	m	class:Bucket
+nodeMgrID	Bucket.h	/^    CkNodeGroupID nodeMgrID;$/;"	m	class:Bucket
+nodeMgrID	Sorter.h	/^    CkNodeGroupID nodeMgrID;$/;"	m	class:Sorter
+nodeMgrID	sortinglib.h	/^\/*readonly*\/ CkNodeGroupID nodeMgrID;$/;"	v
+nodemgr	Bucket.h	/^    CProxy_NodeManager<key, value>  nodemgr;$/;"	m	class:Bucket
+numChunks	Bucket.h	/^   	int numChunks;$/;"	m	class:Bucket
+numDeposited	nodemanager.h	/^		int numDeposited;$/;"	m	class:NodeManager
+numElem	Bucket.h	/^	int numElem;$/;"	m	class:Bucket
+numElem	Bucket.h	/^    int numElem;$/;"	m	class:array_msg
+numElem	nodemanager.h	/^		int* numElem;$/;"	m	class:NodeManager
+numElemFinal	nodemanager.h	/^		uint64_t numElemFinal;$/;"	m	class:NodeManager
+numFinished	nodemanager.h	/^		int numSent, numRecvd, numFinished;$/;"	m	class:NodeManager
+numIndicesShift	Bucket.h	/^	  int numIndicesShift;$/;"	m	class:Bucket
+numProbes	Bucket.h	/^    int numProbes;$/;"	m	class:Bucket
+numProbes	Sorter.h	/^    int numProbes;$/;"	m	class:Sorter
+numRecvd	nodemanager.h	/^		int numSent, numRecvd, numFinished;$/;"	m	class:NodeManager
+numSent	Bucket.h	/^    int numSent;$/;"	m	class:Bucket
+numSent	nodemanager.h	/^		int numSent, numRecvd, numFinished;$/;"	m	class:NodeManager
+numTotalElems	sortinglib.h	/^uint64_t numTotalElems;$/;"	v
+numVals	Bucket.h	/^    int numVals;$/;"	m	struct:lb_struct
+num_buckets	sortinglib.h	/^    int num_buckets;$/;"	m	class:Main
+num_newachv	Sorter.h	/^    int num_newachv;$/;"	m	class:probeMessage
+num_vals	Bucket.h	/^    int num_vals;$/;"	m	class:data_msg
+numnodes	nodemanager.h	/^		int numnodes;$/;"	m	class:NodeManager
+numpes	nodemanager.h	/^		int numpes;$/;"	m	class:NodeManager
+numsamples	HistSort.def.h	/^      int numsamples;$/;"	m	struct:Closure_NodeManager::handleOne_8_closure
+operator ()	HistSort.decl.h	/^    CProxyElement_Bucket < key, value >  operator () (int idx) const $/;"	f	class:CProxySection_Bucket
+operator ()	HistSort.decl.h	/^    CProxyElement_Bucket < key, value >  operator () (int idx) const $/;"	f	class:CProxy_Bucket
+operator ()	HistSort.decl.h	/^    CProxyElement_Bucket < key, value >  operator() (const CkArrayIndex1D &idx) const$/;"	f	class:CProxySection_Bucket
+operator ()	HistSort.decl.h	/^    CProxyElement_Bucket < key, value >  operator() (const CkArrayIndex1D &idx) const$/;"	f	class:CProxy_Bucket
+operator ()	sortinglib.h	/^void recursive_pup_impl<Bucket<unsigned long, int >, 1>::operator()(Bucket<unsigned long, int > *obj, PUP::er &p) {$/;"	f	class:recursive_pup_impl
+operator ()	sortinglib.h	/^void recursive_pup_impl<Main<unsigned long, int >, 1>::operator()(Main<unsigned long, int > *obj, PUP::er &p) {$/;"	f	class:recursive_pup_impl
+operator ()	sortinglib.h	/^void recursive_pup_impl<NodeManager<unsigned long, int >, 1>::operator()(NodeManager<unsigned long, int > *obj, PUP::er &p) {$/;"	f	class:recursive_pup_impl
+operator ()	sortinglib.h	/^void recursive_pup_impl<Sorter<unsigned long, int >, 1>::operator()(Sorter<unsigned long, int > *obj, PUP::er &p) {$/;"	f	class:recursive_pup_impl
+operator <	nodemanager.h	/^   friend bool operator<(const sortItem<key>& a, const sortItem<key>& b){$/;"	f	class:sortItem
+operator <	sortinglib.h	/^    \/*inline*\/ bool operator< (const kv_pair<key, value>& other) const{$/;"	f	class:kv_pair
+operator CkArrayID	HistSort.decl.h	/^    inline operator CkArrayID () const$/;"	f	class:CProxyElement_Bucket
+operator CkArrayID	HistSort.decl.h	/^    inline operator CkArrayID () const$/;"	f	class:CProxySection_Bucket
+operator CkArrayID	HistSort.decl.h	/^    inline operator CkArrayID () const$/;"	f	class:CProxy_Bucket
+operator CkGroupID	HistSort.decl.h	/^operator CkGroupID () const { return ckGetGroupID(); }$/;"	f	class:CProxyElement_NodeManager
+operator CkGroupID	HistSort.decl.h	/^operator CkGroupID () const { return ckGetGroupID(); }$/;"	f	class:CProxySection_NodeManager
+operator CkGroupID	HistSort.decl.h	/^operator CkGroupID () const { return ckGetGroupID(); }$/;"	f	class:CProxy_NodeManager
+operator []	HistSort.decl.h	/^    CProxyElement_Bucket < key, value >  operator [] (const CkArrayIndex1D &idx) const$/;"	f	class:CProxySection_Bucket
+operator []	HistSort.decl.h	/^    CProxyElement_Bucket < key, value >  operator [] (const CkArrayIndex1D &idx) const$/;"	f	class:CProxy_Bucket
+operator []	HistSort.decl.h	/^    CProxyElement_Bucket < key, value >  operator [] (int idx) const $/;"	f	class:CProxySection_Bucket
+operator []	HistSort.decl.h	/^    CProxyElement_Bucket < key, value >  operator [] (int idx) const $/;"	f	class:CProxy_Bucket
+operator []	HistSort.decl.h	/^    CProxyElement_NodeManager < key, value >  operator[](int onPE) const$/;"	f	class:CProxy_NodeManager
+operator const CkChareID &	HistSort.decl.h	/^    operator const CkChareID &(void) const$/;"	f	class:CProxy_Main
+operator const CkChareID &	HistSort.decl.h	/^    operator const CkChareID &(void) const$/;"	f	class:CProxy_Sorter
+operator delete	HistSort.decl.h	/^    void operator delete(void *p, int){dealloc(p);}$/;"	f	class:CMessage_array_msg
+operator delete	HistSort.decl.h	/^    void operator delete(void *p, int){dealloc(p);}$/;"	f	class:CMessage_data_msg
+operator delete	HistSort.decl.h	/^    void operator delete(void *p, int, const int){dealloc(p);}$/;"	f	class:CMessage_array_msg
+operator delete	HistSort.decl.h	/^    void operator delete(void *p, int, const int){dealloc(p);}$/;"	f	class:CMessage_data_msg
+operator delete	HistSort.decl.h	/^    void operator delete(void *p, int, int, int, int){dealloc(p);}$/;"	f	class:CMessage_probeMessage
+operator delete	HistSort.decl.h	/^    void operator delete(void *p, int, int, int, int, const int){dealloc(p);}$/;"	f	class:CMessage_probeMessage
+operator delete	HistSort.decl.h	/^    void operator delete(void*p){dealloc(p);}$/;"	f	class:CMessage_array_msg
+operator delete	HistSort.decl.h	/^    void operator delete(void*p){dealloc(p);}$/;"	f	class:CMessage_data_msg
+operator delete	HistSort.decl.h	/^    void operator delete(void*p){dealloc(p);}$/;"	f	class:CMessage_probeMessage
+operator delete	HistSort.decl.h	/^    void operator delete(void*p, int*){dealloc(p);}$/;"	f	class:CMessage_array_msg
+operator delete	HistSort.decl.h	/^    void operator delete(void*p, int*){dealloc(p);}$/;"	f	class:CMessage_data_msg
+operator delete	HistSort.decl.h	/^    void operator delete(void*p, int*){dealloc(p);}$/;"	f	class:CMessage_probeMessage
+operator delete	HistSort.decl.h	/^    void operator delete(void*p, int*, const int){dealloc(p);}$/;"	f	class:CMessage_array_msg
+operator delete	HistSort.decl.h	/^    void operator delete(void*p, int*, const int){dealloc(p);}$/;"	f	class:CMessage_data_msg
+operator delete	HistSort.decl.h	/^    void operator delete(void*p, int*, const int){dealloc(p);}$/;"	f	class:CMessage_probeMessage
+operator delete	HistSort.decl.h	/^    void operator delete(void*p, size_t){dealloc(p);}$/;"	f	class:CMessage_array_msg
+operator delete	HistSort.decl.h	/^    void operator delete(void*p, size_t){dealloc(p);}$/;"	f	class:CMessage_data_msg
+operator delete	HistSort.decl.h	/^    void operator delete(void*p, size_t){dealloc(p);}$/;"	f	class:CMessage_probeMessage
+operator delete	HistSort.decl.h	/^    void operator delete(void*p, void*){dealloc(p);}$/;"	f	class:CMessage_array_msg
+operator delete	HistSort.decl.h	/^    void operator delete(void*p, void*){dealloc(p);}$/;"	f	class:CMessage_data_msg
+operator delete	HistSort.decl.h	/^    void operator delete(void*p, void*){dealloc(p);}$/;"	f	class:CMessage_probeMessage
+operator new	HistSort.decl.h	/^    void* operator new(size_t, void*p) { return p; }$/;"	f	class:CMessage_array_msg
+operator new	HistSort.decl.h	/^    void* operator new(size_t, void*p) { return p; }$/;"	f	class:CMessage_data_msg
+operator new	HistSort.decl.h	/^    void* operator new(size_t, void*p) { return p; }$/;"	f	class:CMessage_probeMessage
+operator new	HistSort.def.h	/^template < class key >  void *CMessage_array_msg < key > ::operator new(size_t s){$/;"	f	class:CMessage_array_msg
+operator new	HistSort.def.h	/^template < class key >  void *CMessage_array_msg < key > ::operator new(size_t s, int sz0) {$/;"	f	class:CMessage_array_msg
+operator new	HistSort.def.h	/^template < class key >  void *CMessage_array_msg < key > ::operator new(size_t s, int sz0, const int p) {$/;"	f	class:CMessage_array_msg
+operator new	HistSort.def.h	/^template < class key >  void *CMessage_array_msg < key > ::operator new(size_t s, int* sz){$/;"	f	class:CMessage_array_msg
+operator new	HistSort.def.h	/^template < class key >  void *CMessage_array_msg < key > ::operator new(size_t s, int* sz,const int pb){$/;"	f	class:CMessage_array_msg
+operator new	HistSort.def.h	/^template < class key >  void *CMessage_probeMessage < key > ::operator new(size_t s){$/;"	f	class:CMessage_probeMessage
+operator new	HistSort.def.h	/^template < class key >  void *CMessage_probeMessage < key > ::operator new(size_t s, int sz0, int sz1, int sz2, int sz3) {$/;"	f	class:CMessage_probeMessage
+operator new	HistSort.def.h	/^template < class key >  void *CMessage_probeMessage < key > ::operator new(size_t s, int sz0, int sz1, int sz2, int sz3, const int p) {$/;"	f	class:CMessage_probeMessage
+operator new	HistSort.def.h	/^template < class key >  void *CMessage_probeMessage < key > ::operator new(size_t s, int* sz){$/;"	f	class:CMessage_probeMessage
+operator new	HistSort.def.h	/^template < class key >  void *CMessage_probeMessage < key > ::operator new(size_t s, int* sz,const int pb){$/;"	f	class:CMessage_probeMessage
+operator new	HistSort.def.h	/^template < class key, class value >  void *CMessage_data_msg < key, value > ::operator new(size_t s){$/;"	f	class:CMessage_data_msg
+operator new	HistSort.def.h	/^template < class key, class value >  void *CMessage_data_msg < key, value > ::operator new(size_t s, int sz0) {$/;"	f	class:CMessage_data_msg
+operator new	HistSort.def.h	/^template < class key, class value >  void *CMessage_data_msg < key, value > ::operator new(size_t s, int sz0, const int p) {$/;"	f	class:CMessage_data_msg
+operator new	HistSort.def.h	/^template < class key, class value >  void *CMessage_data_msg < key, value > ::operator new(size_t s, int* sz){$/;"	f	class:CMessage_data_msg
+operator new	HistSort.def.h	/^template < class key, class value >  void *CMessage_data_msg < key, value > ::operator new(size_t s, int* sz,const int pb){$/;"	f	class:CMessage_data_msg
+out_elems	sortinglib.h	/^__thread int in_elems, *out_elems;$/;"	v
+pack	HistSort.def.h	/^template < class key >  void* CMessage_array_msg < key > ::pack(array_msg < key >  *msg) {$/;"	f	class:CMessage_array_msg
+pack	HistSort.def.h	/^template < class key >  void* CMessage_probeMessage < key > ::pack(probeMessage < key >  *msg) {$/;"	f	class:CMessage_probeMessage
+pack	HistSort.def.h	/^template < class key, class value >  void* CMessage_data_msg < key, value > ::pack(data_msg < key, value >  *msg) {$/;"	f	class:CMessage_data_msg
+params	Bucket.h	/^	tuning_params *params;$/;"	m	class:Bucket
+params	Sorter.h	/^    tuning_params *params;$/;"	m	class:Sorter
+parent_pup	HistSort.def.h	/^  void parent_pup(PUP::er &p) {$/;"	f	struct:CBase_Bucket
+parent_pup	HistSort.def.h	/^  void parent_pup(PUP::er &p) {$/;"	f	struct:CBase_Main
+parent_pup	HistSort.def.h	/^  void parent_pup(PUP::er &p) {$/;"	f	struct:CBase_NodeManager
+parent_pup	HistSort.def.h	/^  void parent_pup(PUP::er &p) {$/;"	f	struct:CBase_Sorter
+pars	sortinglib.h	/^    tuning_params pars; $/;"	m	class:Main
+partialSend	Bucket.C	/^void Bucket<key, value>::partialSend(probeMessage<key> *pm){$/;"	f	class:Bucket
+partialSendOne	Bucket.C	/^void Bucket<key, value>::partialSendOne(){$/;"	f	class:Bucket
+partialSendOne	HistSort.decl.h	/^    static int partialSendOne(void) { return idx_partialSendOne_void(); }$/;"	f	class:CkIndex_Bucket
+partialSendOne	HistSort.def.h	/^void CProxyElement_Bucket < key, value > ::partialSendOne(void) $/;"	f	class:CProxyElement_Bucket
+partialSendOne	HistSort.def.h	/^void CProxySection_Bucket < key, value > ::partialSendOne(void) $/;"	f	class:CProxySection_Bucket
+partialSendOne	HistSort.def.h	/^void CProxy_Bucket < key, value > ::partialSendOne(void) $/;"	f	class:CProxy_Bucket
+partialSendOne_13_closure	HistSort.def.h	/^      partialSendOne_13_closure() {$/;"	f	struct:Closure_Bucket::partialSendOne_13_closure
+partialSendOne_13_closure	HistSort.def.h	/^      partialSendOne_13_closure(CkMigrateMessage*) {$/;"	f	struct:Closure_Bucket::partialSendOne_13_closure
+partialSendOne_13_closure	HistSort.def.h	/^    struct Closure_Bucket < key, value > ::partialSendOne_13_closure : public SDAG::Closure {$/;"	s	class:Closure_Bucket
+pe	HistSort.def.h	/^      int pe;$/;"	m	struct:Closure_NodeManager::registerLocalChare_2_closure
+peId	nodemanager.h	/^	int peId;$/;"	m	class:sortItem
+pelist	nodemanager.h	/^		int* pelist;$/;"	m	class:NodeManager
+postMerging	Bucket.C	/^void Bucket<key, value>::postMerging(){$/;"	f	class:Bucket
+probe	Sorter.h	/^    key* probe;$/;"	m	class:probeMessage
+probeMessage	Sorter.h	/^class probeMessage : public CMessage_probeMessage<key> {$/;"	c
+probeSize	HistSort.def.h	/^      int probeSize;$/;"	m	struct:Closure_Bucket::firstProbe_5_closure
+probeSize	Sorter.h	/^    int probeSize;$/;"	m	class:probeMessage
+probe_max	defs.h	/^    int probe_max;$/;"	m	class:tuning_params
+probe_size	defs.h	/^    int probe_size;$/;"	m	class:tuning_params
+proxy_t	HistSort.decl.h	/^    typedef CProxy_Bucket < key, value >  proxy_t;$/;"	t	class:CProxyElement_Bucket
+proxy_t	HistSort.decl.h	/^    typedef CProxy_Bucket < key, value >  proxy_t;$/;"	t	class:CProxySection_Bucket
+proxy_t	HistSort.decl.h	/^    typedef CProxy_Bucket < key, value >  proxy_t;$/;"	t	class:CProxy_Bucket
+proxy_t	HistSort.decl.h	/^    typedef CProxy_Bucket < key, value >  proxy_t;$/;"	t	class:CkIndex_Bucket
+proxy_t	HistSort.decl.h	/^    typedef CProxy_Main < key, value >  proxy_t;$/;"	t	class:CProxy_Main
+proxy_t	HistSort.decl.h	/^    typedef CProxy_Main < key, value >  proxy_t;$/;"	t	class:CkIndex_Main
+proxy_t	HistSort.decl.h	/^    typedef CProxy_NodeManager < key, value >  proxy_t;$/;"	t	class:CProxyElement_NodeManager
+proxy_t	HistSort.decl.h	/^    typedef CProxy_NodeManager < key, value >  proxy_t;$/;"	t	class:CProxySection_NodeManager
+proxy_t	HistSort.decl.h	/^    typedef CProxy_NodeManager < key, value >  proxy_t;$/;"	t	class:CProxy_NodeManager
+proxy_t	HistSort.decl.h	/^    typedef CProxy_NodeManager < key, value >  proxy_t;$/;"	t	class:CkIndex_NodeManager
+proxy_t	HistSort.decl.h	/^    typedef CProxy_Sorter < key, value >  proxy_t;$/;"	t	class:CProxy_Sorter
+proxy_t	HistSort.decl.h	/^    typedef CProxy_Sorter < key, value >  proxy_t;$/;"	t	class:CkIndex_Sorter
+ptr	nodemanager.h	/^	void *ptr;$/;"	m	class:wrap_ptr
+pup	HistSort.decl.h	/^    void pup(PUP::er &p)$/;"	f	class:CProxyElement_Bucket
+pup	HistSort.decl.h	/^    void pup(PUP::er &p)$/;"	f	class:CProxyElement_NodeManager
+pup	HistSort.decl.h	/^    void pup(PUP::er &p)$/;"	f	class:CProxySection_Bucket
+pup	HistSort.decl.h	/^    void pup(PUP::er &p)$/;"	f	class:CProxySection_NodeManager
+pup	HistSort.decl.h	/^    void pup(PUP::er &p)$/;"	f	class:CProxy_Bucket
+pup	HistSort.decl.h	/^    void pup(PUP::er &p)$/;"	f	class:CProxy_Main
+pup	HistSort.decl.h	/^    void pup(PUP::er &p)$/;"	f	class:CProxy_NodeManager
+pup	HistSort.decl.h	/^    void pup(PUP::er &p)$/;"	f	class:CProxy_Sorter
+pup	HistSort.def.h	/^            void pup(PUP::er& __p) {$/;"	f	struct:Closure_Bucket::MergingWork_12_closure
+pup	HistSort.def.h	/^            void pup(PUP::er& __p) {$/;"	f	struct:Closure_Bucket::SetData_3_closure
+pup	HistSort.def.h	/^            void pup(PUP::er& __p) {$/;"	f	struct:Closure_Bucket::finish_15_closure
+pup	HistSort.def.h	/^            void pup(PUP::er& __p) {$/;"	f	struct:Closure_Bucket::partialSendOne_13_closure
+pup	HistSort.def.h	/^            void pup(PUP::er& __p) {$/;"	f	struct:Closure_Bucket::sortAll_8_closure
+pup	HistSort.def.h	/^            void pup(PUP::er& __p) {$/;"	f	struct:Closure_Bucket::stepSort_9_closure
+pup	HistSort.def.h	/^            void pup(PUP::er& __p) {$/;"	f	struct:Closure_Main::DataReady_3_closure
+pup	HistSort.def.h	/^            void pup(PUP::er& __p) {$/;"	f	struct:Closure_Main::Exit_2_closure
+pup	HistSort.def.h	/^            void pup(PUP::er& __p) {$/;"	f	struct:Closure_NodeManager::depositHist_11_closure
+pup	HistSort.def.h	/^            void pup(PUP::er& __p) {$/;"	f	struct:Closure_NodeManager::finishOne_9_closure
+pup	HistSort.def.h	/^            void pup(PUP::er& __p) {$/;"	f	struct:Closure_NodeManager::releaseBufMsgs_6_closure
+pup	HistSort.def.h	/^      void pup(PUP::er& __p) {$/;"	f	struct:Closure_Bucket::firstLocalProbe_6_closure
+pup	HistSort.def.h	/^      void pup(PUP::er& __p) {$/;"	f	struct:Closure_Bucket::firstProbe_5_closure
+pup	HistSort.def.h	/^      void pup(PUP::er& __p) {$/;"	f	struct:Closure_Bucket::recvFinalKeys_11_closure
+pup	HistSort.def.h	/^      void pup(PUP::er& __p) {$/;"	f	struct:Closure_Bucket::startBarrier_2_closure
+pup	HistSort.def.h	/^      void pup(PUP::er& __p) {$/;"	f	struct:Closure_NodeManager::handleOne_8_closure
+pup	HistSort.def.h	/^      void pup(PUP::er& __p) {$/;"	f	struct:Closure_NodeManager::loadkeys_4_closure
+pup	HistSort.def.h	/^      void pup(PUP::er& __p) {$/;"	f	struct:Closure_NodeManager::registerLocalChare_2_closure
+pup	HistSort.def.h	/^      void pup(PUP::er& __p) {$/;"	f	struct:Closure_NodeManager::sendOne_5_closure
+pup	HistSort.def.h	/^  void pup(PUP::er &p) { }$/;"	f	struct:CBase_Bucket
+pup	HistSort.def.h	/^  void pup(PUP::er &p) { }$/;"	f	struct:CBase_Main
+pup	HistSort.def.h	/^  void pup(PUP::er &p) { }$/;"	f	struct:CBase_NodeManager
+pup	HistSort.def.h	/^  void pup(PUP::er &p) { }$/;"	f	struct:CBase_Sorter
+pup	defs.h	/^    void pup(PUP::er &p) {$/;"	f	class:tuning_params
+pup	nodemanager.h	/^		void pup(PUP::er &p){$/;"	f	class:sendInfo
+pup	nodemanager.h	/^	void pup(PUP::er &p){$/;"	f	class:wrap_ptr
+received	Bucket.h	/^    int received;$/;"	m	class:Bucket
+recvData	Bucket.h	/^    std::vector<sendInfo> recvData;$/;"	m	class:Bucket
+recvFinalKeys	Bucket.C	/^void Bucket<key, value>::recvFinalKeys(int srcnode, sendInfo s){$/;"	f	class:Bucket
+recvFinalKeys	HistSort.decl.h	/^    static int recvFinalKeys(int srcnode, const sendInfo &s) { return idx_recvFinalKeys_marshall11(); }$/;"	f	class:CkIndex_Bucket
+recvFinalKeys	HistSort.def.h	/^void CProxyElement_Bucket < key, value > ::recvFinalKeys(int srcnode, const sendInfo &s, const CkEntryOptions *impl_e_opts) $/;"	f	class:CProxyElement_Bucket
+recvFinalKeys	HistSort.def.h	/^void CProxySection_Bucket < key, value > ::recvFinalKeys(int srcnode, const sendInfo &s, const CkEntryOptions *impl_e_opts) $/;"	f	class:CProxySection_Bucket
+recvFinalKeys	HistSort.def.h	/^void CProxy_Bucket < key, value > ::recvFinalKeys(int srcnode, const sendInfo &s, const CkEntryOptions *impl_e_opts) $/;"	f	class:CProxy_Bucket
+recvFinalKeys_11_closure	HistSort.def.h	/^      recvFinalKeys_11_closure() {$/;"	f	struct:Closure_Bucket::recvFinalKeys_11_closure
+recvFinalKeys_11_closure	HistSort.def.h	/^      recvFinalKeys_11_closure(CkMigrateMessage*) {$/;"	f	struct:Closure_Bucket::recvFinalKeys_11_closure
+recvFinalKeys_11_closure	HistSort.def.h	/^    struct Closure_Bucket < key, value > ::recvFinalKeys_11_closure : public SDAG::Closure {$/;"	s	class:Closure_Bucket
+recvOne	HistSort.decl.h	/^    static int recvOne(data_msg<key,value >* impl_msg) { return idx_recvOne_data_msg(); }$/;"	f	class:CkIndex_NodeManager
+recvOne	HistSort.def.h	/^void CProxyElement_NodeManager < key, value > ::recvOne(data_msg<key,value >* impl_msg)$/;"	f	class:CProxyElement_NodeManager
+recvOne	HistSort.def.h	/^void CProxySection_NodeManager < key, value > ::recvOne(data_msg<key,value >* impl_msg)$/;"	f	class:CProxySection_NodeManager
+recvOne	HistSort.def.h	/^void CProxy_NodeManager < key, value > ::recvOne(data_msg<key,value >* impl_msg)$/;"	f	class:CProxy_NodeManager
+recvOne	nodemanager.h	/^		void recvOne(data_msg<key, value> *dm){$/;"	f	class:NodeManager
+recvSample	HistSort.decl.h	/^    static int recvSample(array_msg<key >* impl_msg) { return idx_recvSample_array_msg(); }$/;"	f	class:CkIndex_Sorter
+recvSample	HistSort.def.h	/^void CProxy_Sorter < key, value > ::recvSample(array_msg<key >* impl_msg)$/;"	f	class:CProxy_Sorter
+recvSample	Sorter.C	/^void Sorter<key, value>::recvSample(array_msg<key>* am){$/;"	f	class:Sorter
+recvdMsgs	nodemanager.h	/^		std::vector<data_msg<key, value> *> recvdMsgs;$/;"	m	class:NodeManager
+reg_Bucket_CkMigrateMessage	HistSort.def.h	/^int CkIndex_Bucket < key, value > ::reg_Bucket_CkMigrateMessage() {$/;"	f	class:CkIndex_Bucket
+reg_Bucket_marshall1	HistSort.def.h	/^int CkIndex_Bucket < key, value > ::reg_Bucket_marshall1() {$/;"	f	class:CkIndex_Bucket
+reg_DataReady_void	HistSort.def.h	/^int CkIndex_Main < key, value > ::reg_DataReady_void() {$/;"	f	class:CkIndex_Main
+reg_Done_CkReductionMsg	HistSort.def.h	/^int CkIndex_Sorter < key, value > ::reg_Done_CkReductionMsg() {$/;"	f	class:CkIndex_Sorter
+reg_Exit_void	HistSort.def.h	/^int CkIndex_Main < key, value > ::reg_Exit_void() {$/;"	f	class:CkIndex_Main
+reg_Histogram_CkReductionMsg	HistSort.def.h	/^int CkIndex_Sorter < key, value > ::reg_Histogram_CkReductionMsg() {$/;"	f	class:CkIndex_Sorter
+reg_Load_data_msg	HistSort.def.h	/^int CkIndex_Bucket < key, value > ::reg_Load_data_msg() {$/;"	f	class:CkIndex_Bucket
+reg_Main_marshall1	HistSort.def.h	/^int CkIndex_Main < key, value > ::reg_Main_marshall1() {$/;"	f	class:CkIndex_Main
+reg_MergingWork_void	HistSort.def.h	/^int CkIndex_Bucket < key, value > ::reg_MergingWork_void() {$/;"	f	class:CkIndex_Bucket
+reg_NodeManager_marshall1	HistSort.def.h	/^int CkIndex_NodeManager < key, value > ::reg_NodeManager_marshall1() {$/;"	f	class:CkIndex_NodeManager
+reg_SanityCheck_CkReductionMsg	HistSort.def.h	/^int CkIndex_Sorter < key, value > ::reg_SanityCheck_CkReductionMsg() {$/;"	f	class:CkIndex_Sorter
+reg_SetData_void	HistSort.def.h	/^int CkIndex_Bucket < key, value > ::reg_SetData_void() {$/;"	f	class:CkIndex_Bucket
+reg_Sorter_marshall2	HistSort.def.h	/^int CkIndex_Sorter < key, value > ::reg_Sorter_marshall2() {$/;"	f	class:CkIndex_Sorter
+reg_Sorter_void	HistSort.def.h	/^int CkIndex_Sorter < key, value > ::reg_Sorter_void() {$/;"	f	class:CkIndex_Sorter
+reg_collectSamples_array_msg	HistSort.def.h	/^int CkIndex_NodeManager < key, value > ::reg_collectSamples_array_msg() {$/;"	f	class:CkIndex_NodeManager
+reg_depositHist_void	HistSort.def.h	/^int CkIndex_NodeManager < key, value > ::reg_depositHist_void() {$/;"	f	class:CkIndex_NodeManager
+reg_finalProbes_array_msg	HistSort.def.h	/^int CkIndex_Bucket < key, value > ::reg_finalProbes_array_msg() {$/;"	f	class:CkIndex_Bucket
+reg_final_dsum_CkReductionMsg	HistSort.def.h	/^int CkIndex_Main < key, value > ::reg_final_dsum_CkReductionMsg() {$/;"	f	class:CkIndex_Main
+reg_final_isum_CkReductionMsg	HistSort.def.h	/^int CkIndex_Main < key, value > ::reg_final_isum_CkReductionMsg() {$/;"	f	class:CkIndex_Main
+reg_finishBarrier_CkReductionMsg	HistSort.def.h	/^int CkIndex_Sorter < key, value > ::reg_finishBarrier_CkReductionMsg() {$/;"	f	class:CkIndex_Sorter
+reg_finishOne_void	HistSort.def.h	/^int CkIndex_NodeManager < key, value > ::reg_finishOne_void() {$/;"	f	class:CkIndex_NodeManager
+reg_finish_void	HistSort.def.h	/^int CkIndex_Bucket < key, value > ::reg_finish_void() {$/;"	f	class:CkIndex_Bucket
+reg_firstLocalProbe_marshall6	HistSort.def.h	/^int CkIndex_Bucket < key, value > ::reg_firstLocalProbe_marshall6() {$/;"	f	class:CkIndex_Bucket
+reg_firstProbe_marshall5	HistSort.def.h	/^int CkIndex_Bucket < key, value > ::reg_firstProbe_marshall5() {$/;"	f	class:CkIndex_Bucket
+reg_genSample_array_msg	HistSort.def.h	/^int CkIndex_Bucket < key, value > ::reg_genSample_array_msg() {$/;"	f	class:CkIndex_Bucket
+reg_handleOne_marshall8	HistSort.def.h	/^int CkIndex_NodeManager < key, value > ::reg_handleOne_marshall8() {$/;"	f	class:CkIndex_NodeManager
+reg_histCountProbes_probeMessage	HistSort.def.h	/^int CkIndex_Bucket < key, value > ::reg_histCountProbes_probeMessage() {$/;"	f	class:CkIndex_Bucket
+reg_init_dsum_CkReductionMsg	HistSort.def.h	/^int CkIndex_Main < key, value > ::reg_init_dsum_CkReductionMsg() {$/;"	f	class:CkIndex_Main
+reg_init_isum_CkReductionMsg	HistSort.def.h	/^int CkIndex_Main < key, value > ::reg_init_isum_CkReductionMsg() {$/;"	f	class:CkIndex_Main
+reg_loadkeys_marshall4	HistSort.def.h	/^int CkIndex_NodeManager < key, value > ::reg_loadkeys_marshall4() {$/;"	f	class:CkIndex_NodeManager
+reg_localhist_data_msg	HistSort.def.h	/^int CkIndex_NodeManager < key, value > ::reg_localhist_data_msg() {$/;"	f	class:CkIndex_NodeManager
+reg_partialSendOne_void	HistSort.def.h	/^int CkIndex_Bucket < key, value > ::reg_partialSendOne_void() {$/;"	f	class:CkIndex_Bucket
+reg_recvFinalKeys_marshall11	HistSort.def.h	/^int CkIndex_Bucket < key, value > ::reg_recvFinalKeys_marshall11() {$/;"	f	class:CkIndex_Bucket
+reg_recvOne_data_msg	HistSort.def.h	/^int CkIndex_NodeManager < key, value > ::reg_recvOne_data_msg() {$/;"	f	class:CkIndex_NodeManager
+reg_recvSample_array_msg	HistSort.def.h	/^int CkIndex_Sorter < key, value > ::reg_recvSample_array_msg() {$/;"	f	class:CkIndex_Sorter
+reg_registerLocalChare_marshall2	HistSort.def.h	/^int CkIndex_NodeManager < key, value > ::reg_registerLocalChare_marshall2() {$/;"	f	class:CkIndex_NodeManager
+reg_releaseBufMsgs_void	HistSort.def.h	/^int CkIndex_NodeManager < key, value > ::reg_releaseBufMsgs_void() {$/;"	f	class:CkIndex_NodeManager
+reg_sendOne_marshall5	HistSort.def.h	/^int CkIndex_NodeManager < key, value > ::reg_sendOne_marshall5() {$/;"	f	class:CkIndex_NodeManager
+reg_sendToBuckets_data_msg	HistSort.def.h	/^int CkIndex_NodeManager < key, value > ::reg_sendToBuckets_data_msg() {$/;"	f	class:CkIndex_NodeManager
+reg_sortAll_void	HistSort.def.h	/^int CkIndex_Bucket < key, value > ::reg_sortAll_void() {$/;"	f	class:CkIndex_Bucket
+reg_startBarrier_marshall2	HistSort.def.h	/^int CkIndex_Bucket < key, value > ::reg_startBarrier_marshall2() {$/;"	f	class:CkIndex_Bucket
+reg_stepSort_void	HistSort.def.h	/^int CkIndex_Bucket < key, value > ::reg_stepSort_void() {$/;"	f	class:CkIndex_Bucket
+registerLocalChare	HistSort.decl.h	/^    static int registerLocalChare(int nElem, int pe, const CProxy_Bucket<key,value > &_bucket_arr, const CProxy_Sorter<key,value > &_sorter) { return idx_registerLocalChare_marshall2(); }$/;"	f	class:CkIndex_NodeManager
+registerLocalChare	HistSort.def.h	/^void CProxyElement_NodeManager < key, value > ::registerLocalChare(int nElem, int pe, const CProxy_Bucket<key,value > &_bucket_arr, const CProxy_Sorter<key,value > &_sorter, const CkEntryOptions *impl_e_opts)$/;"	f	class:CProxyElement_NodeManager
+registerLocalChare	HistSort.def.h	/^void CProxySection_NodeManager < key, value > ::registerLocalChare(int nElem, int pe, const CProxy_Bucket<key,value > &_bucket_arr, const CProxy_Sorter<key,value > &_sorter, const CkEntryOptions *impl_e_opts)$/;"	f	class:CProxySection_NodeManager
+registerLocalChare	HistSort.def.h	/^void CProxy_NodeManager < key, value > ::registerLocalChare(int nElem, int pe, const CProxy_Bucket<key,value > &_bucket_arr, const CProxy_Sorter<key,value > &_sorter, const CkEntryOptions *impl_e_opts)$/;"	f	class:CProxy_NodeManager
+registerLocalChare	nodemanager.h	/^		void registerLocalChare(int nElem, int pe, CProxy_Bucket<key, value> _bucket_arr,$/;"	f	class:NodeManager
+registerLocalChare_2_closure	HistSort.def.h	/^      registerLocalChare_2_closure() {$/;"	f	struct:Closure_NodeManager::registerLocalChare_2_closure
+registerLocalChare_2_closure	HistSort.def.h	/^      registerLocalChare_2_closure(CkMigrateMessage*) {$/;"	f	struct:Closure_NodeManager::registerLocalChare_2_closure
+registerLocalChare_2_closure	HistSort.def.h	/^    struct Closure_NodeManager < key, value > ::registerLocalChare_2_closure : public SDAG::Closure {$/;"	s	class:Closure_NodeManager
+registerSortingLib	sortinglib.h	/^void registerSortingLib() {$/;"	f
+register_minmax_uint64_t	Sorter.C	/^void register_minmax_uint64_t(void){$/;"	f
+register_sum_uint64_t	Sorter.C	/^\/*initcall*\/ void register_sum_uint64_t(void){$/;"	f
+releaseBufMsgs	HistSort.decl.h	/^    static int releaseBufMsgs(void) { return idx_releaseBufMsgs_void(); }$/;"	f	class:CkIndex_NodeManager
+releaseBufMsgs	HistSort.def.h	/^void CProxyElement_NodeManager < key, value > ::releaseBufMsgs(void)$/;"	f	class:CProxyElement_NodeManager
+releaseBufMsgs	HistSort.def.h	/^void CProxySection_NodeManager < key, value > ::releaseBufMsgs(void)$/;"	f	class:CProxySection_NodeManager
+releaseBufMsgs	HistSort.def.h	/^void CProxy_NodeManager < key, value > ::releaseBufMsgs(void)$/;"	f	class:CProxy_NodeManager
+releaseBufMsgs	nodemanager.h	/^		void releaseBufMsgs(){$/;"	f	class:NodeManager
+releaseBufMsgs_6_closure	HistSort.def.h	/^      releaseBufMsgs_6_closure() {$/;"	f	struct:Closure_NodeManager::releaseBufMsgs_6_closure
+releaseBufMsgs_6_closure	HistSort.def.h	/^      releaseBufMsgs_6_closure(CkMigrateMessage*) {$/;"	f	struct:Closure_NodeManager::releaseBufMsgs_6_closure
+releaseBufMsgs_6_closure	HistSort.def.h	/^    struct Closure_NodeManager < key, value > ::releaseBufMsgs_6_closure : public SDAG::Closure {$/;"	s	class:Closure_NodeManager
+reuse_probe_results	defs.h	/^    bool reuse_probe_results;$/;"	m	class:tuning_params
+s	HistSort.def.h	/^      sendInfo s;$/;"	m	struct:Closure_Bucket::recvFinalKeys_11_closure
+sample	nodemanager.h	/^		array_msg<key> *sample;$/;"	m	class:NodeManager
+sampleInd	HistSort.def.h	/^      int sampleInd;$/;"	m	struct:Closure_NodeManager::handleOne_8_closure
+sampleSize	nodemanager.h	/^		int sampleSize;$/;"	m	class:NodeManager
+sampleSizePerNode	nodemanager.h	/^int sampleSizePerNode(){$/;"	f
+samplesRcvd	nodemanager.h	/^		int samplesRcvd;$/;"	m	class:NodeManager
+scratch	Bucket.h	/^    kv_pair<key, value>* scratch;$/;"	m	class:Bucket
+scratch	Sorter.h	/^    key* scratch;$/;"	m	class:Sorter
+section_t	HistSort.decl.h	/^    typedef CProxySection_Bucket < key, value >  section_t;$/;"	t	class:CProxyElement_Bucket
+section_t	HistSort.decl.h	/^    typedef CProxySection_Bucket < key, value >  section_t;$/;"	t	class:CProxySection_Bucket
+section_t	HistSort.decl.h	/^    typedef CProxySection_Bucket < key, value >  section_t;$/;"	t	class:CProxy_Bucket
+section_t	HistSort.decl.h	/^    typedef CProxySection_Bucket < key, value >  section_t;$/;"	t	class:CkIndex_Bucket
+section_t	HistSort.decl.h	/^    typedef CProxySection_NodeManager < key, value >  section_t;$/;"	t	class:CProxyElement_NodeManager
+section_t	HistSort.decl.h	/^    typedef CProxySection_NodeManager < key, value >  section_t;$/;"	t	class:CProxySection_NodeManager
+section_t	HistSort.decl.h	/^    typedef CProxySection_NodeManager < key, value >  section_t;$/;"	t	class:CProxy_NodeManager
+section_t	HistSort.decl.h	/^    typedef CProxySection_NodeManager < key, value >  section_t;$/;"	t	class:CkIndex_NodeManager
+sendAll	Bucket.C	/^void Bucket<key, value>::sendAll(){$/;"	f	class:Bucket
+sendInfo	nodemanager.h	/^		sendInfo() {}$/;"	f	class:sendInfo
+sendInfo	nodemanager.h	/^		sendInfo(void *_base, int _ind1, int _ind2) : base(_base), ind1(_ind1), ind2(_ind2) {}$/;"	f	class:sendInfo
+sendInfo	nodemanager.h	/^class sendInfo{$/;"	c
+sendOne	HistSort.decl.h	/^    static int sendOne(int dest) { return idx_sendOne_marshall5(); }$/;"	f	class:CkIndex_NodeManager
+sendOne	HistSort.def.h	/^void CProxyElement_NodeManager < key, value > ::sendOne(int dest, const CkEntryOptions *impl_e_opts)$/;"	f	class:CProxyElement_NodeManager
+sendOne	HistSort.def.h	/^void CProxySection_NodeManager < key, value > ::sendOne(int dest, const CkEntryOptions *impl_e_opts)$/;"	f	class:CProxySection_NodeManager
+sendOne	HistSort.def.h	/^void CProxy_NodeManager < key, value > ::sendOne(int dest, const CkEntryOptions *impl_e_opts)$/;"	f	class:CProxy_NodeManager
+sendOne	nodemanager.h	/^		void sendOne(int dest){$/;"	f	class:NodeManager
+sendOne_5_closure	HistSort.def.h	/^      sendOne_5_closure() {$/;"	f	struct:Closure_NodeManager::sendOne_5_closure
+sendOne_5_closure	HistSort.def.h	/^      sendOne_5_closure(CkMigrateMessage*) {$/;"	f	struct:Closure_NodeManager::sendOne_5_closure
+sendOne_5_closure	HistSort.def.h	/^    struct Closure_NodeManager < key, value > ::sendOne_5_closure : public SDAG::Closure {$/;"	s	class:Closure_NodeManager
+sendToBuckets	HistSort.decl.h	/^    static int sendToBuckets(data_msg<key,value >* impl_msg) { return idx_sendToBuckets_data_msg(); }$/;"	f	class:CkIndex_NodeManager
+sendToBuckets	HistSort.def.h	/^void CProxyElement_NodeManager < key, value > ::sendToBuckets(data_msg<key,value >* impl_msg)$/;"	f	class:CProxyElement_NodeManager
+sendToBuckets	HistSort.def.h	/^void CProxySection_NodeManager < key, value > ::sendToBuckets(data_msg<key,value >* impl_msg)$/;"	f	class:CProxySection_NodeManager
+sendToBuckets	HistSort.def.h	/^void CProxy_NodeManager < key, value > ::sendToBuckets(data_msg<key,value >* impl_msg)$/;"	f	class:CProxy_NodeManager
+sendToBuckets	nodemanager.h	/^	void sendToBuckets(data_msg<key, value>* dm){$/;"	f	class:NodeManager
+sent	Bucket.h	/^    bool* sent;$/;"	m	class:Bucket
+sepCounts	Bucket.h	/^    int *sepCounts;$/;"	m	class:Bucket
+sepKeys	Bucket.h	/^    key *sepKeys;$/;"	m	class:Bucket
+setReductionClient	HistSort.decl.h	/^    inline void setReductionClient(CkReductionClientFn fn,void *param=NULL) const$/;"	f	class:CProxyElement_Bucket
+setReductionClient	HistSort.decl.h	/^    inline void setReductionClient(CkReductionClientFn fn,void *param=NULL) const$/;"	f	class:CProxyElement_NodeManager
+setReductionClient	HistSort.decl.h	/^    inline void setReductionClient(CkReductionClientFn fn,void *param=NULL) const$/;"	f	class:CProxySection_Bucket
+setReductionClient	HistSort.decl.h	/^    inline void setReductionClient(CkReductionClientFn fn,void *param=NULL) const$/;"	f	class:CProxySection_NodeManager
+setReductionClient	HistSort.decl.h	/^    inline void setReductionClient(CkReductionClientFn fn,void *param=NULL) const$/;"	f	class:CProxy_Bucket
+setReductionClient	HistSort.decl.h	/^    inline void setReductionClient(CkReductionClientFn fn,void *param=NULL) const$/;"	f	class:CProxy_NodeManager
+setTotalKeys	Bucket.h	/^    inline void setTotalKeys(){$/;"	f	class:Bucket
+sortAll	Bucket.C	/^void Bucket<key, value>::sortAll(){$/;"	f	class:Bucket
+sortAll	HistSort.decl.h	/^    static int sortAll(void) { return idx_sortAll_void(); }$/;"	f	class:CkIndex_Bucket
+sortAll	HistSort.def.h	/^void CProxyElement_Bucket < key, value > ::sortAll(void) $/;"	f	class:CProxyElement_Bucket
+sortAll	HistSort.def.h	/^void CProxySection_Bucket < key, value > ::sortAll(void) $/;"	f	class:CProxySection_Bucket
+sortAll	HistSort.def.h	/^void CProxy_Bucket < key, value > ::sortAll(void) $/;"	f	class:CProxy_Bucket
+sortAll_8_closure	HistSort.def.h	/^      sortAll_8_closure() {$/;"	f	struct:Closure_Bucket::sortAll_8_closure
+sortAll_8_closure	HistSort.def.h	/^      sortAll_8_closure(CkMigrateMessage*) {$/;"	f	struct:Closure_Bucket::sortAll_8_closure
+sortAll_8_closure	HistSort.def.h	/^    struct Closure_Bucket < key, value > ::sortAll_8_closure : public SDAG::Closure {$/;"	s	class:Closure_Bucket
+sortCopyMsg	nodemanager.h	/^		void sortCopyMsg(data_msg<key, value> *dm,  int dest){$/;"	f	class:NodeManager
+sortItem	nodemanager.h	/^   sortItem(key _k, int _peId): k(_k), peId(_peId) {}$/;"	f	class:sortItem
+sortItem	nodemanager.h	/^class sortItem{$/;"	c
+sorted	Bucket.h	/^  	bool *sorted;$/;"	m	class:Bucket
+sorted	Bucket.h	/^    bool sorted;$/;"	m	class:data_msg
+sorter	nodemanager.h	/^		CProxy_Sorter<key, value> sorter;$/;"	m	class:NodeManager
+sorter	sortinglib.h	/^    CProxy_Sorter<key, value> sorter;$/;"	m	class:Main
+sorter_proxy	Bucket.h	/^	CProxy_Sorter<key, value> sorter_proxy;$/;"	m	class:Bucket
+splice_thresh	defs.h	/^    int splice_thresh;$/;"	m	class:tuning_params
+splitters	nodemanager.h	/^		key* splitters;$/;"	m	class:NodeManager
+srcnode	HistSort.def.h	/^      int srcnode;$/;"	m	struct:Closure_Bucket::recvFinalKeys_11_closure
+start	Bucket.h	/^    int start;$/;"	m	struct:lb_struct
+startBarrier	Bucket.C	/^void Bucket<key, value>::startBarrier(CProxy_Sorter<key, value> _sorter_proxy, CProxy_Main<key, value> _main_proxy){$/;"	f	class:Bucket
+startBarrier	HistSort.decl.h	/^    static int startBarrier(const CProxy_Sorter<key,value > &_sorter_proxy, const CProxy_Main<key,value > &_main_proxy) { return idx_startBarrier_marshall2(); }$/;"	f	class:CkIndex_Bucket
+startBarrier	HistSort.def.h	/^void CProxyElement_Bucket < key, value > ::startBarrier(const CProxy_Sorter<key,value > &_sorter_proxy, const CProxy_Main<key,value > &_main_proxy, const CkEntryOptions *impl_e_opts) $/;"	f	class:CProxyElement_Bucket
+startBarrier	HistSort.def.h	/^void CProxySection_Bucket < key, value > ::startBarrier(const CProxy_Sorter<key,value > &_sorter_proxy, const CProxy_Main<key,value > &_main_proxy, const CkEntryOptions *impl_e_opts) $/;"	f	class:CProxySection_Bucket
+startBarrier	HistSort.def.h	/^void CProxy_Bucket < key, value > ::startBarrier(const CProxy_Sorter<key,value > &_sorter_proxy, const CProxy_Main<key,value > &_main_proxy, const CkEntryOptions *impl_e_opts) $/;"	f	class:CProxy_Bucket
+startBarrier_2_closure	HistSort.def.h	/^      startBarrier_2_closure() {$/;"	f	struct:Closure_Bucket::startBarrier_2_closure
+startBarrier_2_closure	HistSort.def.h	/^      startBarrier_2_closure(CkMigrateMessage*) {$/;"	f	struct:Closure_Bucket::startBarrier_2_closure
+startBarrier_2_closure	HistSort.def.h	/^    struct Closure_Bucket < key, value > ::startBarrier_2_closure : public SDAG::Closure {$/;"	s	class:Closure_Bucket
+startMergingWork	Bucket.h	/^    bool startMergingWork;$/;"	m	class:Bucket
+stepSize	HistSort.def.h	/^      key stepSize;$/;"	m	struct:Closure_Bucket::firstProbe_5_closure
+stepSort	Bucket.C	/^void Bucket<key, value>::stepSort(){$/;"	f	class:Bucket
+stepSort	HistSort.decl.h	/^    static int stepSort(void) { return idx_stepSort_void(); }$/;"	f	class:CkIndex_Bucket
+stepSort	HistSort.def.h	/^void CProxyElement_Bucket < key, value > ::stepSort(void) $/;"	f	class:CProxyElement_Bucket
+stepSort	HistSort.def.h	/^void CProxySection_Bucket < key, value > ::stepSort(void) $/;"	f	class:CProxySection_Bucket
+stepSort	HistSort.def.h	/^void CProxy_Bucket < key, value > ::stepSort(void) $/;"	f	class:CProxy_Bucket
+stepSort_9_closure	HistSort.def.h	/^      stepSort_9_closure() {$/;"	f	struct:Closure_Bucket::stepSort_9_closure
+stepSort_9_closure	HistSort.def.h	/^      stepSort_9_closure(CkMigrateMessage*) {$/;"	f	struct:Closure_Bucket::stepSort_9_closure
+stepSort_9_closure	HistSort.def.h	/^    struct Closure_Bucket < key, value > ::stepSort_9_closure : public SDAG::Closure {$/;"	s	class:Closure_Bucket
+stride	nodemanager.h	/^		int stride;$/;"	m	class:NodeManager
+sum_uint64_t	Sorter.C	/^CkReductionMsg *sum_uint64_t(int nMsg,CkReductionMsg **msgs)$/;"	f
+sum_uint64_t_type	Sorter.C	/^\/*global*\/ CkReduction::reducerType sum_uint64_t_type; $/;"	v
+thisProxy	HistSort.def.h	/^  CProxy_Bucket < key, value >  thisProxy;$/;"	m	struct:CBase_Bucket
+thisProxy	HistSort.def.h	/^  CProxy_Main < key, value >  thisProxy;$/;"	m	struct:CBase_Main
+thisProxy	HistSort.def.h	/^  CProxy_NodeManager < key, value >  thisProxy;$/;"	m	struct:CBase_NodeManager
+thisProxy	HistSort.def.h	/^  CProxy_Sorter < key, value >  thisProxy;$/;"	m	struct:CBase_Sorter
+toSend	Bucket.h	/^    std::vector <int> toSend;$/;"	m	class:Bucket
+totalmerge	Bucket.h	/^    bool totalmerge;$/;"	m	class:Bucket
+tuning_params	defs.h	/^class tuning_params{$/;"	c
+unpack	HistSort.def.h	/^template < class key >  array_msg < key > * CMessage_array_msg < key > ::unpack(void* buf) {$/;"	f	class:CMessage_array_msg
+unpack	HistSort.def.h	/^template < class key >  probeMessage < key > * CMessage_probeMessage < key > ::unpack(void* buf) {$/;"	f	class:CMessage_probeMessage
+unpack	HistSort.def.h	/^template < class key, class value >  data_msg < key, value > * CMessage_data_msg < key, value > ::unpack(void* buf) {$/;"	f	class:CMessage_data_msg
+v	sortinglib.h	/^    value v;$/;"	m	class:kv_pair
+virtual_pup	HistSort.def.h	/^  void virtual_pup(PUP::er &p) {$/;"	f	struct:CBase_Bucket
+virtual_pup	HistSort.def.h	/^  void virtual_pup(PUP::er &p) {$/;"	f	struct:CBase_Main
+virtual_pup	HistSort.def.h	/^  void virtual_pup(PUP::er &p) {$/;"	f	struct:CBase_NodeManager
+virtual_pup	HistSort.def.h	/^  void virtual_pup(PUP::er &p) {$/;"	f	struct:CBase_Sorter
+wrap_ptr	nodemanager.h	/^	wrap_ptr() {} $/;"	f	class:wrap_ptr
+wrap_ptr	nodemanager.h	/^	wrap_ptr(void *_ptr): ptr(_ptr) {}$/;"	f	class:wrap_ptr
+wrap_ptr	nodemanager.h	/^class wrap_ptr{$/;"	c
+~DataReady_3_closure	HistSort.def.h	/^      virtual ~DataReady_3_closure() {$/;"	f	struct:Closure_Main::DataReady_3_closure
+~Exit_2_closure	HistSort.def.h	/^      virtual ~Exit_2_closure() {$/;"	f	struct:Closure_Main::Exit_2_closure
+~MergingWork_12_closure	HistSort.def.h	/^      virtual ~MergingWork_12_closure() {$/;"	f	struct:Closure_Bucket::MergingWork_12_closure
+~SetData_3_closure	HistSort.def.h	/^      virtual ~SetData_3_closure() {$/;"	f	struct:Closure_Bucket::SetData_3_closure
+~depositHist_11_closure	HistSort.def.h	/^      virtual ~depositHist_11_closure() {$/;"	f	struct:Closure_NodeManager::depositHist_11_closure
+~finishOne_9_closure	HistSort.def.h	/^      virtual ~finishOne_9_closure() {$/;"	f	struct:Closure_NodeManager::finishOne_9_closure
+~finish_15_closure	HistSort.def.h	/^      virtual ~finish_15_closure() {$/;"	f	struct:Closure_Bucket::finish_15_closure
+~firstLocalProbe_6_closure	HistSort.def.h	/^      virtual ~firstLocalProbe_6_closure() {$/;"	f	struct:Closure_Bucket::firstLocalProbe_6_closure
+~firstProbe_5_closure	HistSort.def.h	/^      virtual ~firstProbe_5_closure() {$/;"	f	struct:Closure_Bucket::firstProbe_5_closure
+~handleOne_8_closure	HistSort.def.h	/^      virtual ~handleOne_8_closure() {$/;"	f	struct:Closure_NodeManager::handleOne_8_closure
+~loadkeys_4_closure	HistSort.def.h	/^      virtual ~loadkeys_4_closure() {$/;"	f	struct:Closure_NodeManager::loadkeys_4_closure
+~partialSendOne_13_closure	HistSort.def.h	/^      virtual ~partialSendOne_13_closure() {$/;"	f	struct:Closure_Bucket::partialSendOne_13_closure
+~recvFinalKeys_11_closure	HistSort.def.h	/^      virtual ~recvFinalKeys_11_closure() {$/;"	f	struct:Closure_Bucket::recvFinalKeys_11_closure
+~registerLocalChare_2_closure	HistSort.def.h	/^      virtual ~registerLocalChare_2_closure() {$/;"	f	struct:Closure_NodeManager::registerLocalChare_2_closure
+~releaseBufMsgs_6_closure	HistSort.def.h	/^      virtual ~releaseBufMsgs_6_closure() {$/;"	f	struct:Closure_NodeManager::releaseBufMsgs_6_closure
+~sendOne_5_closure	HistSort.def.h	/^      virtual ~sendOne_5_closure() {$/;"	f	struct:Closure_NodeManager::sendOne_5_closure
+~sortAll_8_closure	HistSort.def.h	/^      virtual ~sortAll_8_closure() {$/;"	f	struct:Closure_Bucket::sortAll_8_closure
+~startBarrier_2_closure	HistSort.def.h	/^      virtual ~startBarrier_2_closure() {$/;"	f	struct:Closure_Bucket::startBarrier_2_closure
+~stepSort_9_closure	HistSort.def.h	/^      virtual ~stepSort_9_closure() {$/;"	f	struct:Closure_Bucket::stepSort_9_closure

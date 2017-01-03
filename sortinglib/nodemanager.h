@@ -6,23 +6,26 @@
 #include <queue>
 #include <map>
 
-const int SAMPLE_FACTOR = 20;
+const int SAMPLE_FACTOR = 1;
 
 #define LS_EPS 2
 
 
 int maxSampleSize(){
-	int lognnodes = 1, numnodes = CkNumNodes();
-	while((1<<lognnodes) <= numnodes) lognnodes++;
-	int sampleSize = (SAMPLE_FACTOR *  numnodes * lognnodes);
+	int lognprocs = 1, numprocs = CkNumPes(), numpes = CkNodeSize(CkMyNode());
+	return 10 * numprocs;
+	while((1<<lognprocs) <= numprocs) lognprocs++;
+	int sampleSize = (SAMPLE_FACTOR *  numprocs * lognprocs * numpes);
 	return sampleSize + 2;
 }
 
 
 int sampleSizePerNode(){
-	int lognnodes = 1, numnodes = CkNumNodes(), numpes = CkNodeSize(CkMyNode());
-	while((1<<lognnodes) <= numnodes) lognnodes++;
-	int sampleSize = (SAMPLE_FACTOR * lognnodes);
+	int numproc = CkNumPes();
+	int lognprocs = 1, numpes = CkNodeSize(CkMyNode());
+	return 10*numpes;
+	while((1<<lognprocs) <= numproc) lognprocs++;
+	int sampleSize = (SAMPLE_FACTOR * lognprocs * numpes);
 	return sampleSize;
 }
 
@@ -56,6 +59,20 @@ public:
 	void *ptr;
 	wrap_ptr() {} 
 	wrap_ptr(void *_ptr): ptr(_ptr) {}
+	void pup(PUP::er &p){
+		pup_bytes(&p, this, sizeof(*this));
+	}
+};
+
+class sampleInfo{
+public:
+	int size;
+	int *indices;
+	void *dest;
+	int offset;
+	sampleInfo() {}
+	sampleInfo(int _size, int *_indices, void *_dest, int _offset): 
+		size(_size), indices(_indices), dest(_dest), offset(_offset){}
 	void pup(PUP::er &p){
 		pup_bytes(&p, this, sizeof(*this));
 	}
@@ -133,7 +150,7 @@ class NodeManager : public CBase_NodeManager<key, value> {
 			numElem = new int[numpes];
 			pelist = new int[numpes];
 			splitters = new key[numpes];
-			ainfo.resize(numnodes);
+			ainfo.resize(CkNumPes());
 			numRecvd = numFinished = numDeposited = numSent = 0;
 			ls_numTotSamples=0;
 			numElemFinal=0;
@@ -149,8 +166,6 @@ class NodeManager : public CBase_NodeManager<key, value> {
 			static int currnpes = 0;
 			pelist[currnpes] = pe;
 			numElem[currnpes++] = nElem;
-			int lognnodes = 1;
-			while((1<<lognnodes) <= numnodes) lognnodes <<= 1;
 			if(currnpes == numpes){ //all PE's registered
 				sampleSize = sampleSizePerNode();
 				//ckout<<"sample size: "<<sampleSize<<endl;
@@ -193,23 +208,27 @@ class NodeManager : public CBase_NodeManager<key, value> {
 				int ub = std::upper_bound(randIndices + cumIndex, 
 						randIndices + sampleSize, cumFreq + numElem[i]) - randIndices;   
 				//send  randIndices[cumIndex, ub) - cumFreq to PE pelist[i]
+				sampleInfo sI(ub-cumIndex, randIndices+cumIndex, sample->data + cumIndex, cumFreq);
+				/*
 				array_msg<int> *am = new (ub-cumIndex) array_msg<int>;
 				am->numElem = ub-cumIndex;
 				for(int j=0; j<am->numElem; j++){
 					am->data[j] = randIndices[cumIndex+j] - cumFreq;
 				}
+				*/
 				//ckout<<"Sending randIndices["<<cumIndex<<","<<ub<<") - ";
-				//ckout<<cumFreq<<" to PE "<<pelist[i]<<endl;
-				bucket_arr[pelist[i]].genSample(am);
+				//ckout<<cumFreq<<" to PE "<<pelist[i]<<" dest: "<<sI.dest<<endl;
+				bucket_arr[pelist[i]].genSample(sI);
 				cumIndex = ub;
 				cumFreq += numElem[i];
 			}
 		}
 
-		void collectSamples(array_msg<key> *s){
+		void collectSamples(sampleInfo sI){
 			static int count = 0;
-			memcpy(sample->data + samplesRcvd, s->data, s->numElem * sizeof(key));
-			samplesRcvd += s->numElem;
+
+			//memcpy(sample->data + samplesRcvd, s->data, s->numElem * sizeof(key));
+			samplesRcvd += sI.size;
 			count++;
 			//can enter here twice, check on the basis of number of msgs received
 			if(count == numpes){
@@ -312,7 +331,7 @@ class NodeManager : public CBase_NodeManager<key, value> {
 			if(ls_numTotSamples >= ls_getMaxSampleSize()) {
 				CmiAbort("Sample size exceeds expectations");
 			}
-			CkPrintf("[%d, %d] Calling handleOne, dm->num_vals: %d, ind: %d, sampleInd: %d, numsamples: %d\n", CkMyNode(), CkMyPe(), dm->num_vals, recvdMsgs.size()-1, ls_numTotSamples - numsamples, numsamples);	
+			//CkPrintf("[%d, %d] Calling handleOne, dm->num_vals: %d, ind: %d, sampleInd: %d, numsamples: %d\n", CkMyNode(), CkMyPe(), dm->num_vals, recvdMsgs.size()-1, ls_numTotSamples - numsamples, numsamples);	
 			this->thisProxy[CkMyNode()].handleOne(wrap_ptr(dm), ls_numTotSamples - numsamples, numsamples);
 			++numRecvd;
 			if(numRecvd == CkNumNodes())

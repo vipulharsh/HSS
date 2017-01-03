@@ -20,7 +20,7 @@ Bucket<key, value>::Bucket(tuning_params par, key min, key max, int nuBuckets_, 
 	params = new tuning_params;
 	*params = par;
 	nNodes = CkNumNodes();
-        int maxprobe = std::max(params->probe_max, maxSampleSize());
+    int maxprobe = std::max(params->probe_max, maxSampleSize());
 	lastProbe = new key[maxprobe];
 	finalSplitters = new key[nBuckets+2]; //required size is nBuckets+2
 	achieved = new bool[nBuckets+2];
@@ -46,9 +46,9 @@ Bucket<key, value>::Bucket(tuning_params par, key min, key max, int nuBuckets_, 
 //reset variables after sorting
 template <class key, class value>
 void Bucket<key, value>::Reset(){
-	memset(achieved+1, false, nNodes);
+	memset(achieved+1, false, nBuckets+1);
 	memset(sorted, false, numChunks+1);
-	memset(sent, false, nNodes+1);
+	memset(sent, false, nBuckets+1);
 	achieved[0] = true;
 	//achieved[0] = achieved[nBuckets] = true;
 	//check the validity of this
@@ -165,15 +165,16 @@ void Bucket<key, value>::sortAll(){
 
 
 template <class key, class value>
-void Bucket<key, value>::genSample(array_msg<int>  *am){
+void Bucket<key, value>::genSample(sampleInfo sI){
 	//ckout<<"I will generate samples now "<<CkMyPe()<<endl;
-	array_msg<key> *sample = new (am->numElem) array_msg<key>;
-	for(int i=0; i<am->numElem; i++){
-		sample->data[i] = bucket_data[am->data[i]].k;
+	//array_msg<key> *sample = new (am->numElem) array_msg<key>;
+	key *dest  = (key *)sI.dest;
+	//CkPrintf("[%d] genSample of size: %d, dest: %p\n", CkMyPe(), sI.size, sI.dest);
+	for(int i=0; i<sI.size; i++){
+		dest[i] = bucket_data[sI.indices[i]-sI.offset].k;
 	}
-	sample->numElem = am->numElem;
-	nodemgr[CkMyNode()].collectSamples(sample);
-	delete(am);
+	nodemgr[CkMyNode()].collectSamples(sI);
+	//delete(am);
  	this->thisProxy[this->thisIndex].sortAll();
 	/****  Undo this, after fixing the chunks ***/
 	//this->thisProxy[this->thisIndex].stepSort();
@@ -292,7 +293,7 @@ void Bucket<key, value>::localProbe(){
 		}
 	
 
-		int numIndices = std::max(nNodes, lastProbeSize) * indexFactor;			
+		int numIndices = std::max(nBuckets, lastProbeSize) * indexFactor;			
 		key indexStep = std::max((mymax- currmin + numIndices)/numIndices, (key)1);	
 		
 		std::pair<int, key> p2= grtstPow2((mymax-currmin)/numIndices + 1);
@@ -346,6 +347,11 @@ void Bucket<key, value>::localProbe(){
 	//ckout<<"Time taken in Histogramming at "<<CkMyPe()<<" : "<<c2-c1<<endl;
 }
 
+template <class key, class value>
+void Bucket<key, value>::genNextSamples(sampleMessage<key> *sm){
+}
+
+
 
 template <class key, class value>
 void Bucket<key, value>::histCountProbes(probeMessage<key> *pm){
@@ -353,7 +359,8 @@ void Bucket<key, value>::histCountProbes(probeMessage<key> *pm){
 	bool flag =  (achieved[this->thisIndex] &&  achieved[this->thisIndex+1]);
 	for(int i=0; i<pm->num_newachv; i++){
 		finalSplitters[pm->newachv_id[i]] = pm->newachv_key[i];
-		assert(!achieved[pm->newachv_id[i]]);
+		//ckout<<"#"<<i<<": "<<pm->newachv_id[i]<<" : "<< pm->newachv_key[i]<<" achieved?"<<(bool)achieved[pm->newachv_id[i]]<<" - "<<CkMyPe()<<endl;
+		assert(achieved[pm->newachv_id[i]] == false);
 		achieved[pm->newachv_id[i]] = true;
 		achievedCounts[pm->newachv_id[i]] = pm->newachv_count[i];
 	}
@@ -378,9 +385,9 @@ void Bucket<key, value>::histCountProbes(probeMessage<key> *pm){
 
 
 	if(lastProbeSize <= 1){
-		//ckout<<"Splitters have been determined  - "<<CkMyPe()<<endl;	
-		sendAll();
-		//this->contribute(CkCallback(CkIndex_Sorter<key, value>::Done(NULL), sorter_proxy));
+		ckout<<"Splitters have been determined  - "<<CkMyPe()<<endl;	
+		//sendAll();
+		this->contribute(CkCallback(CkIndex_Sorter<key, value>::Done(NULL), sorter_proxy));
 		return;
 		//Not required, I think
 		//if(lastSortedChunk == numChunks && numSent == nBuckets)

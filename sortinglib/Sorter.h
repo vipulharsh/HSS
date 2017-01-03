@@ -16,6 +16,28 @@ class probeMessage : public CMessage_probeMessage<key> {
 };
 
 
+template <class key>
+class sampleMessage : public CMessage_sampleMessage<key> {
+  public:
+    double f;
+    int nIntervals;
+    key* lb;
+    key* ub;
+    
+    key* newachv_key;
+    int* newachv_id;
+    uint64_t* newachv_count;
+    int num_newachv;
+};
+
+
+
+
+
+
+
+
+
 template <class key, class value>
 class Sorter : public CBase_Sorter<key, value>  {
   private:
@@ -43,6 +65,9 @@ class Sorter : public CBase_Sorter<key, value>  {
 
     std::vector<key> collectedSample;
 
+    key *lb_keys, *ub_keys;
+    uint64_t *lb_ranks, *ub_ranks;
+
     /**
     For collecting stats
     **/
@@ -51,6 +76,7 @@ class Sorter : public CBase_Sorter<key, value>  {
 
     int checkGoal(int splitterInd, uint64_t histCount);
     void nextProbes(std::vector<std::pair<key, int> > &newachv, uint64_t* histCounts, CkReductionMsg *msg);
+    void nextSamples(std::vector<std::pair<key, int> > &newachv, uint64_t* histCounts, CkReductionMsg *msg);
     
   public:
 
@@ -65,9 +91,11 @@ class Sorter : public CBase_Sorter<key, value>  {
     void Init();
     //void Begin();
     void Histogram(CkReductionMsg *msg);
+    void updateBounds(CkReductionMsg *msg);
     //void globalMinMax(CkReductionMsg *msg);
     void Done(CkReductionMsg *msg);
     void SanityCheck(CkReductionMsg *msg);
+    inline uint64_t idealSplitterRank(int i){ return (nElements*i)/nBuckets;}
 };
 //need to include .C file in order to have it instantiated when the .h file is included externally
 //such instantiation is necessary here since the compiler generates templated code on demand
