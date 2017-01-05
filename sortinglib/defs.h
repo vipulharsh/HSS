@@ -1,8 +1,9 @@
 #ifndef __DEFS_H__
 #define __DEFS_H__
 
+#include <vector>
 #include "pup.h"
-
+#include "pup_stl.h"
 //prints a lot of information, will generate large logs, will also perform sanity checks on data
 //#define DEBUG 0
 

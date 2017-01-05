@@ -2,7 +2,8 @@
 #include "assert.h"
 #include "sortinglib.h"
 #include "nodemanager.h"
-
+#include "math.h"
+#include <vector>
 
 extern CkReduction::reducerType sum_uint64_t_type; 
 extern CkReduction::reducerType minmax_uint64_t_type; 
@@ -349,6 +350,37 @@ void Bucket<key, value>::localProbe(){
 
 template <class key, class value>
 void Bucket<key, value>::genNextSamples(sampleMessage<key> *sm){
+	//ckout<<"Generating samples now:#"<<sm->nIntervals<<" - "<<CkMyPe()<<endl;
+	
+	//array_msg<key> *sample = new (am->numElem) array_msg<key>;
+	std::vector<key> samples;
+	typedef std::chrono::high_resolution_clock myclock;
+	static myclock::time_point beginning = myclock::now();
+	myclock::duration d = myclock::now() - beginning;
+	unsigned seed = d.count();
+	//seed = CkMyPe();
+	
+	int sampleSize = ceil(sampleSizePerPe() / sm->f);
+	//ckout<<"Seed is "<<seed<<endl;
+	std::default_random_engine generator(seed);
+	std::uniform_int_distribution<int> distribution(0,numElem-1);
+	distribution(generator);
+	
+	for(int i=0; i<sampleSize; i++){
+		int randIndex = distribution(generator);
+		key k = bucket_data[randIndex].k; 
+		int l = std::lower_bound(sm->lb, sm->lb + sm->nIntervals, k) - (sm->lb+1);
+		int u = std::upper_bound(sm->ub, sm->ub + sm->nIntervals, k) - (sm->ub+1);
+		//ckout<<"randIndex: "<<randIndex<<", l: "<<l<<", u: "<<u<<", k: "<<k<<endl;
+		//ckout<<l<<" "<<u<<endl;
+		if(l != u){
+			//ckout<<"Found a key!: "<<k<<endl;
+			samples.push_back(k);
+		}
+		//distribution.reset();
+	}
+	//ckout<<"Sample size for next round: "<<samples.size()<<"/"<<sampleSize<<" - "<<CkMyPe()<<endl;
+	nodemgr[CkMyNode()].assembleSamples(samples);
 }
 
 

@@ -97,6 +97,7 @@ module HistSort{
                   CProxy_Sorter<key, value> _sorter
                   );
       entry [exclusive, expedited] void collectSamples(sampleInfo sI);
+      entry [exclusive] void assembleSamples(std::vector<key> proc_sample);
       entry [exclusive] void loadkeys(int dest, sendInfo inf);
       entry void sendOne(int dest);
       entry [exclusive] void releaseBufMsgs();

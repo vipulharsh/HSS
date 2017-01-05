@@ -1700,6 +1700,7 @@ class wrap_ptr;
 NodeManager(const key &_minkey, const key &_maxkey);
 void registerLocalChare(int nElem, int pe, const CProxy_Bucket<key,value > &_bucket_arr, const CProxy_Sorter<key,value > &_sorter);
 void collectSamples(const sampleInfo &sI);
+void assembleSamples(const std::vector<key > &proc_sample);
 void loadkeys(int dest, const sendInfo &inf);
 void sendOne(int dest);
 void releaseBufMsgs(void);
@@ -1801,60 +1802,86 @@ template < class key, class value > class CkIndex_NodeManager:public CkIndex_Nod
     static void _call_sdag_collectSamples_marshall3(void* impl_msg, void* impl_obj);
     
     static void _marshallmessagepup_collectSamples_marshall3(PUP::er &p,void *msg);
+    /* DECLS: void assembleSamples(const std::vector<key > &proc_sample);
+     */
+    // Entry point registration at startup
+    
+    static int reg_assembleSamples_marshall4();
+    // Entry point index lookup
+    
+    inline static int idx_assembleSamples_marshall4() {
+      static int epidx = reg_assembleSamples_marshall4();
+      return epidx;
+    }
+
+    
+    inline static int idx_assembleSamples(void (NodeManager < key, value > ::*)(const std::vector<key > &proc_sample) ) {
+      return idx_assembleSamples_marshall4();
+    }
+
+
+    
+    static int assembleSamples(const std::vector<key > &proc_sample) { return idx_assembleSamples_marshall4(); }
+    
+    static void _call_assembleSamples_marshall4(void* impl_msg, void* impl_obj);
+    
+    static void _call_sdag_assembleSamples_marshall4(void* impl_msg, void* impl_obj);
+    
+    static void _marshallmessagepup_assembleSamples_marshall4(PUP::er &p,void *msg);
     /* DECLS: void loadkeys(int dest, const sendInfo &inf);
      */
     // Entry point registration at startup
     
-    static int reg_loadkeys_marshall4();
+    static int reg_loadkeys_marshall5();
     // Entry point index lookup
     
-    inline static int idx_loadkeys_marshall4() {
-      static int epidx = reg_loadkeys_marshall4();
+    inline static int idx_loadkeys_marshall5() {
+      static int epidx = reg_loadkeys_marshall5();
       return epidx;
     }
 
     
     inline static int idx_loadkeys(void (NodeManager < key, value > ::*)(int dest, const sendInfo &inf) ) {
-      return idx_loadkeys_marshall4();
+      return idx_loadkeys_marshall5();
     }
 
 
     
-    static int loadkeys(int dest, const sendInfo &inf) { return idx_loadkeys_marshall4(); }
+    static int loadkeys(int dest, const sendInfo &inf) { return idx_loadkeys_marshall5(); }
     
-    static void _call_loadkeys_marshall4(void* impl_msg, void* impl_obj);
+    static void _call_loadkeys_marshall5(void* impl_msg, void* impl_obj);
     
-    static void _call_sdag_loadkeys_marshall4(void* impl_msg, void* impl_obj);
+    static void _call_sdag_loadkeys_marshall5(void* impl_msg, void* impl_obj);
     
-    static void _marshallmessagepup_loadkeys_marshall4(PUP::er &p,void *msg);
+    static void _marshallmessagepup_loadkeys_marshall5(PUP::er &p,void *msg);
     /* DECLS: void sendOne(int dest);
      */
     // Entry point registration at startup
     
-    static int reg_sendOne_marshall5();
+    static int reg_sendOne_marshall6();
     // Entry point index lookup
     
-    inline static int idx_sendOne_marshall5() {
-      static int epidx = reg_sendOne_marshall5();
+    inline static int idx_sendOne_marshall6() {
+      static int epidx = reg_sendOne_marshall6();
       return epidx;
     }
 
     
     inline static int idx_sendOne(void (NodeManager < key, value > ::*)(int dest) ) {
-      return idx_sendOne_marshall5();
+      return idx_sendOne_marshall6();
     }
 
 
     
-    static int sendOne(int dest) { return idx_sendOne_marshall5(); }
+    static int sendOne(int dest) { return idx_sendOne_marshall6(); }
     
-    static void _call_sendOne_marshall5(void* impl_msg, void* impl_obj);
+    static void _call_sendOne_marshall6(void* impl_msg, void* impl_obj);
     
-    static void _call_sdag_sendOne_marshall5(void* impl_msg, void* impl_obj);
+    static void _call_sdag_sendOne_marshall6(void* impl_msg, void* impl_obj);
     
-    static int _callmarshall_sendOne_marshall5(char* impl_buf, void* impl_obj_void);
+    static int _callmarshall_sendOne_marshall6(char* impl_buf, void* impl_obj_void);
     
-    static void _marshallmessagepup_sendOne_marshall5(PUP::er &p,void *msg);
+    static void _marshallmessagepup_sendOne_marshall6(PUP::er &p,void *msg);
     /* DECLS: void releaseBufMsgs(void);
      */
     // Entry point registration at startup
@@ -1907,30 +1934,30 @@ template < class key, class value > class CkIndex_NodeManager:public CkIndex_Nod
      */
     // Entry point registration at startup
     
-    static int reg_handleOne_marshall8();
+    static int reg_handleOne_marshall9();
     // Entry point index lookup
     
-    inline static int idx_handleOne_marshall8() {
-      static int epidx = reg_handleOne_marshall8();
+    inline static int idx_handleOne_marshall9() {
+      static int epidx = reg_handleOne_marshall9();
       return epidx;
     }
 
     
     inline static int idx_handleOne(void (NodeManager < key, value > ::*)(const wrap_ptr &msg, int sampleInd, int numsamples) ) {
-      return idx_handleOne_marshall8();
+      return idx_handleOne_marshall9();
     }
 
 
     
-    static int handleOne(const wrap_ptr &msg, int sampleInd, int numsamples) { return idx_handleOne_marshall8(); }
+    static int handleOne(const wrap_ptr &msg, int sampleInd, int numsamples) { return idx_handleOne_marshall9(); }
     
-    static void _call_handleOne_marshall8(void* impl_msg, void* impl_obj);
+    static void _call_handleOne_marshall9(void* impl_msg, void* impl_obj);
     
-    static void _call_sdag_handleOne_marshall8(void* impl_msg, void* impl_obj);
+    static void _call_sdag_handleOne_marshall9(void* impl_msg, void* impl_obj);
     
-    static int _callmarshall_handleOne_marshall8(char* impl_buf, void* impl_obj_void);
+    static int _callmarshall_handleOne_marshall9(char* impl_buf, void* impl_obj_void);
     
-    static void _marshallmessagepup_handleOne_marshall8(PUP::er &p,void *msg);
+    static void _marshallmessagepup_handleOne_marshall9(PUP::er &p,void *msg);
     /* DECLS: void finishOne(void);
      */
     // Entry point registration at startup
@@ -2103,6 +2130,11 @@ int ckGetGroupPe(void) const
     
     void collectSamples(const sampleInfo &sI, const CkEntryOptions *impl_e_opts=NULL);
 
+/* DECLS: void assembleSamples(const std::vector<key > &proc_sample);
+ */
+    
+    void assembleSamples(const std::vector<key > &proc_sample, const CkEntryOptions *impl_e_opts=NULL);
+
 /* DECLS: void loadkeys(int dest, const sendInfo &inf);
  */
     
@@ -2220,6 +2252,11 @@ operator CkGroupID () const { return ckGetGroupID(); }
  */
     
     void collectSamples(const sampleInfo &sI, const CkEntryOptions *impl_e_opts=NULL);
+
+/* DECLS: void assembleSamples(const std::vector<key > &proc_sample);
+ */
+    
+    void assembleSamples(const std::vector<key > &proc_sample, const CkEntryOptions *impl_e_opts=NULL);
 
 /* DECLS: void loadkeys(int dest, const sendInfo &inf);
  */
@@ -2356,6 +2393,11 @@ inline int ckGetNumElements(int i) const
  */
     
     void collectSamples(const sampleInfo &sI, const CkEntryOptions *impl_e_opts=NULL);
+
+/* DECLS: void assembleSamples(const std::vector<key > &proc_sample);
+ */
+    
+    void assembleSamples(const std::vector<key > &proc_sample, const CkEntryOptions *impl_e_opts=NULL);
 
 /* DECLS: void loadkeys(int dest, const sendInfo &inf);
  */
@@ -2500,24 +2542,27 @@ template < class key, class value > class Closure_NodeManager {
     struct collectSamples_3_closure;
 
 
-    struct loadkeys_4_closure;
+    struct assembleSamples_4_closure;
 
 
-    struct sendOne_5_closure;
+    struct loadkeys_5_closure;
 
 
-    struct releaseBufMsgs_6_closure;
+    struct sendOne_6_closure;
 
 
-
-    struct handleOne_8_closure;
-
-
-    struct finishOne_9_closure;
+    struct releaseBufMsgs_7_closure;
 
 
 
-    struct depositHist_11_closure;
+    struct handleOne_9_closure;
+
+
+    struct finishOne_10_closure;
+
+
+
+    struct depositHist_12_closure;
 
 
 };

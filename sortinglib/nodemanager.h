@@ -6,32 +6,26 @@
 #include <queue>
 #include <map>
 
-const int SAMPLE_FACTOR = 1;
+const int SAMPLE_FACTOR = 4;
 
 #define LS_EPS 2
 
-
 int maxSampleSize(){
-	int lognprocs = 1, numprocs = CkNumPes(), numpes = CkNodeSize(CkMyNode());
-	return 10 * numprocs;
+	int numprocs = CkNumPes(), numpes = CkNodeSize(CkMyNode()), lognprocs=1;
 	while((1<<lognprocs) <= numprocs) lognprocs++;
-	int sampleSize = (SAMPLE_FACTOR *  numprocs * lognprocs * numpes);
-	return sampleSize + 2;
+	return SAMPLE_FACTOR * numprocs;
 }
-
 
 int sampleSizePerNode(){
 	int numproc = CkNumPes();
 	int lognprocs = 1, numpes = CkNodeSize(CkMyNode());
-	return 10*numpes;
 	while((1<<lognprocs) <= numproc) lognprocs++;
-	int sampleSize = (SAMPLE_FACTOR * lognprocs * numpes);
-	return sampleSize;
+	return SAMPLE_FACTOR*numpes;
 }
 
-
-
-
+int sampleSizePerPe(){
+	return SAMPLE_FACTOR;
+}
 
 int ls_getStride(){
 	uint64_t elemsPerPe = numTotalElems/CkNumPes();
@@ -118,8 +112,9 @@ class NodeManager : public CBase_NodeManager<key, value> {
 		CProxy_Sorter<key, value> sorter;
 		CProxy_Bucket<key, value> bucket_arr;
 		array_msg<key> *sample;
+		key *nodeSample;
 		key minkey, maxkey;
-		int samplesRcvd;
+		int samplesRcvd, sampleMsgsRcvd;
 		int numSent, numRecvd, numFinished;
 		key* ls_sample; //ls_ :: localsort
 		key* splitters;
@@ -150,10 +145,12 @@ class NodeManager : public CBase_NodeManager<key, value> {
 			numElem = new int[numpes];
 			pelist = new int[numpes];
 			splitters = new key[numpes];
+			nodeSample = new key[sampleSizePerNode() * 10]; //allocate extra, just in case
 			ainfo.resize(CkNumPes());
 			numRecvd = numFinished = numDeposited = numSent = 0;
 			ls_numTotSamples=0;
 			numElemFinal=0;
+			sampleMsgsRcvd=0;
 		}
 
 		void registerLocalChare(int nElem, int pe, CProxy_Bucket<key, value> _bucket_arr,
@@ -236,8 +233,30 @@ class NodeManager : public CBase_NodeManager<key, value> {
 				//for(int i=0; i<sample->numElem; i++)
 				//	ckout<<"From nodemgr "<<CkMyNode()<<" : "<<sample->data[i]<<endl;
 				sorter.recvSample(sample);
+				samplesRcvd = 0;
 			}
 		}
+
+
+		void assembleSamples(std::vector<key> proc_sample){
+			sampleMsgsRcvd++;
+			for(int i=0; i<proc_sample.size(); i++){
+				nodeSample[i+samplesRcvd] = proc_sample[i];
+			}
+			samplesRcvd += proc_sample.size();
+			if(sampleMsgsRcvd == numpes){
+				//ckout<<"All samples received #"<<samplesRcvd<<", maxSampleSize: "<<sampleSizePerNode()<<" - "<<CkMyNode()<<endl;
+				sample= new (samplesRcvd) array_msg<key>;
+				sample->numElem = samplesRcvd;
+				memcpy(sample->data, nodeSample, samplesRcvd*sizeof(key));
+				sorter.recvSample(sample);
+				samplesRcvd = 0;
+				sampleMsgsRcvd = 0;
+			}
+		}
+		
+
+
 		void loadkeys(int dest, sendInfo inf){
 			ainfo[dest].push_back(inf);   //This will cause synchronization problems.	
 			if(ainfo[dest].size() == numpes){

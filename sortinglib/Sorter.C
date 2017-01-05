@@ -210,11 +210,15 @@ void Sorter<key, value>::recvSample(array_msg<key>* am){
     memcpy(lastProbe, finalProbe->data, finalProbe->numElem * sizeof(key));
     lastProbeSize = finalProbe->numElem;
 
+
+    //ckout<<"Initiating Probe from sorter: "<<probeSize<<endl;
     //for(int i=0; i<lastProbeSize; i++)
     //	 ckout<<"Sample #"<<i<<" : "<<lastProbe[i]<<endl;
 
     buckets.finalProbes(finalProbe);
 
+    collectedSample.clear();
+    msgReceived = 0;
     //CProxy_NodeManager<key, value> nodemgr = CProxy_NodeManager<key, value>(nodeMgrID);   
     //nodemgr.finalProbes(finalProbe);
     //(Global<key, value>::nodemgr)->finalProbes(finalProbe);   
@@ -313,6 +317,7 @@ void Sorter<key, value>::Histogram(CkReductionMsg *msg){
 template <class key, class value>
 void Sorter<key, value>::updateBounds(CkReductionMsg *msg){
     if(numProbes <= 1){
+      ckout<<"***************************************####################comes here"<<endl;
       for(int i=0; i<nBuckets; i++){
         ub_ranks[i] = nElements;
         lb_ranks[i] = 0;
@@ -350,7 +355,7 @@ void Sorter<key, value>::updateBounds(CkReductionMsg *msg){
 
 template <class key, class value>
 void Sorter<key, value>::nextSamples(std::vector<std::pair<key, int> > &newachv, uint64_t* histCounts, CkReductionMsg *msg){
-    sampleMessage<key> *sm;
+    
     uint64_t totalLength = 0;
     uint64_t totalLength2 = 0;
     uint64_t prevLb = 0;
@@ -366,18 +371,20 @@ void Sorter<key, value>::nextSamples(std::vector<std::pair<key, int> > &newachv,
     ckout<<"Fraction of input to be sampled: "<<((double)totalLength)/nElements<<", "<<((double)totalLength2)/nElements<<endl;
 
     int r = newachv.size();
-    sm = new (nIntervals, nIntervals, r, r, r) sampleMessage<key>;
+    sampleMessage<key> *sm = new (nIntervals, nIntervals, r, r, r) sampleMessage<key>;
     sm->nIntervals = nIntervals;
     sm->num_newachv = r;
     sm->f = ((double)totalLength)/nElements;
     nIntervals = 0;
     for(int i=1; i<nBuckets; i++){
-      if(!achieved[i] && (lb_ranks[i] != prevLb || i==1)){
-          sm->lb[nIntervals] = lb_keys[i];
-          sm->ub[nIntervals] = ub_keys[i];
-          nIntervals++;
+      if(!achieved[i]){
+        if(lb_ranks[i] != prevLb || i==1){
+            sm->lb[nIntervals] = lb_keys[i];
+            sm->ub[nIntervals] = ub_keys[i];
+            nIntervals++;
+        }
+        prevLb = lb_ranks[i];
       }
-      prevLb = lb_ranks[i];
     }
 
 
@@ -389,10 +396,34 @@ void Sorter<key, value>::nextSamples(std::vector<std::pair<key, int> > &newachv,
         ckout<<"Splitter "<<i<<": "<<finalSplitters[i]<<" "<<achieved[i]<<" : "<<achievedCounts[i] - cum<<endl;
         cum = achievedCounts[i];
       }
+      CkExit();
     }
-   
 
-    ckout<<"Sending sample intervals to buckets, nIntervals: "<<sm->nIntervals<<" frac: "<<sm->f<<" Not achieved: "<<nBuckets+1-achievedSplitters<<endl;
+/*
+    if(numProbes >= 10)
+        CkExit();
+*/
+
+
+
+    ckout<<"Sending sample intervals to buckets, nIntervals: "<<sm->nIntervals<<" frac: ";
+    ckout<<sm->f<<" Not achieved: "<<nBuckets+1-achievedSplitters<<" - "<<CkMyPe()<<endl;
+    for(int i=0; i<sm->nIntervals; i++){
+      //ckout<<"#"<<i<<"("<<sm->lb[i]<<","<<sm->ub[i]<<")"<<endl;
+    }
+
+    for(int i=0; i<=nBuckets; i++){
+        //  CkPrintf("[%d] ##%d, rank(%ld, %ld), keys(%lu, %lu), achieved: %d\n", CkMyPe(), i, lb_ranks[i], ub_ranks[i], lb_keys[i], ub_keys[i], achieved[i]);
+      }
+
+
+
+    if(sm->nIntervals == 0){
+      assert(achievedSplitters == nBuckets+1);
+    }
+
+
+
     buckets.genNextSamples(sm);
 
    //ckout<<"Sent !!"<<endl;

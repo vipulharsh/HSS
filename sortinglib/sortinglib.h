@@ -222,6 +222,12 @@ void registerSortingLib() {
 */
   CMessage_probeMessage<key >::__register("probeMessage<key >", sizeof(probeMessage<key >),(CkPackFnPtr) probeMessage<key >::pack,(CkUnpackFnPtr) probeMessage<key >::unpack);
 
+
+/* REG: message sampleMessage<key >;
+*/
+  CMessage_sampleMessage<key >::__register("sampleMessage<key >", sizeof(sampleMessage<key >),(CkPackFnPtr) sampleMessage<key >::pack,(CkUnpackFnPtr) sampleMessage<key >::unpack);
+
+
 /* REG: message data_msg<key, value >;
 */
   CMessage_data_msg<key, value >::__register("data_msg<key,value >", sizeof(data_msg<key,value >),(CkPackFnPtr) data_msg<key,value >::pack,(CkUnpackFnPtr) data_msg<key,value >::unpack);

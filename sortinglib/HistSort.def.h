@@ -435,15 +435,39 @@ template < class key, class value >
 #ifdef CK_TEMPLATES_ONLY
 template < class key, class value > 
 
-    struct Closure_NodeManager < key, value > ::loadkeys_4_closure : public SDAG::Closure {
+    struct Closure_NodeManager < key, value > ::assembleSamples_4_closure : public SDAG::Closure {
+      std::vector<key > proc_sample;
+
+
+      assembleSamples_4_closure() {
+        init();
+      }
+      assembleSamples_4_closure(CkMigrateMessage*) {
+        init();
+      }
+      std::vector<key > & getP0() { return proc_sample;}
+      void pup(PUP::er& __p) {
+        __p | proc_sample;
+        packClosure(__p);
+      }
+      virtual ~assembleSamples_4_closure() {
+      }
+      PUPable_decl_template(SINGLE_ARG(assembleSamples_4_closure));
+    };
+#endif /* CK_TEMPLATES_ONLY */
+
+#ifdef CK_TEMPLATES_ONLY
+template < class key, class value > 
+
+    struct Closure_NodeManager < key, value > ::loadkeys_5_closure : public SDAG::Closure {
       int dest;
       sendInfo inf;
 
 
-      loadkeys_4_closure() {
+      loadkeys_5_closure() {
         init();
       }
-      loadkeys_4_closure(CkMigrateMessage*) {
+      loadkeys_5_closure(CkMigrateMessage*) {
         init();
       }
       int & getP0() { return dest;}
@@ -453,23 +477,23 @@ template < class key, class value >
         __p | inf;
         packClosure(__p);
       }
-      virtual ~loadkeys_4_closure() {
+      virtual ~loadkeys_5_closure() {
       }
-      PUPable_decl_template(SINGLE_ARG(loadkeys_4_closure));
+      PUPable_decl_template(SINGLE_ARG(loadkeys_5_closure));
     };
 #endif /* CK_TEMPLATES_ONLY */
 
 #ifdef CK_TEMPLATES_ONLY
 template < class key, class value > 
 
-    struct Closure_NodeManager < key, value > ::sendOne_5_closure : public SDAG::Closure {
+    struct Closure_NodeManager < key, value > ::sendOne_6_closure : public SDAG::Closure {
       int dest;
 
 
-      sendOne_5_closure() {
+      sendOne_6_closure() {
         init();
       }
-      sendOne_5_closure(CkMigrateMessage*) {
+      sendOne_6_closure(CkMigrateMessage*) {
         init();
       }
       int & getP0() { return dest;}
@@ -477,30 +501,30 @@ template < class key, class value >
         __p | dest;
         packClosure(__p);
       }
-      virtual ~sendOne_5_closure() {
+      virtual ~sendOne_6_closure() {
       }
-      PUPable_decl_template(SINGLE_ARG(sendOne_5_closure));
+      PUPable_decl_template(SINGLE_ARG(sendOne_6_closure));
     };
 #endif /* CK_TEMPLATES_ONLY */
 
 #ifdef CK_TEMPLATES_ONLY
 template < class key, class value > 
 
-    struct Closure_NodeManager < key, value > ::releaseBufMsgs_6_closure : public SDAG::Closure {
+    struct Closure_NodeManager < key, value > ::releaseBufMsgs_7_closure : public SDAG::Closure {
       
 
-      releaseBufMsgs_6_closure() {
+      releaseBufMsgs_7_closure() {
         init();
       }
-      releaseBufMsgs_6_closure(CkMigrateMessage*) {
+      releaseBufMsgs_7_closure(CkMigrateMessage*) {
         init();
       }
             void pup(PUP::er& __p) {
         packClosure(__p);
       }
-      virtual ~releaseBufMsgs_6_closure() {
+      virtual ~releaseBufMsgs_7_closure() {
       }
-      PUPable_decl_template(SINGLE_ARG(releaseBufMsgs_6_closure));
+      PUPable_decl_template(SINGLE_ARG(releaseBufMsgs_7_closure));
     };
 #endif /* CK_TEMPLATES_ONLY */
 
@@ -510,16 +534,16 @@ template < class key, class value >
 #ifdef CK_TEMPLATES_ONLY
 template < class key, class value > 
 
-    struct Closure_NodeManager < key, value > ::handleOne_8_closure : public SDAG::Closure {
+    struct Closure_NodeManager < key, value > ::handleOne_9_closure : public SDAG::Closure {
       wrap_ptr msg;
       int sampleInd;
       int numsamples;
 
 
-      handleOne_8_closure() {
+      handleOne_9_closure() {
         init();
       }
-      handleOne_8_closure(CkMigrateMessage*) {
+      handleOne_9_closure(CkMigrateMessage*) {
         init();
       }
       wrap_ptr & getP0() { return msg;}
@@ -531,30 +555,30 @@ template < class key, class value >
         __p | numsamples;
         packClosure(__p);
       }
-      virtual ~handleOne_8_closure() {
+      virtual ~handleOne_9_closure() {
       }
-      PUPable_decl_template(SINGLE_ARG(handleOne_8_closure));
+      PUPable_decl_template(SINGLE_ARG(handleOne_9_closure));
     };
 #endif /* CK_TEMPLATES_ONLY */
 
 #ifdef CK_TEMPLATES_ONLY
 template < class key, class value > 
 
-    struct Closure_NodeManager < key, value > ::finishOne_9_closure : public SDAG::Closure {
+    struct Closure_NodeManager < key, value > ::finishOne_10_closure : public SDAG::Closure {
       
 
-      finishOne_9_closure() {
+      finishOne_10_closure() {
         init();
       }
-      finishOne_9_closure(CkMigrateMessage*) {
+      finishOne_10_closure(CkMigrateMessage*) {
         init();
       }
             void pup(PUP::er& __p) {
         packClosure(__p);
       }
-      virtual ~finishOne_9_closure() {
+      virtual ~finishOne_10_closure() {
       }
-      PUPable_decl_template(SINGLE_ARG(finishOne_9_closure));
+      PUPable_decl_template(SINGLE_ARG(finishOne_10_closure));
     };
 #endif /* CK_TEMPLATES_ONLY */
 
@@ -564,21 +588,21 @@ template < class key, class value >
 #ifdef CK_TEMPLATES_ONLY
 template < class key, class value > 
 
-    struct Closure_NodeManager < key, value > ::depositHist_11_closure : public SDAG::Closure {
+    struct Closure_NodeManager < key, value > ::depositHist_12_closure : public SDAG::Closure {
       
 
-      depositHist_11_closure() {
+      depositHist_12_closure() {
         init();
       }
-      depositHist_11_closure(CkMigrateMessage*) {
+      depositHist_12_closure(CkMigrateMessage*) {
         init();
       }
             void pup(PUP::er& __p) {
         packClosure(__p);
       }
-      virtual ~depositHist_11_closure() {
+      virtual ~depositHist_12_closure() {
       }
-      PUPable_decl_template(SINGLE_ARG(depositHist_11_closure));
+      PUPable_decl_template(SINGLE_ARG(depositHist_12_closure));
     };
 #endif /* CK_TEMPLATES_ONLY */
 
@@ -3596,6 +3620,7 @@ struct CBase_Bucket : public ArrayElementT<CkIndex1D>, virtual CBase
 NodeManager(const key &_minkey, const key &_maxkey);
 void registerLocalChare(int nElem, int pe, const CProxy_Bucket<key,value > &_bucket_arr, const CProxy_Sorter<key,value > &_sorter);
 void collectSamples(const sampleInfo &sI);
+void assembleSamples(const std::vector<key > &proc_sample);
 void loadkeys(int dest, const sendInfo &inf);
 void sendOne(int dest);
 void releaseBufMsgs(void);
@@ -3682,6 +3707,35 @@ void CProxyElement_NodeManager < key, value > ::collectSamples(const sampleInfo 
 #endif /* CK_TEMPLATES_ONLY */
 
 #ifdef CK_TEMPLATES_ONLY
+/* DEFS: void assembleSamples(const std::vector<key > &proc_sample);
+ */
+template < class key, class value > 
+
+void CProxyElement_NodeManager < key, value > ::assembleSamples(const std::vector<key > &proc_sample, const CkEntryOptions *impl_e_opts)
+{
+  ckCheck();
+  //Marshall: const std::vector<key > &proc_sample
+  int impl_off=0;
+  { //Find the size of the PUP'd data
+    PUP::sizer implP;
+    //Have to cast away const-ness to get pup routine
+    implP|(std::vector<key > &)proc_sample;
+    impl_off+=implP.size();
+  }
+  CkMarshallMsg *impl_msg=CkAllocateMarshallMsg(impl_off,impl_e_opts);
+  { //Copy over the PUP'd data
+    PUP::toMem implP((void *)impl_msg->msgBuf);
+    //Have to cast away const-ness to get pup routine
+    implP|(std::vector<key > &)proc_sample;
+  }
+  if (ckIsDelegated()) {
+     CkNodeGroupMsgPrep(CkIndex_NodeManager < key, value > ::idx_assembleSamples_marshall4(), impl_msg, ckGetGroupID());
+     ckDelegatedTo()->NodeGroupSend(ckDelegatedPtr(),CkIndex_NodeManager < key, value > ::idx_assembleSamples_marshall4(), impl_msg, ckGetGroupPe(), ckGetGroupID());
+  } else CkSendMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_assembleSamples_marshall4(), impl_msg, ckGetGroupPe(), ckGetGroupID(),0);
+}
+#endif /* CK_TEMPLATES_ONLY */
+
+#ifdef CK_TEMPLATES_ONLY
 /* DEFS: void loadkeys(int dest, const sendInfo &inf);
  */
 template < class key, class value > 
@@ -3706,9 +3760,9 @@ void CProxyElement_NodeManager < key, value > ::loadkeys(int dest, const sendInf
     implP|(sendInfo &)inf;
   }
   if (ckIsDelegated()) {
-     CkNodeGroupMsgPrep(CkIndex_NodeManager < key, value > ::idx_loadkeys_marshall4(), impl_msg, ckGetGroupID());
-     ckDelegatedTo()->NodeGroupSend(ckDelegatedPtr(),CkIndex_NodeManager < key, value > ::idx_loadkeys_marshall4(), impl_msg, ckGetGroupPe(), ckGetGroupID());
-  } else CkSendMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_loadkeys_marshall4(), impl_msg, ckGetGroupPe(), ckGetGroupID(),0);
+     CkNodeGroupMsgPrep(CkIndex_NodeManager < key, value > ::idx_loadkeys_marshall5(), impl_msg, ckGetGroupID());
+     ckDelegatedTo()->NodeGroupSend(ckDelegatedPtr(),CkIndex_NodeManager < key, value > ::idx_loadkeys_marshall5(), impl_msg, ckGetGroupPe(), ckGetGroupID());
+  } else CkSendMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_loadkeys_marshall5(), impl_msg, ckGetGroupPe(), ckGetGroupID(),0);
 }
 #endif /* CK_TEMPLATES_ONLY */
 
@@ -3733,9 +3787,9 @@ void CProxyElement_NodeManager < key, value > ::sendOne(int dest, const CkEntryO
     implP|dest;
   }
   if (ckIsDelegated()) {
-     CkNodeGroupMsgPrep(CkIndex_NodeManager < key, value > ::idx_sendOne_marshall5(), impl_msg, ckGetGroupID());
-     ckDelegatedTo()->NodeGroupSend(ckDelegatedPtr(),CkIndex_NodeManager < key, value > ::idx_sendOne_marshall5(), impl_msg, ckGetGroupPe(), ckGetGroupID());
-  } else CkSendMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_sendOne_marshall5(), impl_msg, ckGetGroupPe(), ckGetGroupID(),0);
+     CkNodeGroupMsgPrep(CkIndex_NodeManager < key, value > ::idx_sendOne_marshall6(), impl_msg, ckGetGroupID());
+     ckDelegatedTo()->NodeGroupSend(ckDelegatedPtr(),CkIndex_NodeManager < key, value > ::idx_sendOne_marshall6(), impl_msg, ckGetGroupPe(), ckGetGroupID());
+  } else CkSendMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_sendOne_marshall6(), impl_msg, ckGetGroupPe(), ckGetGroupID(),0);
 }
 #endif /* CK_TEMPLATES_ONLY */
 
@@ -3797,9 +3851,9 @@ void CProxyElement_NodeManager < key, value > ::handleOne(const wrap_ptr &msg, i
     implP|numsamples;
   }
   if (ckIsDelegated()) {
-     CkNodeGroupMsgPrep(CkIndex_NodeManager < key, value > ::idx_handleOne_marshall8(), impl_msg, ckGetGroupID());
-     ckDelegatedTo()->NodeGroupSend(ckDelegatedPtr(),CkIndex_NodeManager < key, value > ::idx_handleOne_marshall8(), impl_msg, ckGetGroupPe(), ckGetGroupID());
-  } else CkSendMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_handleOne_marshall8(), impl_msg, ckGetGroupPe(), ckGetGroupID(),0);
+     CkNodeGroupMsgPrep(CkIndex_NodeManager < key, value > ::idx_handleOne_marshall9(), impl_msg, ckGetGroupID());
+     ckDelegatedTo()->NodeGroupSend(ckDelegatedPtr(),CkIndex_NodeManager < key, value > ::idx_handleOne_marshall9(), impl_msg, ckGetGroupPe(), ckGetGroupID());
+  } else CkSendMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_handleOne_marshall9(), impl_msg, ckGetGroupPe(), ckGetGroupID(),0);
 }
 #endif /* CK_TEMPLATES_ONLY */
 
@@ -4153,6 +4207,81 @@ template < class key, class value > PUPable_def_template_nonInst(SINGLE_ARG(Clos
 #endif /* CK_TEMPLATES_ONLY */
 
 #ifdef CK_TEMPLATES_ONLY
+/* DEFS: void assembleSamples(const std::vector<key > &proc_sample);
+ */
+template < class key, class value > 
+
+void CProxy_NodeManager < key, value > ::assembleSamples(const std::vector<key > &proc_sample, const CkEntryOptions *impl_e_opts)
+{
+  ckCheck();
+  //Marshall: const std::vector<key > &proc_sample
+  int impl_off=0;
+  { //Find the size of the PUP'd data
+    PUP::sizer implP;
+    //Have to cast away const-ness to get pup routine
+    implP|(std::vector<key > &)proc_sample;
+    impl_off+=implP.size();
+  }
+  CkMarshallMsg *impl_msg=CkAllocateMarshallMsg(impl_off,impl_e_opts);
+  { //Copy over the PUP'd data
+    PUP::toMem implP((void *)impl_msg->msgBuf);
+    //Have to cast away const-ness to get pup routine
+    implP|(std::vector<key > &)proc_sample;
+  }
+  if (ckIsDelegated()) {
+     CkNodeGroupMsgPrep(CkIndex_NodeManager < key, value > ::idx_assembleSamples_marshall4(), impl_msg, ckGetGroupID());
+     ckDelegatedTo()->NodeGroupBroadcast(ckDelegatedPtr(),CkIndex_NodeManager < key, value > ::idx_assembleSamples_marshall4(), impl_msg, ckGetGroupID());
+  } else CkBroadcastMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_assembleSamples_marshall4(), impl_msg, ckGetGroupID(),0);
+}
+
+// Entry point registration function
+template < class key, class value > 
+
+int CkIndex_NodeManager < key, value > ::reg_assembleSamples_marshall4() {
+  int epidx = CkRegisterEp("assembleSamples(const std::vector<key > &proc_sample)",
+      _call_assembleSamples_marshall4, CkMarshallMsg::__idx, __idx, 0+CK_EP_NOKEEP);
+  CkRegisterMessagePupFn(epidx, _marshallmessagepup_assembleSamples_marshall4);
+
+  return epidx;
+}
+
+template < class key, class value > 
+
+void CkIndex_NodeManager < key, value > ::_call_assembleSamples_marshall4(void* impl_msg, void* impl_obj_void)
+{
+  NodeManager < key, value > * impl_obj = static_cast<NodeManager < key, value >  *>(impl_obj_void);
+  if(CmiTryLock(impl_obj->__nodelock)) {
+    impl_msg = CkCopyMsg(&impl_msg);
+    CkSendMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_assembleSamples_marshall4(),impl_msg,CkMyNode(),impl_obj->CkGetNodeGroupID());
+    return;
+  }
+  CkMarshallMsg *impl_msg_typed=(CkMarshallMsg *)impl_msg;
+  char *impl_buf=impl_msg_typed->msgBuf;
+  /*Unmarshall pup'd fields: const std::vector<key > &proc_sample*/
+  PUP::fromMem implP(impl_buf);
+  std::vector<key > proc_sample; implP|proc_sample;
+  impl_buf+=CK_ALIGN(implP.size(),16);
+  /*Unmarshall arrays:*/
+  impl_obj->assembleSamples(proc_sample);
+  CmiUnlock(impl_obj->__nodelock);
+}
+template < class key, class value > 
+
+void CkIndex_NodeManager < key, value > ::_marshallmessagepup_assembleSamples_marshall4(PUP::er &implDestP,void *impl_msg) {
+  CkMarshallMsg *impl_msg_typed=(CkMarshallMsg *)impl_msg;
+  char *impl_buf=impl_msg_typed->msgBuf;
+  /*Unmarshall pup'd fields: const std::vector<key > &proc_sample*/
+  PUP::fromMem implP(impl_buf);
+  std::vector<key > proc_sample; implP|proc_sample;
+  impl_buf+=CK_ALIGN(implP.size(),16);
+  /*Unmarshall arrays:*/
+  if (implDestP.hasComments()) implDestP.comment("proc_sample");
+  implDestP|proc_sample;
+}
+template < class key, class value > PUPable_def_template_nonInst(SINGLE_ARG(Closure_NodeManager < key, value > ::assembleSamples_4_closure))
+#endif /* CK_TEMPLATES_ONLY */
+
+#ifdef CK_TEMPLATES_ONLY
 /* DEFS: void loadkeys(int dest, const sendInfo &inf);
  */
 template < class key, class value > 
@@ -4177,30 +4306,30 @@ void CProxy_NodeManager < key, value > ::loadkeys(int dest, const sendInfo &inf,
     implP|(sendInfo &)inf;
   }
   if (ckIsDelegated()) {
-     CkNodeGroupMsgPrep(CkIndex_NodeManager < key, value > ::idx_loadkeys_marshall4(), impl_msg, ckGetGroupID());
-     ckDelegatedTo()->NodeGroupBroadcast(ckDelegatedPtr(),CkIndex_NodeManager < key, value > ::idx_loadkeys_marshall4(), impl_msg, ckGetGroupID());
-  } else CkBroadcastMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_loadkeys_marshall4(), impl_msg, ckGetGroupID(),0);
+     CkNodeGroupMsgPrep(CkIndex_NodeManager < key, value > ::idx_loadkeys_marshall5(), impl_msg, ckGetGroupID());
+     ckDelegatedTo()->NodeGroupBroadcast(ckDelegatedPtr(),CkIndex_NodeManager < key, value > ::idx_loadkeys_marshall5(), impl_msg, ckGetGroupID());
+  } else CkBroadcastMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_loadkeys_marshall5(), impl_msg, ckGetGroupID(),0);
 }
 
 // Entry point registration function
 template < class key, class value > 
 
-int CkIndex_NodeManager < key, value > ::reg_loadkeys_marshall4() {
+int CkIndex_NodeManager < key, value > ::reg_loadkeys_marshall5() {
   int epidx = CkRegisterEp("loadkeys(int dest, const sendInfo &inf)",
-      _call_loadkeys_marshall4, CkMarshallMsg::__idx, __idx, 0+CK_EP_NOKEEP);
-  CkRegisterMessagePupFn(epidx, _marshallmessagepup_loadkeys_marshall4);
+      _call_loadkeys_marshall5, CkMarshallMsg::__idx, __idx, 0+CK_EP_NOKEEP);
+  CkRegisterMessagePupFn(epidx, _marshallmessagepup_loadkeys_marshall5);
 
   return epidx;
 }
 
 template < class key, class value > 
 
-void CkIndex_NodeManager < key, value > ::_call_loadkeys_marshall4(void* impl_msg, void* impl_obj_void)
+void CkIndex_NodeManager < key, value > ::_call_loadkeys_marshall5(void* impl_msg, void* impl_obj_void)
 {
   NodeManager < key, value > * impl_obj = static_cast<NodeManager < key, value >  *>(impl_obj_void);
   if(CmiTryLock(impl_obj->__nodelock)) {
     impl_msg = CkCopyMsg(&impl_msg);
-    CkSendMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_loadkeys_marshall4(),impl_msg,CkMyNode(),impl_obj->CkGetNodeGroupID());
+    CkSendMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_loadkeys_marshall5(),impl_msg,CkMyNode(),impl_obj->CkGetNodeGroupID());
     return;
   }
   CkMarshallMsg *impl_msg_typed=(CkMarshallMsg *)impl_msg;
@@ -4216,7 +4345,7 @@ void CkIndex_NodeManager < key, value > ::_call_loadkeys_marshall4(void* impl_ms
 }
 template < class key, class value > 
 
-void CkIndex_NodeManager < key, value > ::_marshallmessagepup_loadkeys_marshall4(PUP::er &implDestP,void *impl_msg) {
+void CkIndex_NodeManager < key, value > ::_marshallmessagepup_loadkeys_marshall5(PUP::er &implDestP,void *impl_msg) {
   CkMarshallMsg *impl_msg_typed=(CkMarshallMsg *)impl_msg;
   char *impl_buf=impl_msg_typed->msgBuf;
   /*Unmarshall pup'd fields: int dest, const sendInfo &inf*/
@@ -4230,7 +4359,7 @@ void CkIndex_NodeManager < key, value > ::_marshallmessagepup_loadkeys_marshall4
   if (implDestP.hasComments()) implDestP.comment("inf");
   implDestP|inf;
 }
-template < class key, class value > PUPable_def_template_nonInst(SINGLE_ARG(Closure_NodeManager < key, value > ::loadkeys_4_closure))
+template < class key, class value > PUPable_def_template_nonInst(SINGLE_ARG(Closure_NodeManager < key, value > ::loadkeys_5_closure))
 #endif /* CK_TEMPLATES_ONLY */
 
 #ifdef CK_TEMPLATES_ONLY
@@ -4254,26 +4383,26 @@ void CProxy_NodeManager < key, value > ::sendOne(int dest, const CkEntryOptions 
     implP|dest;
   }
   if (ckIsDelegated()) {
-     CkNodeGroupMsgPrep(CkIndex_NodeManager < key, value > ::idx_sendOne_marshall5(), impl_msg, ckGetGroupID());
-     ckDelegatedTo()->NodeGroupBroadcast(ckDelegatedPtr(),CkIndex_NodeManager < key, value > ::idx_sendOne_marshall5(), impl_msg, ckGetGroupID());
-  } else CkBroadcastMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_sendOne_marshall5(), impl_msg, ckGetGroupID(),0);
+     CkNodeGroupMsgPrep(CkIndex_NodeManager < key, value > ::idx_sendOne_marshall6(), impl_msg, ckGetGroupID());
+     ckDelegatedTo()->NodeGroupBroadcast(ckDelegatedPtr(),CkIndex_NodeManager < key, value > ::idx_sendOne_marshall6(), impl_msg, ckGetGroupID());
+  } else CkBroadcastMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_sendOne_marshall6(), impl_msg, ckGetGroupID(),0);
 }
 
 // Entry point registration function
 template < class key, class value > 
 
-int CkIndex_NodeManager < key, value > ::reg_sendOne_marshall5() {
+int CkIndex_NodeManager < key, value > ::reg_sendOne_marshall6() {
   int epidx = CkRegisterEp("sendOne(int dest)",
-      _call_sendOne_marshall5, CkMarshallMsg::__idx, __idx, 0+CK_EP_NOKEEP);
-  CkRegisterMarshallUnpackFn(epidx, _callmarshall_sendOne_marshall5);
-  CkRegisterMessagePupFn(epidx, _marshallmessagepup_sendOne_marshall5);
+      _call_sendOne_marshall6, CkMarshallMsg::__idx, __idx, 0+CK_EP_NOKEEP);
+  CkRegisterMarshallUnpackFn(epidx, _callmarshall_sendOne_marshall6);
+  CkRegisterMessagePupFn(epidx, _marshallmessagepup_sendOne_marshall6);
 
   return epidx;
 }
 
 template < class key, class value > 
 
-void CkIndex_NodeManager < key, value > ::_call_sendOne_marshall5(void* impl_msg, void* impl_obj_void)
+void CkIndex_NodeManager < key, value > ::_call_sendOne_marshall6(void* impl_msg, void* impl_obj_void)
 {
   NodeManager < key, value > * impl_obj = static_cast<NodeManager < key, value >  *>(impl_obj_void);
   CkMarshallMsg *impl_msg_typed=(CkMarshallMsg *)impl_msg;
@@ -4287,7 +4416,7 @@ void CkIndex_NodeManager < key, value > ::_call_sendOne_marshall5(void* impl_msg
 }
 template < class key, class value > 
 
-int CkIndex_NodeManager < key, value > ::_callmarshall_sendOne_marshall5(char* impl_buf, void* impl_obj_void) {
+int CkIndex_NodeManager < key, value > ::_callmarshall_sendOne_marshall6(char* impl_buf, void* impl_obj_void) {
   NodeManager < key, value > * impl_obj = static_cast< NodeManager < key, value >  *>(impl_obj_void);
   /*Unmarshall pup'd fields: int dest*/
   PUP::fromMem implP(impl_buf);
@@ -4299,7 +4428,7 @@ int CkIndex_NodeManager < key, value > ::_callmarshall_sendOne_marshall5(char* i
 }
 template < class key, class value > 
 
-void CkIndex_NodeManager < key, value > ::_marshallmessagepup_sendOne_marshall5(PUP::er &implDestP,void *impl_msg) {
+void CkIndex_NodeManager < key, value > ::_marshallmessagepup_sendOne_marshall6(PUP::er &implDestP,void *impl_msg) {
   CkMarshallMsg *impl_msg_typed=(CkMarshallMsg *)impl_msg;
   char *impl_buf=impl_msg_typed->msgBuf;
   /*Unmarshall pup'd fields: int dest*/
@@ -4310,7 +4439,7 @@ void CkIndex_NodeManager < key, value > ::_marshallmessagepup_sendOne_marshall5(
   if (implDestP.hasComments()) implDestP.comment("dest");
   implDestP|dest;
 }
-template < class key, class value > PUPable_def_template_nonInst(SINGLE_ARG(Closure_NodeManager < key, value > ::sendOne_5_closure))
+template < class key, class value > PUPable_def_template_nonInst(SINGLE_ARG(Closure_NodeManager < key, value > ::sendOne_6_closure))
 #endif /* CK_TEMPLATES_ONLY */
 
 #ifdef CK_TEMPLATES_ONLY
@@ -4350,7 +4479,7 @@ void CkIndex_NodeManager < key, value > ::_call_releaseBufMsgs_void(void* impl_m
   impl_obj->releaseBufMsgs();
   CmiUnlock(impl_obj->__nodelock);
 }
-template < class key, class value > PUPable_def_template_nonInst(SINGLE_ARG(Closure_NodeManager < key, value > ::releaseBufMsgs_6_closure))
+template < class key, class value > PUPable_def_template_nonInst(SINGLE_ARG(Closure_NodeManager < key, value > ::releaseBufMsgs_7_closure))
 #endif /* CK_TEMPLATES_ONLY */
 
 #ifdef CK_TEMPLATES_ONLY
@@ -4418,26 +4547,26 @@ void CProxy_NodeManager < key, value > ::handleOne(const wrap_ptr &msg, int samp
     implP|numsamples;
   }
   if (ckIsDelegated()) {
-     CkNodeGroupMsgPrep(CkIndex_NodeManager < key, value > ::idx_handleOne_marshall8(), impl_msg, ckGetGroupID());
-     ckDelegatedTo()->NodeGroupBroadcast(ckDelegatedPtr(),CkIndex_NodeManager < key, value > ::idx_handleOne_marshall8(), impl_msg, ckGetGroupID());
-  } else CkBroadcastMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_handleOne_marshall8(), impl_msg, ckGetGroupID(),0);
+     CkNodeGroupMsgPrep(CkIndex_NodeManager < key, value > ::idx_handleOne_marshall9(), impl_msg, ckGetGroupID());
+     ckDelegatedTo()->NodeGroupBroadcast(ckDelegatedPtr(),CkIndex_NodeManager < key, value > ::idx_handleOne_marshall9(), impl_msg, ckGetGroupID());
+  } else CkBroadcastMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_handleOne_marshall9(), impl_msg, ckGetGroupID(),0);
 }
 
 // Entry point registration function
 template < class key, class value > 
 
-int CkIndex_NodeManager < key, value > ::reg_handleOne_marshall8() {
+int CkIndex_NodeManager < key, value > ::reg_handleOne_marshall9() {
   int epidx = CkRegisterEp("handleOne(const wrap_ptr &msg, int sampleInd, int numsamples)",
-      _call_handleOne_marshall8, CkMarshallMsg::__idx, __idx, 0+CK_EP_NOKEEP);
-  CkRegisterMarshallUnpackFn(epidx, _callmarshall_handleOne_marshall8);
-  CkRegisterMessagePupFn(epidx, _marshallmessagepup_handleOne_marshall8);
+      _call_handleOne_marshall9, CkMarshallMsg::__idx, __idx, 0+CK_EP_NOKEEP);
+  CkRegisterMarshallUnpackFn(epidx, _callmarshall_handleOne_marshall9);
+  CkRegisterMessagePupFn(epidx, _marshallmessagepup_handleOne_marshall9);
 
   return epidx;
 }
 
 template < class key, class value > 
 
-void CkIndex_NodeManager < key, value > ::_call_handleOne_marshall8(void* impl_msg, void* impl_obj_void)
+void CkIndex_NodeManager < key, value > ::_call_handleOne_marshall9(void* impl_msg, void* impl_obj_void)
 {
   NodeManager < key, value > * impl_obj = static_cast<NodeManager < key, value >  *>(impl_obj_void);
   CkMarshallMsg *impl_msg_typed=(CkMarshallMsg *)impl_msg;
@@ -4453,7 +4582,7 @@ void CkIndex_NodeManager < key, value > ::_call_handleOne_marshall8(void* impl_m
 }
 template < class key, class value > 
 
-int CkIndex_NodeManager < key, value > ::_callmarshall_handleOne_marshall8(char* impl_buf, void* impl_obj_void) {
+int CkIndex_NodeManager < key, value > ::_callmarshall_handleOne_marshall9(char* impl_buf, void* impl_obj_void) {
   NodeManager < key, value > * impl_obj = static_cast< NodeManager < key, value >  *>(impl_obj_void);
   /*Unmarshall pup'd fields: const wrap_ptr &msg, int sampleInd, int numsamples*/
   PUP::fromMem implP(impl_buf);
@@ -4467,7 +4596,7 @@ int CkIndex_NodeManager < key, value > ::_callmarshall_handleOne_marshall8(char*
 }
 template < class key, class value > 
 
-void CkIndex_NodeManager < key, value > ::_marshallmessagepup_handleOne_marshall8(PUP::er &implDestP,void *impl_msg) {
+void CkIndex_NodeManager < key, value > ::_marshallmessagepup_handleOne_marshall9(PUP::er &implDestP,void *impl_msg) {
   CkMarshallMsg *impl_msg_typed=(CkMarshallMsg *)impl_msg;
   char *impl_buf=impl_msg_typed->msgBuf;
   /*Unmarshall pup'd fields: const wrap_ptr &msg, int sampleInd, int numsamples*/
@@ -4484,7 +4613,7 @@ void CkIndex_NodeManager < key, value > ::_marshallmessagepup_handleOne_marshall
   if (implDestP.hasComments()) implDestP.comment("numsamples");
   implDestP|numsamples;
 }
-template < class key, class value > PUPable_def_template_nonInst(SINGLE_ARG(Closure_NodeManager < key, value > ::handleOne_8_closure))
+template < class key, class value > PUPable_def_template_nonInst(SINGLE_ARG(Closure_NodeManager < key, value > ::handleOne_9_closure))
 #endif /* CK_TEMPLATES_ONLY */
 
 #ifdef CK_TEMPLATES_ONLY
@@ -4524,7 +4653,7 @@ void CkIndex_NodeManager < key, value > ::_call_finishOne_void(void* impl_msg, v
   impl_obj->finishOne();
   CmiUnlock(impl_obj->__nodelock);
 }
-template < class key, class value > PUPable_def_template_nonInst(SINGLE_ARG(Closure_NodeManager < key, value > ::finishOne_9_closure))
+template < class key, class value > PUPable_def_template_nonInst(SINGLE_ARG(Closure_NodeManager < key, value > ::finishOne_10_closure))
 #endif /* CK_TEMPLATES_ONLY */
 
 #ifdef CK_TEMPLATES_ONLY
@@ -4597,7 +4726,7 @@ void CkIndex_NodeManager < key, value > ::_call_depositHist_void(void* impl_msg,
   impl_obj->depositHist();
   CmiUnlock(impl_obj->__nodelock);
 }
-template < class key, class value > PUPable_def_template_nonInst(SINGLE_ARG(Closure_NodeManager < key, value > ::depositHist_11_closure))
+template < class key, class value > PUPable_def_template_nonInst(SINGLE_ARG(Closure_NodeManager < key, value > ::depositHist_12_closure))
 #endif /* CK_TEMPLATES_ONLY */
 
 #ifdef CK_TEMPLATES_ONLY
@@ -4717,6 +4846,41 @@ void CProxySection_NodeManager < key, value > ::collectSamples(const sampleInfo 
 #endif /* CK_TEMPLATES_ONLY */
 
 #ifdef CK_TEMPLATES_ONLY
+/* DEFS: void assembleSamples(const std::vector<key > &proc_sample);
+ */
+template < class key, class value > 
+
+void CProxySection_NodeManager < key, value > ::assembleSamples(const std::vector<key > &proc_sample, const CkEntryOptions *impl_e_opts)
+{
+  ckCheck();
+  //Marshall: const std::vector<key > &proc_sample
+  int impl_off=0;
+  { //Find the size of the PUP'd data
+    PUP::sizer implP;
+    //Have to cast away const-ness to get pup routine
+    implP|(std::vector<key > &)proc_sample;
+    impl_off+=implP.size();
+  }
+  CkMarshallMsg *impl_msg=CkAllocateMarshallMsg(impl_off,impl_e_opts);
+  { //Copy over the PUP'd data
+    PUP::toMem implP((void *)impl_msg->msgBuf);
+    //Have to cast away const-ness to get pup routine
+    implP|(std::vector<key > &)proc_sample;
+  }
+  if (ckIsDelegated()) {
+     CkNodeGroupMsgPrep(CkIndex_NodeManager < key, value > ::idx_assembleSamples_marshall4(), impl_msg, ckGetGroupID());
+     ckDelegatedTo()->NodeGroupSectionSend(ckDelegatedPtr(),CkIndex_NodeManager < key, value > ::idx_assembleSamples_marshall4(), impl_msg, ckGetNumSections(), ckGetSectionIDs());
+  } else {
+    void *impl_msg_tmp = (ckGetNumSections()>1) ? CkCopyMsg((void **) &impl_msg) : impl_msg;
+    for (int i=0; i<ckGetNumSections(); ++i) {
+       impl_msg_tmp= (i<ckGetNumSections()-1) ? CkCopyMsg((void **) &impl_msg):impl_msg;
+       CkSendMsgNodeBranchMulti(CkIndex_NodeManager < key, value > ::idx_assembleSamples_marshall4(), impl_msg_tmp, ckGetGroupIDn(i), ckGetNumElements(i), ckGetElements(i),0);
+    }
+  }
+}
+#endif /* CK_TEMPLATES_ONLY */
+
+#ifdef CK_TEMPLATES_ONLY
 /* DEFS: void loadkeys(int dest, const sendInfo &inf);
  */
 template < class key, class value > 
@@ -4741,13 +4905,13 @@ void CProxySection_NodeManager < key, value > ::loadkeys(int dest, const sendInf
     implP|(sendInfo &)inf;
   }
   if (ckIsDelegated()) {
-     CkNodeGroupMsgPrep(CkIndex_NodeManager < key, value > ::idx_loadkeys_marshall4(), impl_msg, ckGetGroupID());
-     ckDelegatedTo()->NodeGroupSectionSend(ckDelegatedPtr(),CkIndex_NodeManager < key, value > ::idx_loadkeys_marshall4(), impl_msg, ckGetNumSections(), ckGetSectionIDs());
+     CkNodeGroupMsgPrep(CkIndex_NodeManager < key, value > ::idx_loadkeys_marshall5(), impl_msg, ckGetGroupID());
+     ckDelegatedTo()->NodeGroupSectionSend(ckDelegatedPtr(),CkIndex_NodeManager < key, value > ::idx_loadkeys_marshall5(), impl_msg, ckGetNumSections(), ckGetSectionIDs());
   } else {
     void *impl_msg_tmp = (ckGetNumSections()>1) ? CkCopyMsg((void **) &impl_msg) : impl_msg;
     for (int i=0; i<ckGetNumSections(); ++i) {
        impl_msg_tmp= (i<ckGetNumSections()-1) ? CkCopyMsg((void **) &impl_msg):impl_msg;
-       CkSendMsgNodeBranchMulti(CkIndex_NodeManager < key, value > ::idx_loadkeys_marshall4(), impl_msg_tmp, ckGetGroupIDn(i), ckGetNumElements(i), ckGetElements(i),0);
+       CkSendMsgNodeBranchMulti(CkIndex_NodeManager < key, value > ::idx_loadkeys_marshall5(), impl_msg_tmp, ckGetGroupIDn(i), ckGetNumElements(i), ckGetElements(i),0);
     }
   }
 }
@@ -4774,13 +4938,13 @@ void CProxySection_NodeManager < key, value > ::sendOne(int dest, const CkEntryO
     implP|dest;
   }
   if (ckIsDelegated()) {
-     CkNodeGroupMsgPrep(CkIndex_NodeManager < key, value > ::idx_sendOne_marshall5(), impl_msg, ckGetGroupID());
-     ckDelegatedTo()->NodeGroupSectionSend(ckDelegatedPtr(),CkIndex_NodeManager < key, value > ::idx_sendOne_marshall5(), impl_msg, ckGetNumSections(), ckGetSectionIDs());
+     CkNodeGroupMsgPrep(CkIndex_NodeManager < key, value > ::idx_sendOne_marshall6(), impl_msg, ckGetGroupID());
+     ckDelegatedTo()->NodeGroupSectionSend(ckDelegatedPtr(),CkIndex_NodeManager < key, value > ::idx_sendOne_marshall6(), impl_msg, ckGetNumSections(), ckGetSectionIDs());
   } else {
     void *impl_msg_tmp = (ckGetNumSections()>1) ? CkCopyMsg((void **) &impl_msg) : impl_msg;
     for (int i=0; i<ckGetNumSections(); ++i) {
        impl_msg_tmp= (i<ckGetNumSections()-1) ? CkCopyMsg((void **) &impl_msg):impl_msg;
-       CkSendMsgNodeBranchMulti(CkIndex_NodeManager < key, value > ::idx_sendOne_marshall5(), impl_msg_tmp, ckGetGroupIDn(i), ckGetNumElements(i), ckGetElements(i),0);
+       CkSendMsgNodeBranchMulti(CkIndex_NodeManager < key, value > ::idx_sendOne_marshall6(), impl_msg_tmp, ckGetGroupIDn(i), ckGetNumElements(i), ckGetElements(i),0);
     }
   }
 }
@@ -4856,13 +5020,13 @@ void CProxySection_NodeManager < key, value > ::handleOne(const wrap_ptr &msg, i
     implP|numsamples;
   }
   if (ckIsDelegated()) {
-     CkNodeGroupMsgPrep(CkIndex_NodeManager < key, value > ::idx_handleOne_marshall8(), impl_msg, ckGetGroupID());
-     ckDelegatedTo()->NodeGroupSectionSend(ckDelegatedPtr(),CkIndex_NodeManager < key, value > ::idx_handleOne_marshall8(), impl_msg, ckGetNumSections(), ckGetSectionIDs());
+     CkNodeGroupMsgPrep(CkIndex_NodeManager < key, value > ::idx_handleOne_marshall9(), impl_msg, ckGetGroupID());
+     ckDelegatedTo()->NodeGroupSectionSend(ckDelegatedPtr(),CkIndex_NodeManager < key, value > ::idx_handleOne_marshall9(), impl_msg, ckGetNumSections(), ckGetSectionIDs());
   } else {
     void *impl_msg_tmp = (ckGetNumSections()>1) ? CkCopyMsg((void **) &impl_msg) : impl_msg;
     for (int i=0; i<ckGetNumSections(); ++i) {
        impl_msg_tmp= (i<ckGetNumSections()-1) ? CkCopyMsg((void **) &impl_msg):impl_msg;
-       CkSendMsgNodeBranchMulti(CkIndex_NodeManager < key, value > ::idx_handleOne_marshall8(), impl_msg_tmp, ckGetGroupIDn(i), ckGetNumElements(i), ckGetElements(i),0);
+       CkSendMsgNodeBranchMulti(CkIndex_NodeManager < key, value > ::idx_handleOne_marshall9(), impl_msg_tmp, ckGetGroupIDn(i), ckGetNumElements(i), ckGetElements(i),0);
     }
   }
 }
@@ -4970,11 +5134,14 @@ template < class key, class value > void CkIndex_NodeManager < key, value > ::__
   // REG: void collectSamples(const sampleInfo &sI);
   idx_collectSamples_marshall3();
 
+  // REG: void assembleSamples(const std::vector<key > &proc_sample);
+  idx_assembleSamples_marshall4();
+
   // REG: void loadkeys(int dest, const sendInfo &inf);
-  idx_loadkeys_marshall4();
+  idx_loadkeys_marshall5();
 
   // REG: void sendOne(int dest);
-  idx_sendOne_marshall5();
+  idx_sendOne_marshall6();
 
   // REG: void releaseBufMsgs(void);
   idx_releaseBufMsgs_void();
@@ -4983,7 +5150,7 @@ template < class key, class value > void CkIndex_NodeManager < key, value > ::__
   idx_recvOne_data_msg();
 
   // REG: void handleOne(const wrap_ptr &msg, int sampleInd, int numsamples);
-  idx_handleOne_marshall8();
+  idx_handleOne_marshall9();
 
   // REG: void finishOne(void);
   idx_finishOne_void();
