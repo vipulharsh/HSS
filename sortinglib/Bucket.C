@@ -21,7 +21,7 @@ Bucket<key, value>::Bucket(tuning_params par, key min, key max, int nuBuckets_, 
 	params = new tuning_params;
 	*params = par;
 	nNodes = CkNumNodes();
-    int maxprobe = std::max(params->probe_max, maxSampleSize());
+    int maxprobe = std::max(params->probe_max, 2*maxSampleSize());
 	lastProbe = new key[maxprobe];
 	finalSplitters = new key[nBuckets+2]; //required size is nBuckets+2
 	achieved = new bool[nBuckets+2];
@@ -69,9 +69,12 @@ void Bucket<key, value>::Reset(){
 	firstMergingWork = true;
 	dummyCount = 0;
 	dummyCount2 = 0;
-	callPartialSendOne = true;
+	callPartialSendOne = false;
 	numSent = 0;
 	startMergingWork = false;
+	tsum = 0;
+	recvd = 0;
+
 }
 
 
@@ -154,12 +157,13 @@ void Bucket<key, value>::sortAll(){
 	//Since, we are not "chunking" bucket_data, 
 	// work around for localProbe() to work correctly
         numChunks = 1;
-        sepKeys[0] = mymin ;
+        sepKeys[0] = minkey ;
         sepKeys[1] = maxkey ;
         sepCounts[0] = 0;
         sepCounts[1] = numElem;
         std::sort(bucket_data, bucket_data + numElem);
         lastSortedChunk = 1;
+        sorted[1] = true; 
 }
 
 
@@ -341,6 +345,14 @@ void Bucket<key, value>::localProbe(){
 	for (int i = 0; i < lastProbeSize; i++)
 		longhistCounts[i] = histCounts[i]; 
 
+	for (int i = 0; i < lastProbeSize; i++){
+		longhistCounts[i] = histCounts[i]; 
+		//CkPrintf("[%d] histogram[lastProbe[%lu]: %lu\n", CkMyPe(), lastProbe[i], longhistCounts[i]);
+	}
+
+
+
+
 	//ckout<<" Hist Count on "<<CkMyPe()<<" --- "<<lastSortedChunk<<endl;
 	this->contribute((lastProbeSize)*sizeof(uint64_t), longhistCounts, sum_uint64_t_type, 
 		CkCallback(CkIndex_Sorter<key,value>::Histogram(NULL), sorter_proxy));
@@ -351,6 +363,39 @@ void Bucket<key, value>::localProbe(){
 template <class key, class value>
 void Bucket<key, value>::genNextSamples(sampleMessage<key> *sm){
 	//ckout<<"Generating samples now:#"<<sm->nIntervals<<" - "<<CkMyPe()<<endl;
+
+	bool flag =  (achieved[this->thisIndex] &&  achieved[this->thisIndex+1]);
+	for(int i=0; i<sm->num_newachv; i++){
+		finalSplitters[sm->newachv_id[i]] = sm->newachv_key[i];
+		//ckout<<"#"<<i<<": "<<pm->newachv_id[i]<<" : "<< pm->newachv_key[i]<<" achieved?"<<(bool)achieved[pm->newachv_id[i]]<<" - "<<CkMyPe()<<endl;
+		assert(achieved[sm->newachv_id[i]] == false);
+		achieved[sm->newachv_id[i]] = true;
+		achievedCounts[sm->newachv_id[i]] = sm->newachv_count[i];
+	}
+	achievedSplitters += sm->num_newachv;
+	/*** Undo ***/
+	//partialSend(sm);
+
+	//ckout<<"achievedSplitters: "<<achievedSplitters<<" - "<<CkMyPe()<<endl;
+	if(achievedSplitters == nBuckets+1){
+		//ckout<<"Splitters have been determined  - toSend.size(): "<<toSend.size()<<" - "<<CkMyPe()<<endl;
+		//ckout<<"callPartialSendOne: "<<callPartialSendOne<<" - "<<CkMyPe()<<endl;	
+		doneHists = true;
+		//callPartialSendOne = true;
+		//partialSendOne();
+		sendAll();
+		//this->contribute(CkCallback(CkIndex_Sorter<key, value>::Done(NULL), sorter_proxy));
+		return;
+		//Not required, I think
+		if(lastSortedChunk == numChunks && numSent == nBuckets)
+			MergingWork();
+		if(mergingDone){
+			postMerging();
+		}
+		return;
+	}
+
+
 	
 	//array_msg<key> *sample = new (am->numElem) array_msg<key>;
 	std::vector<key> samples;
@@ -358,9 +403,9 @@ void Bucket<key, value>::genNextSamples(sampleMessage<key> *sm){
 	static myclock::time_point beginning = myclock::now();
 	myclock::duration d = myclock::now() - beginning;
 	unsigned seed = d.count();
-	//seed = CkMyPe();
 	
 	int sampleSize = ceil(sampleSizePerPe() / sm->f);
+	seed = (sampleSize * CkMyPe());
 	//ckout<<"Seed is "<<seed<<endl;
 	std::default_random_engine generator(seed);
 	std::uniform_int_distribution<int> distribution(0,numElem-1);
@@ -440,7 +485,7 @@ template <class key, class value>
 void Bucket<key, value>::sendAll(){
 	//randomize it
 	int prev = 0;
-	for(int i = 1; i <= nNodes; i++){
+	for(int i = 1; i <= nBuckets; i++){
 		//better randomization
 		int bkt = (i + this->thisIndex)%nNodes + 1; 
 		key sep1 = finalSplitters[bkt-1];
@@ -504,15 +549,17 @@ void Bucket<key, value>::recvFinalKeys(int srcnode, sendInfo s){
 
 
 template <class key, class value>
-void Bucket<key, value>::partialSend(probeMessage<key> *pm){
+void Bucket<key, value>::partialSend(sampleMessage<key> *sm){
 	//randomize it
-	for(int ti=0,i; ti<pm->num_newachv; ti++){
-		i = (ti + this->thisIndex)%pm->num_newachv;
-		for(int bkt = pm->newachv_id[i]; bkt<= pm->newachv_id[i]+1 && bkt<=nBuckets; bkt++){
+	for(int ti=0,i; ti<sm->num_newachv; ti++){
+		i = (ti + this->thisIndex)%sm->num_newachv;
+		for(int bkt = sm->newachv_id[i]; bkt<= sm->newachv_id[i]+1 && bkt<=nBuckets; bkt++){
+			assert(bkt>0);
 			if(!sent[bkt] && achieved[bkt] && achieved[bkt-1]){
 				toSend.push_back(bkt);
 				sent[bkt] = true;
 				if(callPartialSendOne){
+					CmiAbort("callPartialSendOne is not initialized");
 					this->thisProxy[this->thisIndex].partialSendOne();
 					callPartialSendOne = false;
 				}
@@ -525,7 +572,18 @@ void Bucket<key, value>::partialSend(probeMessage<key> *pm){
 
 template <class key, class value>
 void Bucket<key, value>::partialSendOne(){
+
+	assert(!toSend.empty());
+
 	int bkt = toSend.back();
+
+
+	if(bkt == 0){
+		ckout<<"wtf: "<<toSend.size()<<endl;
+		ckout<<numChunks<<" : "<<mymax<<" : "<<" : "<<sepKeys[numChunks]<<" ! ";
+		ckout<<" for "<<bkt<<" - "<<CkMyPe()<<endl;
+	}
+
 	toSend.pop_back();
 
 	//find what all chunks it belongs to
@@ -534,9 +592,13 @@ void Bucket<key, value>::partialSendOne(){
 	int chunk1 = std::upper_bound(sepKeys, sepKeys + numChunks + 1, sep1) - sepKeys - 1;
 	int chunk2 = std::lower_bound(sepKeys, sepKeys + numChunks + 1, sep2) - sepKeys;
 
-	//ckout<<numChunks<<" : "<<mymax<<" : "<<sep1<<" ;; "<<sep2<<" : "<<sepKeys[numChunks]<<" ! ";
-	//	ckout<<chunk1<<" ;';';';'; "<<chunk2<<" for "<<bkt<<" - "<<CkMyPe()<<endl;
-	
+
+	if(bkt == 0 || bkt == 144){
+		ckout<<numChunks<<" : "<<mymax<<" : "<<sep1<<" ;; "<<sep2<<" : "<<sepKeys[numChunks]<<" ! ";
+		ckout<<chunk1<<" ;';';';'; "<<chunk2<<" for "<<bkt<<" - "<<CkMyPe()<<endl;
+	}
+
+
 	//sort those chunks if not already sorted
 	for(int c = chunk1+1; c <= chunk2; c++){
 		if(!sorted[c]){
@@ -544,7 +606,8 @@ void Bucket<key, value>::partialSendOne(){
 			bucket_data + sepCounts[c]);
 			sorted[c] = true;
 			//use this sorted chunk to optimize computations in localProbe
-			//ckout<<chunk1<<" ;';';';'; "<<chunk2<<" for "<<bkt<<" - "<<CkMyPe()<<endl;
+			assert(false); //HSS should not come here since everything is sorted before 1st round
+			ckout<<chunk1<<" ;';';';'; "<<chunk2<<" for "<<bkt<<" - "<<CkMyPe()<<endl;
 		}
 	}
 
@@ -582,6 +645,20 @@ void Bucket<key, value>::partialSendOne(){
 
 template <class key, class value>
 void Bucket<key, value>::Load(data_msg<key, value>* msg){
+	//ckout<<"Data Message received - "<<CkMyPe()<<endl;
+	//ckout<<"lastSortedChunk: "<<lastSortedChunk<<" , "<<numChunks<<" noMergingWork: "<<noMergingWork<<endl;
+
+	recvd++;
+
+	for(int i = 0; i < msg->num_vals; i++)
+		tsum += (int)(msg->data[i].k % 1009);
+
+	if(recvd == nBuckets){
+		//ckout<<"contributing: "<<tsum<<" : recvd:"<<recvd<<" - "<<CkMyPe()<<endl;
+		this->contribute(sizeof(int), &tsum, CkReduction::sum_int,
+			CkCallback(CkIndex_Main<key, value>::intermediate_isum(NULL),main_proxy));
+	}
+
 	incomingMsgBuffer.push_back(msg);
 	if(noMergingWork && lastSortedChunk==numChunks){
 		noMergingWork = false;
@@ -593,6 +670,9 @@ void Bucket<key, value>::Load(data_msg<key, value>* msg){
 
 template <class key, class value>
 void Bucket<key, value>::MergingWork(){
+
+	//CkPrintf("[%d] MergingWork, mergingDone: %d \n", CkMyPe(), mergingDone);
+
 	if(mergingDone) return;
 
 	noMergingWork = false;
@@ -656,10 +736,16 @@ void Bucket<key, value>::MergingWork(){
 			received++;
 			if(received == nBuckets){
 				totalmerge = true;
+				//ckout<<"totalmerge: "<<endl;
 			}
 			//ckout<<"incomingMsgBuffer - "<<incomingMsgBuffer.size()<<" - "<<CkMyPe()<<endl;
 	    }
 	    else if(totalmerge){
+
+	    	if(loadBuffer.size() == 1  && loadBuffer[0].msg != NULL){
+	    		*dataOut = loadBuffer[0].msg->data;
+	    	}
+
 			mergingDone = true;
 			//ckout<<"Total Merge over -"<<CkMyPe()<<endl;
 			//ckout<<*out_elems<<" : "<<doneHists<<" Done at "<<CkMyPe()<<endl;

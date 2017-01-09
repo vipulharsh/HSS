@@ -6,7 +6,7 @@
 #include <queue>
 #include <map>
 
-const int SAMPLE_FACTOR = 4;
+const int SAMPLE_FACTOR = 5;
 
 #define LS_EPS 2
 
@@ -29,14 +29,14 @@ int sampleSizePerPe(){
 
 int ls_getStride(){
 	uint64_t elemsPerPe = numTotalElems/CkNumPes();
-	elemsPerPe += ((elemsPerPe * EPS)/100);
-	return ((double)elemsPerPe * LS_EPS)/(CkNumNodes() * 100);
+	elemsPerPe += ((elemsPerPe * EPS * 2)/100);
+	return std::max(1, (int)(((double)elemsPerPe * LS_EPS)/(CkNumNodes() * 100)));
 }
 
 int ls_getMaxSampleSize(){
-   uint64_t stride = ls_getStride();
+    uint64_t stride = ls_getStride();
 	uint64_t elemsPerNode = numTotalElems/CkNumNodes();
-	elemsPerNode += ((elemsPerNode * EPS)/100);
+	elemsPerNode += ((elemsPerNode * EPS * 2)/100);
 	int sampleSize = elemsPerNode/stride;
    return sampleSize + 2; //for the last one
 }
@@ -348,6 +348,8 @@ class NodeManager : public CBase_NodeManager<key, value> {
 			recvdMsgs.push_back(dm);
 			ls_numTotSamples += numsamples;
 			if(ls_numTotSamples >= ls_getMaxSampleSize()) {
+				CkPrintf("[%d] ls_numTotSamples: %d, ls_MaxSampleSize: %d, stride: %d, numElemFinal: %lu\n",
+							CkMyNode(), ls_numTotSamples, ls_getMaxSampleSize(), ls_getStride(), numElemFinal);
 				CmiAbort("Sample size exceeds expectations");
 			}
 			//CkPrintf("[%d, %d] Calling handleOne, dm->num_vals: %d, ind: %d, sampleInd: %d, numsamples: %d\n", CkMyNode(), CkMyPe(), dm->num_vals, recvdMsgs.size()-1, ls_numTotSamples - numsamples, numsamples);	
@@ -399,9 +401,9 @@ class NodeManager : public CBase_NodeManager<key, value> {
 				}
 				splitters[numpes-1] = maxkey;
 				std::sort(pelist, pelist + numpes);
-				for(int i=0; i<numpes; i++){
-					CkPrintf("[%d] Splitterss #%d: %llu\n", CkMyNode(), i, splitters[i]);
-				}
+				//for(int i=0; i<numpes; i++){
+				//	CkPrintf("[%d] Splitterss #%d: %llu\n", CkMyNode(), i, splitters[i]);
+				//}
 				//CkPrintf("[%d] RecvdMsgs.size: %d\n", CkMyNode(), recvdMsgs.size());
 				for(int i=0; i<recvdMsgs.size(); i++){
 					//for(int j=0; j<recvdMsgs[i]->num_vals; j++)

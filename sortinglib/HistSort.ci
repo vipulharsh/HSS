@@ -7,10 +7,11 @@ module HistSort{
   
 
   template <class key, class value> chare Main {
-    entry Main(int num_buckets_, int probe_max);
+    entry Main(int num_buckets_, int probe_max, int num_partitions_);
     entry void Exit();
     entry void DataReady();
     entry void init_isum(CkReductionMsg*);
+    entry void intermediate_isum(CkReductionMsg*);
     entry void final_isum(CkReductionMsg*);
     entry void init_dsum(CkReductionMsg*);
     entry void final_dsum(CkReductionMsg*);

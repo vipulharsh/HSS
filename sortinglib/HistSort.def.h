@@ -59,6 +59,9 @@ template < class key, class value >
 #ifdef CK_TEMPLATES_ONLY
 #endif /* CK_TEMPLATES_ONLY */
 
+#ifdef CK_TEMPLATES_ONLY
+#endif /* CK_TEMPLATES_ONLY */
+
 
 
 
@@ -614,10 +617,11 @@ template < class key, class value >
 
 
 /* DEFS: template < class key, class value > chare Main: Chare{
-Main(int num_buckets_, int probe_max);
+Main(int num_buckets_, int probe_max, int num_partitions_);
 void Exit(void);
 void DataReady(void);
 void init_isum(CkReductionMsg* impl_msg);
+void intermediate_isum(CkReductionMsg* impl_msg);
 void final_isum(CkReductionMsg* impl_msg);
 void init_dsum(CkReductionMsg* impl_msg);
 void final_dsum(CkReductionMsg* impl_msg);
@@ -627,18 +631,19 @@ void final_dsum(CkReductionMsg* impl_msg);
 template < class key, class value >  int CkIndex_Main < key, value > ::__idx=0;
 #endif /* CK_TEMPLATES_ONLY */
 #ifdef CK_TEMPLATES_ONLY
-/* DEFS: Main(int num_buckets_, int probe_max);
+/* DEFS: Main(int num_buckets_, int probe_max, int num_partitions_);
  */
 template < class key, class value > 
 
-CkChareID CProxy_Main < key, value > ::ckNew(int num_buckets_, int probe_max, int impl_onPE, const CkEntryOptions *impl_e_opts)
+CkChareID CProxy_Main < key, value > ::ckNew(int num_buckets_, int probe_max, int num_partitions_, int impl_onPE, const CkEntryOptions *impl_e_opts)
 {
-  //Marshall: int num_buckets_, int probe_max
+  //Marshall: int num_buckets_, int probe_max, int num_partitions_
   int impl_off=0;
   { //Find the size of the PUP'd data
     PUP::sizer implP;
     implP|num_buckets_;
     implP|probe_max;
+    implP|num_partitions_;
     impl_off+=implP.size();
   }
   CkMarshallMsg *impl_msg=CkAllocateMarshallMsg(impl_off,impl_e_opts);
@@ -646,6 +651,7 @@ CkChareID CProxy_Main < key, value > ::ckNew(int num_buckets_, int probe_max, in
     PUP::toMem implP((void *)impl_msg->msgBuf);
     implP|num_buckets_;
     implP|probe_max;
+    implP|num_partitions_;
   }
   CkChareID impl_ret;
   CkCreateChare(CkIndex_Main < key, value > ::__idx, CkIndex_Main < key, value > ::idx_Main_marshall1(), impl_msg, &impl_ret, impl_onPE);
@@ -653,14 +659,15 @@ CkChareID CProxy_Main < key, value > ::ckNew(int num_buckets_, int probe_max, in
 }
 template < class key, class value > 
 
-void CProxy_Main < key, value > ::ckNew(int num_buckets_, int probe_max, CkChareID* pcid, int impl_onPE, const CkEntryOptions *impl_e_opts)
+void CProxy_Main < key, value > ::ckNew(int num_buckets_, int probe_max, int num_partitions_, CkChareID* pcid, int impl_onPE, const CkEntryOptions *impl_e_opts)
 {
-  //Marshall: int num_buckets_, int probe_max
+  //Marshall: int num_buckets_, int probe_max, int num_partitions_
   int impl_off=0;
   { //Find the size of the PUP'd data
     PUP::sizer implP;
     implP|num_buckets_;
     implP|probe_max;
+    implP|num_partitions_;
     impl_off+=implP.size();
   }
   CkMarshallMsg *impl_msg=CkAllocateMarshallMsg(impl_off,impl_e_opts);
@@ -668,19 +675,21 @@ void CProxy_Main < key, value > ::ckNew(int num_buckets_, int probe_max, CkChare
     PUP::toMem implP((void *)impl_msg->msgBuf);
     implP|num_buckets_;
     implP|probe_max;
+    implP|num_partitions_;
   }
   CkCreateChare(CkIndex_Main < key, value > ::__idx, CkIndex_Main < key, value > ::idx_Main_marshall1(), impl_msg, pcid, impl_onPE);
 }
 template < class key, class value > 
 
-  CProxy_Main < key, value > ::CProxy_Main(int num_buckets_, int probe_max, int impl_onPE, const CkEntryOptions *impl_e_opts)
+  CProxy_Main < key, value > ::CProxy_Main(int num_buckets_, int probe_max, int num_partitions_, int impl_onPE, const CkEntryOptions *impl_e_opts)
 {
-  //Marshall: int num_buckets_, int probe_max
+  //Marshall: int num_buckets_, int probe_max, int num_partitions_
   int impl_off=0;
   { //Find the size of the PUP'd data
     PUP::sizer implP;
     implP|num_buckets_;
     implP|probe_max;
+    implP|num_partitions_;
     impl_off+=implP.size();
   }
   CkMarshallMsg *impl_msg=CkAllocateMarshallMsg(impl_off,impl_e_opts);
@@ -688,6 +697,7 @@ template < class key, class value >
     PUP::toMem implP((void *)impl_msg->msgBuf);
     implP|num_buckets_;
     implP|probe_max;
+    implP|num_partitions_;
   }
   CkChareID impl_ret;
   CkCreateChare(CkIndex_Main < key, value > ::__idx, CkIndex_Main < key, value > ::idx_Main_marshall1(), impl_msg, &impl_ret, impl_onPE);
@@ -698,7 +708,7 @@ template < class key, class value >
 template < class key, class value > 
 
 int CkIndex_Main < key, value > ::reg_Main_marshall1() {
-  int epidx = CkRegisterEp("Main(int num_buckets_, int probe_max)",
+  int epidx = CkRegisterEp("Main(int num_buckets_, int probe_max, int num_partitions_)",
       _call_Main_marshall1, CkMarshallMsg::__idx, __idx, 0+CK_EP_NOKEEP);
   CkRegisterMarshallUnpackFn(epidx, _callmarshall_Main_marshall1);
   CkRegisterMessagePupFn(epidx, _marshallmessagepup_Main_marshall1);
@@ -713,25 +723,27 @@ void CkIndex_Main < key, value > ::_call_Main_marshall1(void* impl_msg, void* im
   Main < key, value > * impl_obj = static_cast<Main < key, value >  *>(impl_obj_void);
   CkMarshallMsg *impl_msg_typed=(CkMarshallMsg *)impl_msg;
   char *impl_buf=impl_msg_typed->msgBuf;
-  /*Unmarshall pup'd fields: int num_buckets_, int probe_max*/
+  /*Unmarshall pup'd fields: int num_buckets_, int probe_max, int num_partitions_*/
   PUP::fromMem implP(impl_buf);
   int num_buckets_; implP|num_buckets_;
   int probe_max; implP|probe_max;
+  int num_partitions_; implP|num_partitions_;
   impl_buf+=CK_ALIGN(implP.size(),16);
   /*Unmarshall arrays:*/
-  new (impl_obj) Main < key, value > (num_buckets_, probe_max);
+  new (impl_obj) Main < key, value > (num_buckets_, probe_max, num_partitions_);
 }
 template < class key, class value > 
 
 int CkIndex_Main < key, value > ::_callmarshall_Main_marshall1(char* impl_buf, void* impl_obj_void) {
   Main < key, value > * impl_obj = static_cast< Main < key, value >  *>(impl_obj_void);
-  /*Unmarshall pup'd fields: int num_buckets_, int probe_max*/
+  /*Unmarshall pup'd fields: int num_buckets_, int probe_max, int num_partitions_*/
   PUP::fromMem implP(impl_buf);
   int num_buckets_; implP|num_buckets_;
   int probe_max; implP|probe_max;
+  int num_partitions_; implP|num_partitions_;
   impl_buf+=CK_ALIGN(implP.size(),16);
   /*Unmarshall arrays:*/
-  new (impl_obj) Main < key, value > (num_buckets_, probe_max);
+  new (impl_obj) Main < key, value > (num_buckets_, probe_max, num_partitions_);
   return implP.size();
 }
 template < class key, class value > 
@@ -739,16 +751,19 @@ template < class key, class value >
 void CkIndex_Main < key, value > ::_marshallmessagepup_Main_marshall1(PUP::er &implDestP,void *impl_msg) {
   CkMarshallMsg *impl_msg_typed=(CkMarshallMsg *)impl_msg;
   char *impl_buf=impl_msg_typed->msgBuf;
-  /*Unmarshall pup'd fields: int num_buckets_, int probe_max*/
+  /*Unmarshall pup'd fields: int num_buckets_, int probe_max, int num_partitions_*/
   PUP::fromMem implP(impl_buf);
   int num_buckets_; implP|num_buckets_;
   int probe_max; implP|probe_max;
+  int num_partitions_; implP|num_partitions_;
   impl_buf+=CK_ALIGN(implP.size(),16);
   /*Unmarshall arrays:*/
   if (implDestP.hasComments()) implDestP.comment("num_buckets_");
   implDestP|num_buckets_;
   if (implDestP.hasComments()) implDestP.comment("probe_max");
   implDestP|probe_max;
+  if (implDestP.hasComments()) implDestP.comment("num_partitions_");
+  implDestP|num_partitions_;
 }
 #endif /* CK_TEMPLATES_ONLY */
 
@@ -855,6 +870,40 @@ void CkIndex_Main < key, value > ::_call_init_isum_CkReductionMsg(void* impl_msg
 {
   Main < key, value > * impl_obj = static_cast<Main < key, value >  *>(impl_obj_void);
   impl_obj->init_isum((CkReductionMsg*)impl_msg);
+}
+#endif /* CK_TEMPLATES_ONLY */
+
+#ifdef CK_TEMPLATES_ONLY
+/* DEFS: void intermediate_isum(CkReductionMsg* impl_msg);
+ */
+template < class key, class value > 
+
+void CProxy_Main < key, value > ::intermediate_isum(CkReductionMsg* impl_msg)
+{
+  ckCheck();
+  if (ckIsDelegated()) {
+    int destPE=CkChareMsgPrep(CkIndex_Main < key, value > ::idx_intermediate_isum_CkReductionMsg(), impl_msg, &ckGetChareID());
+    if (destPE!=-1) ckDelegatedTo()->ChareSend(ckDelegatedPtr(),CkIndex_Main < key, value > ::idx_intermediate_isum_CkReductionMsg(), impl_msg, &ckGetChareID(),destPE);
+  }
+  else CkSendMsg(CkIndex_Main < key, value > ::idx_intermediate_isum_CkReductionMsg(), impl_msg, &ckGetChareID(),0);
+}
+
+// Entry point registration function
+template < class key, class value > 
+
+int CkIndex_Main < key, value > ::reg_intermediate_isum_CkReductionMsg() {
+  int epidx = CkRegisterEp("intermediate_isum(CkReductionMsg* impl_msg)",
+      _call_intermediate_isum_CkReductionMsg, CMessage_CkReductionMsg::__idx, __idx, 0);
+  CkRegisterMessagePupFn(epidx, (CkMessagePupFn)CkReductionMsg::ckDebugPup);
+  return epidx;
+}
+
+template < class key, class value > 
+
+void CkIndex_Main < key, value > ::_call_intermediate_isum_CkReductionMsg(void* impl_msg, void* impl_obj_void)
+{
+  Main < key, value > * impl_obj = static_cast<Main < key, value >  *>(impl_obj_void);
+  impl_obj->intermediate_isum((CkReductionMsg*)impl_msg);
 }
 #endif /* CK_TEMPLATES_ONLY */
 
@@ -966,7 +1015,7 @@ void CkIndex_Main < key, value > ::_call_final_dsum_CkReductionMsg(void* impl_ms
 template < class key, class value > void CkIndex_Main < key, value > ::__register(const char *s, size_t size) {
   __idx = CkRegisterChare(s, size, TypeChare);
   CkRegisterBase(__idx, CkIndex_Chare::__idx);
-  // REG: Main(int num_buckets_, int probe_max);
+  // REG: Main(int num_buckets_, int probe_max, int num_partitions_);
   idx_Main_marshall1();
 
   // REG: void Exit(void);
@@ -977,6 +1026,9 @@ template < class key, class value > void CkIndex_Main < key, value > ::__registe
 
   // REG: void init_isum(CkReductionMsg* impl_msg);
   idx_init_isum_CkReductionMsg();
+
+  // REG: void intermediate_isum(CkReductionMsg* impl_msg);
+  idx_intermediate_isum_CkReductionMsg();
 
   // REG: void final_isum(CkReductionMsg* impl_msg);
   idx_final_isum_CkReductionMsg();

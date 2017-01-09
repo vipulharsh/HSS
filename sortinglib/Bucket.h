@@ -95,9 +95,11 @@ class Bucket : public CBase_Bucket<key, value> {
     CProxy_NodeManager<key, value>  nodemgr;
     CkNodeGroupID nodeMgrID;
 
+
+    int tsum, recvd;
    	void Reset(); 
    	void localProbe();
-   	void partialSend(probeMessage<key> *pm);
+   	void partialSend(sampleMessage<key> *sm);
    	void collapseAndMerge();
    	void totalMerge();
    	void mergeAt(int n);

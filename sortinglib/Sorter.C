@@ -1,7 +1,7 @@
 #include <assert.h>
 /*global*/ CkReduction::reducerType sum_uint64_t_type; 
 
-//epsilon  = 5% error
+//epsilon  = 10% imbalance
 #define EPS 5
 
 
@@ -11,12 +11,15 @@ CkReductionMsg *sum_uint64_t(int nMsg,CkReductionMsg **msgs)
   ///Sum starts off at zero 
   int size = msgs[0]->getSize()/sizeof(uint64_t);
   uint64_t ret[size];
-  memset(ret, 0, sizeof(uint64_t)*size);
+  for(int i=0; i<size; i++)
+    ret[i] = 0;
   uint64_t *m;
   for (int i=0;i<nMsg;i++) {
     m=(uint64_t *)msgs[i]->getData();
-    for (int j = 0; j <size;j ++) 
+    for (int j = 0; j <size;j ++) {
       ret[j]+=m[j];
+      //CkPrintf("[wtf] m[%d]: %lu \n", j, m[j]);
+    }
   }
   return CkReductionMsg::buildNew(size*sizeof(uint64_t),ret);
 } 
@@ -101,7 +104,8 @@ extern int maxSampleSize();
 
 template<class key, class value>
 void Sorter<key, value>::Init(){
-	int maxprobe = std::max(params->probe_max, maxSampleSize());
+	      int maxprobe = std::max(params->probe_max, 2*maxSampleSize());
+        ckout<<"maxprobe: "<<maxprobe<<endl;
         lastProbe = new key[maxprobe+1];
         scratch = new key[maxprobe+1];
         finalSplitters = new key[nBuckets+2]; //required size is nBuckets+2
@@ -124,7 +128,7 @@ void Sorter<key, value>::Init(){
         achievedSplitters = 2;
         allPreviousProbes.clear();
         //allPreviousProbes[minkey] = 0;
-        ckout<<"Exiting Sorter Init... "<<params->probe_max<<endl;
+        ckout<<"Exiting Sorter Init... "<<maxprobe<<endl;
 }
 
 
@@ -232,7 +236,7 @@ template <class key, class value>
 inline int Sorter<key, value>::checkGoal(int splitterInd, uint64_t histCount){
     uint64_t goal = (nElements * splitterInd)/nBuckets;
     uint64_t margin = (nElements * EPS)/(100 * nBuckets); //5%
-    //ckout<<nElements<<" : "<<splitterInd<<" : "<<nBuckets<<endl;
+    //ckout<<nElements<<" : "<<splitterInd<<" : "<<nBuckets<<" : "<<histCount<<endl;
     //ckout<<goal<<" : "<<margin<<" : "<<goal-margin<<" : "<<goal + margin<<endl;
     return (histCount < goal-margin ? -1 : (histCount > goal+margin ? 1 : 0));
 }
@@ -247,7 +251,12 @@ void Sorter<key, value>::Histogram(CkReductionMsg *msg){
     ckout<<"Probe Number : #### : "<<numProbes<<", maxprobesize: "<<params->probe_max<<",  lastProbeSize: "<<lastProbeSize<<endl;
     uint64_t* histCounts = (uint64_t*)msg->getData();
     int lenhist = (int)msg->getSize()/sizeof(uint64_t);   
-    
+
+/*
+    for(int i=0; i<lenhist; i++){
+      CkPrintf("*************** lastProbe[%lu], histcount: %lu \n", lastProbe[i], histCounts[i]);
+    }
+*/    
 
     //store cumulative counts
     for(int i=1; i<lenhist; i++){
@@ -262,6 +271,9 @@ void Sorter<key, value>::Histogram(CkReductionMsg *msg){
       achievedCounts[nBuckets] = nElements; 
       newachv.push_back(std::pair<key, int>(maxkey, nBuckets));
     }
+
+
+
 
 
     int p = 0; //currProbe
@@ -388,6 +400,13 @@ void Sorter<key, value>::nextSamples(std::vector<std::pair<key, int> > &newachv,
     }
 
 
+    for(int i=0; i<r; i++){
+       sm->newachv_key[i] = newachv[i].first;
+       sm->newachv_id[i] = newachv[i].second;
+       sm->newachv_count[i] = achievedCounts[newachv[i].second];
+    }  
+
+
     if(achievedSplitters == nBuckets+1){
       assert(sm->nIntervals == 0);
       ckout<<"Done Histogramming in "<<CmiWallTimer()-c1<<" seconds, numprobes: "<< numProbes << endl;
@@ -396,7 +415,7 @@ void Sorter<key, value>::nextSamples(std::vector<std::pair<key, int> > &newachv,
         ckout<<"Splitter "<<i<<": "<<finalSplitters[i]<<" "<<achieved[i]<<" : "<<achievedCounts[i] - cum<<endl;
         cum = achievedCounts[i];
       }
-      CkExit();
+      //CkExit();
     }
 
 /*
@@ -414,11 +433,16 @@ void Sorter<key, value>::nextSamples(std::vector<std::pair<key, int> > &newachv,
 
     for(int i=0; i<=nBuckets; i++){
         //  CkPrintf("[%d] ##%d, rank(%ld, %ld), keys(%lu, %lu), achieved: %d\n", CkMyPe(), i, lb_ranks[i], ub_ranks[i], lb_keys[i], ub_keys[i], achieved[i]);
-      }
+    }
 
 
 
     if(sm->nIntervals == 0){
+      if(achievedSplitters != nBuckets+1){
+          for(int i=0; i<sm->nIntervals; i++){
+            ckout<<"#"<<i<<"("<<sm->lb[i]<<","<<sm->ub[i]<<")"<<endl;
+          }
+      }
       assert(achievedSplitters == nBuckets+1);
     }
 

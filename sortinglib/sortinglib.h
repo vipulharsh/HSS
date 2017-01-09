@@ -102,7 +102,7 @@ void HistSorting(int input_elems_, kv_pair<key, value>* dataIn_,
 #if DEBUG
     CkPrintf("[%d] Histogram Sorting on %d at %.3lf MB\n",CkMyPe(),CkNumPes(),CmiMemoryUsage()/(1024.0*1024));
 #endif
-   static CProxy_Main<key, value> mainProxy = CProxy_Main<key, value>::ckNew(CkNumPes(), probe_max);
+   static CProxy_Main<key, value> mainProxy = CProxy_Main<key, value>::ckNew(CkNumPes(), probe_max, CkNumNodes());
     mainProxy.DataReady();
   }
 }
@@ -116,16 +116,19 @@ void HistSorting(int input_elems_, kv_pair<key, value>* dataIn_,
 template <class key, class value>
 class Main : public CBase_Main<key, value> {
   private:
-    int num_buckets;
+    int num_buckets, num_partitions;
     //chare array proxies
     CProxy_Sorter<key, value> sorter;
     CProxy_Bucket<key, value> bucket_arr;
     tuning_params pars; 
+    int isumk, tsumk, fsumk;
   public:
     //main constructor
-    Main (int num_buckets_, int probe_max) {
+    Main (int num_buckets_, int probe_max, int num_partitions_) {
       //input parameter is number of buckets (data chares)
       num_buckets = num_buckets_;
+      //equal to #chares or #nodes, depending on whether node level or pe level
+      num_partitions = num_partitions_;
       // Create the sorting entities
       CkArrayOptions opts(num_buckets);
       pars.probe_size = num_buckets - 1;
@@ -147,10 +150,10 @@ class Main : public CBase_Main<key, value> {
       CkNodeGroupID nodeMgrID = CProxy_NodeManager<key, value>::ckNew(0, UINT64_MAX);
 
       bucket_arr = CProxy_Bucket<key, value>::ckNew(pars, 0,
-                       UINT64_MAX,  num_buckets, nodeMgrID, opts);
+                       UINT64_MAX,  num_partitions, nodeMgrID, opts);
       
       // maxkey should be MAXINT - c * p
-      sorter = CProxy_Sorter<key, value>::ckNew(bucket_arr, num_buckets, 0, 
+      sorter = CProxy_Sorter<key, value>::ckNew(bucket_arr, num_partitions, 0, 
                      UINT64_MAX, pars, this->thisProxy, nodeMgrID);
 
     }
@@ -171,11 +174,23 @@ class Main : public CBase_Main<key, value> {
       delete msg;
     }
     void init_isum(CkReductionMsg *msg) {
+      isumk = *((int *) msg->getData());
       printf("Initial key sum %d\n",*((int *) msg->getData()));
       delete msg;
     }
+    void intermediate_isum(CkReductionMsg *msg) {
+      tsumk = *((int *) msg->getData());
+      printf("Intermediate key sum %d\n",*((int *) msg->getData()));
+      delete msg;
+    }
+
     void final_isum(CkReductionMsg *msg) {
+      fsumk = *((int *) msg->getData());
       printf("Final key sum %d\n",*((int *) msg->getData()));
+      ckout<<isumk<<" "<<tsumk<<" "<<fsumk<<endl;
+      if(isumk != fsumk){
+        CmiAbort("Checksums don't match \n");
+      }
       //delete msg;
       sorter.Done(msg);
     }

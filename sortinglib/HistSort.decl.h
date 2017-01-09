@@ -9,10 +9,11 @@
 
 
 /* DECLS: template < class key, class value > chare Main: Chare{
-Main(int num_buckets_, int probe_max);
+Main(int num_buckets_, int probe_max, int num_partitions_);
 void Exit(void);
 void DataReady(void);
 void init_isum(CkReductionMsg* impl_msg);
+void intermediate_isum(CkReductionMsg* impl_msg);
 void final_isum(CkReductionMsg* impl_msg);
 void init_dsum(CkReductionMsg* impl_msg);
 void final_dsum(CkReductionMsg* impl_msg);
@@ -31,7 +32,7 @@ template < class key, class value > class CkIndex_Main:public CkIndex_Chare{
 
     static int __idx;
     static void __register(const char *s, size_t size);
-    /* DECLS: Main(int num_buckets_, int probe_max);
+    /* DECLS: Main(int num_buckets_, int probe_max, int num_partitions_);
      */
     // Entry point registration at startup
     
@@ -44,7 +45,7 @@ template < class key, class value > class CkIndex_Main:public CkIndex_Chare{
     }
 
     
-    static int ckNew(int num_buckets_, int probe_max) { return idx_Main_marshall1(); }
+    static int ckNew(int num_buckets_, int probe_max, int num_partitions_) { return idx_Main_marshall1(); }
     
     static void _call_Main_marshall1(void* impl_msg, void* impl_obj);
     
@@ -125,6 +126,30 @@ template < class key, class value > class CkIndex_Main:public CkIndex_Chare{
     static void _call_init_isum_CkReductionMsg(void* impl_msg, void* impl_obj);
     
     static void _call_sdag_init_isum_CkReductionMsg(void* impl_msg, void* impl_obj);
+    /* DECLS: void intermediate_isum(CkReductionMsg* impl_msg);
+     */
+    // Entry point registration at startup
+    
+    static int reg_intermediate_isum_CkReductionMsg();
+    // Entry point index lookup
+    
+    inline static int idx_intermediate_isum_CkReductionMsg() {
+      static int epidx = reg_intermediate_isum_CkReductionMsg();
+      return epidx;
+    }
+
+    
+    inline static int idx_intermediate_isum(void (Main < key, value > ::*)(CkReductionMsg* impl_msg) ) {
+      return idx_intermediate_isum_CkReductionMsg();
+    }
+
+
+    
+    static int intermediate_isum(CkReductionMsg* impl_msg) { return idx_intermediate_isum_CkReductionMsg(); }
+    
+    static void _call_intermediate_isum_CkReductionMsg(void* impl_msg, void* impl_obj);
+    
+    static void _call_sdag_intermediate_isum_CkReductionMsg(void* impl_msg, void* impl_obj);
     /* DECLS: void final_isum(CkReductionMsg* impl_msg);
      */
     // Entry point registration at startup
@@ -238,11 +263,11 @@ template < class key, class value > class CProxy_Main:public CProxy_Chare{
     {      CProxy_Chare::ckSetChareID(c); }
     Main < key, value >  *ckLocal(void) const
     { return (Main < key, value >  *)CkLocalChare(&ckGetChareID()); }
-/* DECLS: Main(int num_buckets_, int probe_max);
+/* DECLS: Main(int num_buckets_, int probe_max, int num_partitions_);
  */
-    static CkChareID ckNew(int num_buckets_, int probe_max, int onPE=CK_PE_ANY, const CkEntryOptions *impl_e_opts=NULL);
-    static void ckNew(int num_buckets_, int probe_max, CkChareID* pcid, int onPE=CK_PE_ANY, const CkEntryOptions *impl_e_opts=NULL);
-    CProxy_Main(int num_buckets_, int probe_max, int onPE=CK_PE_ANY, const CkEntryOptions *impl_e_opts=NULL);
+    static CkChareID ckNew(int num_buckets_, int probe_max, int num_partitions_, int onPE=CK_PE_ANY, const CkEntryOptions *impl_e_opts=NULL);
+    static void ckNew(int num_buckets_, int probe_max, int num_partitions_, CkChareID* pcid, int onPE=CK_PE_ANY, const CkEntryOptions *impl_e_opts=NULL);
+    CProxy_Main(int num_buckets_, int probe_max, int num_partitions_, int onPE=CK_PE_ANY, const CkEntryOptions *impl_e_opts=NULL);
 
 /* DECLS: void Exit(void);
  */
@@ -258,6 +283,11 @@ template < class key, class value > class CProxy_Main:public CProxy_Chare{
  */
     
     void init_isum(CkReductionMsg* impl_msg);
+
+/* DECLS: void intermediate_isum(CkReductionMsg* impl_msg);
+ */
+    
+    void intermediate_isum(CkReductionMsg* impl_msg);
 
 /* DECLS: void final_isum(CkReductionMsg* impl_msg);
  */
@@ -2461,6 +2491,7 @@ template < class key, class value > class Closure_Main {
 
 
     struct DataReady_3_closure;
+
 
 
 
