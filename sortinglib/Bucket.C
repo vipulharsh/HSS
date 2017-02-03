@@ -530,7 +530,7 @@ void Bucket<key, value>::recvFinalKeys(int srcnode, sendInfo s){
 			prev += n;
 		}
 		std::sort(out_data, out_data + out_num);
-		ckout<<" Finished sorting, out_elems: "<<out_num<<" - "<<CkMyPe()<<endl;
+		//ckout<<" Finished sorting, out_elems: "<<out_num<<" - "<<CkMyPe()<<endl;
 		//for(int i=0; i<out_num; i++){
 		//	ckout<<"out_data["<<i<<"]: "<<out_data[i].k<<" : "<<CkMyPe()<<endl;
 		//}

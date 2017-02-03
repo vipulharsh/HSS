@@ -12,12 +12,13 @@
 uint64_t m_w= 110101011;
 uint64_t m_z= 1234567891;
 
+unsigned int seed;
 
 uint64_t getRandom(){
     if (sizeof(int) < sizeof(long))
-        return (static_cast<long>(rand()) << (sizeof(int) * 8)) |
-               rand();
-    return rand();
+        return (static_cast<long>(rand_r(&seed)) << (sizeof(int) * 8)) |
+               rand_r(&seed);
+    return rand_r(&seed);
 }
 
 
@@ -29,6 +30,7 @@ uint64_t getRandom(){
 }
 */
 
+/*
 uint64_t getRandom(uint64_t value){
     value *= 1664525;
     value += 1013904223;
@@ -39,7 +41,7 @@ uint64_t getRandom(uint64_t value){
     value += 12345;
     return value ^ getRandom();
 }
-
+*/
 
 class testsorting : public CBase_testsorting{
   public:
@@ -72,8 +74,10 @@ class dataManager : public CBase_dataManager{
         //num_elems = num_elems*(1+newid);
         dataIn = new kv_pair<uint64_t, int>[numElem];
         int peid = CkMyPe();
+	seed = CkMyPe();
         for (int i = 0; i < numElem; i++){
-            dataIn[i].k  = getRandom() & getRandom((peid + i) ^ numElem);
+            dataIn[i].k  = getRandom() & getRandom();
+            //dataIn[i].k  = getRandom() & getRandom((peid + i) ^ numElem);
             //ckout<<"dataIn["<<i<<"]: "<<dataIn[i].k<<"  ::  "<<peid<<endl;
             //dataIn[i].k = (numpes - peid)*1000 + (numElem - i);
             //dataIn[i].k = peid;

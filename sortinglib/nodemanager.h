@@ -8,7 +8,7 @@
 
 const int SAMPLE_FACTOR = 5;
 
-#define LS_EPS 2
+#define LS_EPS 5
 
 int maxSampleSize(){
 	int numprocs = CkNumPes(), numpes = CkNodeSize(CkMyNode()), lognprocs=1;
@@ -340,7 +340,7 @@ class NodeManager : public CBase_NodeManager<key, value> {
 				obj->setTotalKeys();
 				stride = ls_getStride();
 				numElemFinal = 0;
-				ckout<<" ["<<CkMyNode()<<"] bucket obj : "<<obj<<"   pelist[0]: "<< pelist[0]<<" "<<numTotalElems<<" ls_getMaxSampleSize: "<<ls_getMaxSampleSize()<<" stride: "<<stride<<endl;
+				//ckout<<" ["<<CkMyNode()<<"] bucket obj : "<<obj<<"   pelist[0]: "<< pelist[0]<<" "<<numTotalElems<<" ls_getMaxSampleSize: "<<ls_getMaxSampleSize()<<" stride: "<<stride<<endl;
 				ls_sample = new key[ls_getMaxSampleSize()];	
 			}
 			int numsamples = ls_getSampleSize(dm->num_vals);
@@ -355,8 +355,8 @@ class NodeManager : public CBase_NodeManager<key, value> {
 			//CkPrintf("[%d, %d] Calling handleOne, dm->num_vals: %d, ind: %d, sampleInd: %d, numsamples: %d\n", CkMyNode(), CkMyPe(), dm->num_vals, recvdMsgs.size()-1, ls_numTotSamples - numsamples, numsamples);	
 			this->thisProxy[CkMyNode()].handleOne(wrap_ptr(dm), ls_numTotSamples - numsamples, numsamples);
 			++numRecvd;
-			if(numRecvd == CkNumNodes())
-				CkPrintf("[%d] Received all messages \n", CkMyNode());
+			//if(numRecvd == CkNumNodes())
+			//	CkPrintf("[%d] Received all messages \n", CkMyNode());
 		}
 
 

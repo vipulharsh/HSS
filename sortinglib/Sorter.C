@@ -2,7 +2,7 @@
 /*global*/ CkReduction::reducerType sum_uint64_t_type; 
 
 //epsilon  = 10% imbalance
-#define EPS 5
+#define EPS 2
 
 
 ///reduction for summing arrays of unsigned 64-bit integers
@@ -215,6 +215,7 @@ void Sorter<key, value>::recvSample(array_msg<key>* am){
     lastProbeSize = finalProbe->numElem;
 
 
+    CkPrintf("[%d]Samples collected, sending for histogramming... %lf .\n", CkMyPe(), (CmiWallTimer()-c1));   
     //ckout<<"Initiating Probe from sorter: "<<probeSize<<endl;
     //for(int i=0; i<lastProbeSize; i++)
     //	 ckout<<"Sample #"<<i<<" : "<<lastProbe[i]<<endl;
@@ -245,6 +246,8 @@ inline int Sorter<key, value>::checkGoal(int splitterInd, uint64_t histCount){
 
 template <class key, class value>
 void Sorter<key, value>::Histogram(CkReductionMsg *msg){
+    traceRegisterUserEvent("Histogram: Sorter", 1);
+    double startTime = CmiWallTimer();
     VERBOSEPRINTF("Doing Histogramming %lf seconds after start.\n", (CmiWallTimer()-c1));   
     double cc1 = CmiWallTimer();
     numProbes++;    
@@ -273,9 +276,6 @@ void Sorter<key, value>::Histogram(CkReductionMsg *msg){
     }
 
 
-
-
-
     int p = 0; //currProbe
     int s = 1; //currSplitter
     while(s < nBuckets){
@@ -298,6 +298,10 @@ void Sorter<key, value>::Histogram(CkReductionMsg *msg){
     //double cc2 = CmiWallTimer();
     //ckout<<cc2-cc1<<" : "<< numProbes<<"  - srtr0 <<"<<endl;
 
+    traceUserBracketEvent(1, startTime, CmiWallTimer());
+    traceRegisterUserEvent("Histogram: Before checking goals and updating bounds", 2);
+    startTime = CmiWallTimer();
+
 
     /* Update lower, upper bounds */
     updateBounds(msg);
@@ -306,7 +310,8 @@ void Sorter<key, value>::Histogram(CkReductionMsg *msg){
 //****************FOR DEBUG ******************
     int spltridx = 1;
     for(int i=0; i<lastProbeSize; i++){
-      allPreviousProbes[lastProbe[i]] = histCounts[i];
+      //!!! No need to store in hash-table for HSS
+      //allPreviousProbes[lastProbe[i]] = histCounts[i];
       
       while(checkGoal(spltridx, histCounts[i]) > 0){
           spltridx++;
@@ -316,12 +321,15 @@ void Sorter<key, value>::Histogram(CkReductionMsg *msg){
       //ckout<<lastProbe[i]<<" :-: "<<histCounts[i]<<",   Goal: "<<goal<<", "<<achieved[spltridx]<<endl;
     }
 //**********************************************
+    traceUserBracketEvent(2, startTime, CmiWallTimer());
+    traceRegisterUserEvent("Histogram: Before nextSamples", 3);
+    startTime = CmiWallTimer();
     assert(histCounts[lastProbeSize-1] == nElements);
     nextSamples(newachv, histCounts, msg);
     //nextProbes(newachv, histCounts, msg);
     double cc2 = CmiWallTimer();
     ckout<<cc2-cc1<<" : "<< numProbes<<"  - srtr0 "<<" : "<<allPreviousProbes.size()<<endl;
-    
+    traceUserBracketEvent(3, startTime, CmiWallTimer());
    //delete msg
 }
 
@@ -372,6 +380,10 @@ void Sorter<key, value>::nextSamples(std::vector<std::pair<key, int> > &newachv,
     uint64_t totalLength2 = 0;
     uint64_t prevLb = 0;
     int nIntervals = 0;
+
+    traceRegisterUserEvent("nextSamples: Before for loop 1", 21);
+    double startTime = CmiWallTimer();
+
     for(int i=1; i<nBuckets; i++){
       totalLength2 += ub_ranks[i] - lb_ranks[i];
       if(!achieved[i] && (lb_ranks[i] != prevLb || i==1)){
@@ -380,7 +392,11 @@ void Sorter<key, value>::nextSamples(std::vector<std::pair<key, int> > &newachv,
       }
       prevLb = lb_ranks[i];
     }
-    ckout<<"Fraction of input to be sampled: "<<((double)totalLength)/nElements<<", "<<((double)totalLength2)/nElements<<endl;
+    ckout<<"Fraction of input to be sampled: "<<((double)totalLength)/nElements<<", "<<((double)totalLength2)/nElements<<" achieved: "<<newachv.size()<<endl;
+
+    traceUserBracketEvent(21, startTime, CmiWallTimer());
+    traceRegisterUserEvent("nextSamples: Before creating message", 22);
+    startTime = CmiWallTimer();
 
     int r = newachv.size();
     sampleMessage<key> *sm = new (nIntervals, nIntervals, r, r, r) sampleMessage<key>;
@@ -388,6 +404,11 @@ void Sorter<key, value>::nextSamples(std::vector<std::pair<key, int> > &newachv,
     sm->num_newachv = r;
     sm->f = ((double)totalLength)/nElements;
     nIntervals = 0;
+
+    traceUserBracketEvent(22, startTime, CmiWallTimer());
+    traceRegisterUserEvent("nextSamples: Before updating splitter intervals", 23);
+    startTime = CmiWallTimer();
+
     for(int i=1; i<nBuckets; i++){
       if(!achieved[i]){
         if(lb_ranks[i] != prevLb || i==1){
@@ -400,6 +421,11 @@ void Sorter<key, value>::nextSamples(std::vector<std::pair<key, int> > &newachv,
     }
 
 
+    traceUserBracketEvent(23, startTime, CmiWallTimer());
+    traceRegisterUserEvent("nextSamples: Before populating message", 24);
+    startTime = CmiWallTimer();
+
+
     for(int i=0; i<r; i++){
        sm->newachv_key[i] = newachv[i].first;
        sm->newachv_id[i] = newachv[i].second;
@@ -409,12 +435,13 @@ void Sorter<key, value>::nextSamples(std::vector<std::pair<key, int> > &newachv,
 
     if(achievedSplitters == nBuckets+1){
       assert(sm->nIntervals == 0);
+      //!!! Printing all splitters takes up a lot of time
       ckout<<"Done Histogramming in "<<CmiWallTimer()-c1<<" seconds, numprobes: "<< numProbes << endl;
-      uint64_t cum = 0;
-      for(int i=0; i<=nBuckets; i++){
-        ckout<<"Splitter "<<i<<": "<<finalSplitters[i]<<" "<<achieved[i]<<" : "<<achievedCounts[i] - cum<<endl;
-        cum = achievedCounts[i];
-      }
+      //uint64_t cum = 0;
+      //for(int i=0; i<=nBuckets; i++){
+      //  ckout<<"Splitter "<<i<<": "<<finalSplitters[i]<<" "<<achieved[i]<<" : "<<achievedCounts[i] - cum<<endl;
+      //  cum = achievedCounts[i];
+      //}
       //CkExit();
     }
 
@@ -422,7 +449,7 @@ void Sorter<key, value>::nextSamples(std::vector<std::pair<key, int> > &newachv,
     if(numProbes >= 10)
         CkExit();
 */
-
+    traceUserBracketEvent(24, startTime, CmiWallTimer());
 
 
     ckout<<"Sending sample intervals to buckets, nIntervals: "<<sm->nIntervals<<" frac: ";
@@ -435,8 +462,6 @@ void Sorter<key, value>::nextSamples(std::vector<std::pair<key, int> > &newachv,
         //  CkPrintf("[%d] ##%d, rank(%ld, %ld), keys(%lu, %lu), achieved: %d\n", CkMyPe(), i, lb_ranks[i], ub_ranks[i], lb_keys[i], ub_keys[i], achieved[i]);
     }
 
-
-
     if(sm->nIntervals == 0){
       if(achievedSplitters != nBuckets+1){
           for(int i=0; i<sm->nIntervals; i++){
@@ -445,8 +470,6 @@ void Sorter<key, value>::nextSamples(std::vector<std::pair<key, int> > &newachv,
       }
       assert(achievedSplitters == nBuckets+1);
     }
-
-
 
     buckets.genNextSamples(sm);
 
