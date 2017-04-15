@@ -21,7 +21,7 @@ Bucket<key, value>::Bucket(tuning_params par, key min, key max, int nuBuckets_, 
 	params = new tuning_params;
 	*params = par;
 	nNodes = CkNumNodes();
-    int maxprobe = std::max(params->probe_max, 2*maxSampleSize());
+        int maxprobe = std::max(params->probe_max, 2*maxSampleSize());
 	lastProbe = new key[maxprobe];
 	finalSplitters = new key[nBuckets+2]; //required size is nBuckets+2
 	achieved = new bool[nBuckets+2];
@@ -82,7 +82,7 @@ template <class key, class value>
 void Bucket<key, value>::startBarrier(CProxy_Sorter<key, value> _sorter_proxy, CProxy_Main<key, value> _main_proxy){
 	sorter_proxy = _sorter_proxy;
 	main_proxy = _main_proxy;
-	this->contribute(CkCallback(CkIndex_Sorter<key, value>::finishBarrier(NULL), sorter_proxy));
+	//this->contribute(CkCallback(CkIndex_Sorter<key, value>::finishBarrier(NULL), sorter_proxy));
 }
 
 
@@ -189,10 +189,10 @@ void Bucket<key, value>::genSample(sampleInfo sI){
 
 template <class key, class value>
 void Bucket<key, value>::finalProbes(array_msg<key>* finalprb){
-	//ckout<<"bucket "<<CkMyPe()<<" got the final probes "<<endl;
+	//CkPrintf("^^^^^^^^^^^[%d]bucket  got the final probes: maxSampleSize: %d \n", CkMyPe(), maxSampleSize());
 	memcpy(lastProbe, finalprb->data, finalprb->numElem * sizeof(key));
 	lastProbeSize = finalprb->numElem;
-	//ckout<<"lastProbeSize :  "<<lastProbeSize<<"  :  "<<CkMyPe()<<"  "<<endl;
+	//CkPrintf("^^^^^^^^^^^[%d]lastProbeSize :  %d \n", CkMyPe(), lastProbeSize);
 	localProbe();
 }
 
@@ -315,7 +315,6 @@ void Bucket<key, value>::localProbe(){
 		//ckout<<"IndexStep : "<<indexStep<<" - "<<sepCounts[lastSortedChunk]<<" ;;; "<<numIndices<<" - "<<CkMyPe()<<endl;
 
 
-
 		int prb = 0;
 		for(int ind=0; ind<numIndices; ind++){	
 			//Something needs to be done about long long
@@ -349,9 +348,6 @@ void Bucket<key, value>::localProbe(){
 		longhistCounts[i] = histCounts[i]; 
 		//CkPrintf("[%d] histogram[lastProbe[%lu]: %lu\n", CkMyPe(), lastProbe[i], longhistCounts[i]);
 	}
-
-
-
 
 	//ckout<<" Hist Count on "<<CkMyPe()<<" --- "<<lastSortedChunk<<endl;
 	this->contribute((lastProbeSize)*sizeof(uint64_t), longhistCounts, sum_uint64_t_type, 

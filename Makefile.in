@@ -1,10 +1,11 @@
 #CHARMDIR ?= $(HOME)/work/parallel_sorting/charm-nonsmp/verbs-linux-x86_64-icc
-CHARMDIR ?= $(HOME)/work/parallel_sorting/charm/verbs-linux-x86_64-smp-icc
+CHARMDIR ?= $(HOME)/parallel_sorting/charm/pamilrts-bluegeneq-smp-clang
 #CHARMDIR ?= $(HOME)/work/parallel_sorting/charm-old/verbs-linux-x86_64-smp-icc
 
 #Optimizations need to be enabled
+#OPTS = -O3 -std=c++0x -g
+#OPTS = -O3 -std=c++0x 
 OPTS = -O3 -std=c++0x -tracemode projections
-#OPTS = -g -std=c++0x -tracemode projections
 CHARMC=$(CHARMDIR)/bin/charmc $(OPTS) 
 
 MPI_LIBS=

@@ -99,9 +99,9 @@ void HistSorting(int input_elems_, kv_pair<key, value>* dataIn_,
   //CkPrintf("[%d] HistSorting on, First Elt. %ld \n",CkMyPe(), ((kv_pair<key, value>*) dataIn)[0]);
 
   if(CkMyPe() == 0) {
-#if DEBUG
+//#if DEBUG
     CkPrintf("[%d] Histogram Sorting on %d at %.3lf MB\n",CkMyPe(),CkNumPes(),CmiMemoryUsage()/(1024.0*1024));
-#endif
+//#endif
    static CProxy_Main<key, value> mainProxy = CProxy_Main<key, value>::ckNew(CkNumPes(), probe_max, CkNumNodes());
     mainProxy.DataReady();
   }
@@ -200,7 +200,10 @@ class Main : public CBase_Main<key, value> {
 template <class key, class value>
 void Main<key, value>::DataReady() {
   //There is a possibility of a data race here
+  CkPrintf("((((((((( [%d]DataReady \n", CkMyPe()); 
   bucket_arr.startBarrier(sorter, this->thisProxy);     
+	//this->contribute(CkCallback(CkIndex_Sorter<key, value>::finishBarrier(NULL), sorter_proxy));
+  CkStartQD(CkCallback(CkIndex_Sorter<key, value>::finishBarrier(NULL), sorter));
   //bucket_arr.SetData(sorter, this->thisProxy);     
   //sorter.Begin();       
 }

@@ -10,8 +10,8 @@
 
 /* DECLS: template < class key, class value > chare Main: Chare{
 Main(int num_buckets_, int probe_max, int num_partitions_);
-void Exit(void);
-void DataReady(void);
+void Exit();
+void DataReady();
 void init_isum(CkReductionMsg* impl_msg);
 void intermediate_isum(CkReductionMsg* impl_msg);
 void final_isum(CkReductionMsg* impl_msg);
@@ -54,7 +54,7 @@ template < class key, class value > class CkIndex_Main:public CkIndex_Chare{
     static int _callmarshall_Main_marshall1(char* impl_buf, void* impl_obj_void);
     
     static void _marshallmessagepup_Main_marshall1(PUP::er &p,void *msg);
-    /* DECLS: void Exit(void);
+    /* DECLS: void Exit();
      */
     // Entry point registration at startup
     
@@ -67,18 +67,18 @@ template < class key, class value > class CkIndex_Main:public CkIndex_Chare{
     }
 
     
-    inline static int idx_Exit(void (Main < key, value > ::*)(void) ) {
+    inline static int idx_Exit(void (Main < key, value > ::*)() ) {
       return idx_Exit_void();
     }
 
 
     
-    static int Exit(void) { return idx_Exit_void(); }
+    static int Exit() { return idx_Exit_void(); }
     
     static void _call_Exit_void(void* impl_msg, void* impl_obj);
     
     static void _call_sdag_Exit_void(void* impl_msg, void* impl_obj);
-    /* DECLS: void DataReady(void);
+    /* DECLS: void DataReady();
      */
     // Entry point registration at startup
     
@@ -91,13 +91,13 @@ template < class key, class value > class CkIndex_Main:public CkIndex_Chare{
     }
 
     
-    inline static int idx_DataReady(void (Main < key, value > ::*)(void) ) {
+    inline static int idx_DataReady(void (Main < key, value > ::*)() ) {
       return idx_DataReady_void();
     }
 
 
     
-    static int DataReady(void) { return idx_DataReady_void(); }
+    static int DataReady() { return idx_DataReady_void(); }
     
     static void _call_DataReady_void(void* impl_msg, void* impl_obj);
     
@@ -269,15 +269,15 @@ template < class key, class value > class CProxy_Main:public CProxy_Chare{
     static void ckNew(int num_buckets_, int probe_max, int num_partitions_, CkChareID* pcid, int onPE=CK_PE_ANY, const CkEntryOptions *impl_e_opts=NULL);
     CProxy_Main(int num_buckets_, int probe_max, int num_partitions_, int onPE=CK_PE_ANY, const CkEntryOptions *impl_e_opts=NULL);
 
-/* DECLS: void Exit(void);
+/* DECLS: void Exit();
  */
     
-    void Exit(void);
+    void Exit(const CkEntryOptions *impl_e_opts=NULL);
 
-/* DECLS: void DataReady(void);
+/* DECLS: void DataReady();
  */
     
-    void DataReady(void);
+    void DataReady(const CkEntryOptions *impl_e_opts=NULL);
 
 /* DECLS: void init_isum(CkReductionMsg* impl_msg);
  */
@@ -461,7 +461,7 @@ template < class key > class CMessage_array_msg:public CkMessage{
 };
 
 /* DECLS: template < class key, class value > chare Sorter: Chare{
-Sorter(void);
+Sorter();
 Sorter(const CkArrayID &bucketArr, int num_chares, const key &min, const key &max, const tuning_params &par, const CProxy_Main<key,value > &mainproxy, const CkNodeGroupID &_nodeMgrID);
 void finishBarrier(CkReductionMsg* impl_msg);
 void Histogram(CkReductionMsg* impl_msg);
@@ -483,7 +483,7 @@ template < class key, class value > class CkIndex_Sorter:public CkIndex_Chare{
 
     static int __idx;
     static void __register(const char *s, size_t size);
-    /* DECLS: Sorter(void);
+    /* DECLS: Sorter();
      */
     // Entry point registration at startup
     
@@ -496,7 +496,7 @@ template < class key, class value > class CkIndex_Sorter:public CkIndex_Chare{
     }
 
     
-    static int ckNew(void) { return idx_Sorter_void(); }
+    static int ckNew() { return idx_Sorter_void(); }
     
     static void _call_Sorter_void(void* impl_msg, void* impl_obj);
     
@@ -684,10 +684,10 @@ template < class key, class value > class CProxy_Sorter:public CProxy_Chare{
     {      CProxy_Chare::ckSetChareID(c); }
     Sorter < key, value >  *ckLocal(void) const
     { return (Sorter < key, value >  *)CkLocalChare(&ckGetChareID()); }
-/* DECLS: Sorter(void);
+/* DECLS: Sorter();
  */
-    static CkChareID ckNew(int onPE=CK_PE_ANY);
-    static void ckNew(CkChareID* pcid, int onPE=CK_PE_ANY);
+    static CkChareID ckNew(int onPE=CK_PE_ANY, const CkEntryOptions *impl_e_opts=NULL);
+    static void ckNew(CkChareID* pcid, int onPE=CK_PE_ANY, const CkEntryOptions *impl_e_opts=NULL);
 
 /* DECLS: Sorter(const CkArrayID &bucketArr, int num_chares, const key &min, const key &max, const tuning_params &par, const CProxy_Main<key,value > &mainproxy, const CkNodeGroupID &_nodeMgrID);
  */
@@ -732,20 +732,20 @@ class sendInfo;
 /* DECLS: template < class key, class value > array Bucket: ArrayElement{
 Bucket(const tuning_params &par, const key &_min, const key &_max, int nBuckets_, const CkNodeGroupID &_nodeMgrID);
 void startBarrier(const CProxy_Sorter<key,value > &_sorter_proxy, const CProxy_Main<key,value > &_main_proxy);
-void SetData(void);
+void SetData();
 void genSample(const sampleInfo &sI);
 void firstProbe(const key &firstkey, const key &lastkey, const key &stepSize, int probeSize);
 void firstLocalProbe(int lastProbeSize);
 void histCountProbes(probeMessage<key >* impl_msg);
 void genNextSamples(sampleMessage<key >* impl_msg);
-void sortAll(void);
-void stepSort(void);
+void sortAll();
+void stepSort();
 void Load(data_msg<key,value >* impl_msg);
 void recvFinalKeys(int srcnode, const sendInfo &s);
-void MergingWork(void);
-void partialSendOne(void);
+void MergingWork();
+void partialSendOne();
 void finalProbes(array_msg<key >* impl_msg);
-void finish(void);
+void finish();
 Bucket(CkMigrateMessage* impl_msg);
 };
  */
@@ -815,7 +815,7 @@ template < class key, class value > class CkIndex_Bucket:public CkIndex_ArrayEle
     static int _callmarshall_startBarrier_marshall2(char* impl_buf, void* impl_obj_void);
     
     static void _marshallmessagepup_startBarrier_marshall2(PUP::er &p,void *msg);
-    /* DECLS: void SetData(void);
+    /* DECLS: void SetData();
      */
     // Entry point registration at startup
     
@@ -828,13 +828,13 @@ template < class key, class value > class CkIndex_Bucket:public CkIndex_ArrayEle
     }
 
     
-    inline static int idx_SetData(void (Bucket < key, value > ::*)(void) ) {
+    inline static int idx_SetData(void (Bucket < key, value > ::*)() ) {
       return idx_SetData_void();
     }
 
 
     
-    static int SetData(void) { return idx_SetData_void(); }
+    static int SetData() { return idx_SetData_void(); }
     
     static void _call_SetData_void(void* impl_msg, void* impl_obj);
     
@@ -971,7 +971,7 @@ template < class key, class value > class CkIndex_Bucket:public CkIndex_ArrayEle
     static void _call_genNextSamples_sampleMessage(void* impl_msg, void* impl_obj);
     
     static void _call_sdag_genNextSamples_sampleMessage(void* impl_msg, void* impl_obj);
-    /* DECLS: void sortAll(void);
+    /* DECLS: void sortAll();
      */
     // Entry point registration at startup
     
@@ -984,18 +984,18 @@ template < class key, class value > class CkIndex_Bucket:public CkIndex_ArrayEle
     }
 
     
-    inline static int idx_sortAll(void (Bucket < key, value > ::*)(void) ) {
+    inline static int idx_sortAll(void (Bucket < key, value > ::*)() ) {
       return idx_sortAll_void();
     }
 
 
     
-    static int sortAll(void) { return idx_sortAll_void(); }
+    static int sortAll() { return idx_sortAll_void(); }
     
     static void _call_sortAll_void(void* impl_msg, void* impl_obj);
     
     static void _call_sdag_sortAll_void(void* impl_msg, void* impl_obj);
-    /* DECLS: void stepSort(void);
+    /* DECLS: void stepSort();
      */
     // Entry point registration at startup
     
@@ -1008,13 +1008,13 @@ template < class key, class value > class CkIndex_Bucket:public CkIndex_ArrayEle
     }
 
     
-    inline static int idx_stepSort(void (Bucket < key, value > ::*)(void) ) {
+    inline static int idx_stepSort(void (Bucket < key, value > ::*)() ) {
       return idx_stepSort_void();
     }
 
 
     
-    static int stepSort(void) { return idx_stepSort_void(); }
+    static int stepSort() { return idx_stepSort_void(); }
     
     static void _call_stepSort_void(void* impl_msg, void* impl_obj);
     
@@ -1071,7 +1071,7 @@ template < class key, class value > class CkIndex_Bucket:public CkIndex_ArrayEle
     static int _callmarshall_recvFinalKeys_marshall12(char* impl_buf, void* impl_obj_void);
     
     static void _marshallmessagepup_recvFinalKeys_marshall12(PUP::er &p,void *msg);
-    /* DECLS: void MergingWork(void);
+    /* DECLS: void MergingWork();
      */
     // Entry point registration at startup
     
@@ -1084,18 +1084,18 @@ template < class key, class value > class CkIndex_Bucket:public CkIndex_ArrayEle
     }
 
     
-    inline static int idx_MergingWork(void (Bucket < key, value > ::*)(void) ) {
+    inline static int idx_MergingWork(void (Bucket < key, value > ::*)() ) {
       return idx_MergingWork_void();
     }
 
 
     
-    static int MergingWork(void) { return idx_MergingWork_void(); }
+    static int MergingWork() { return idx_MergingWork_void(); }
     
     static void _call_MergingWork_void(void* impl_msg, void* impl_obj);
     
     static void _call_sdag_MergingWork_void(void* impl_msg, void* impl_obj);
-    /* DECLS: void partialSendOne(void);
+    /* DECLS: void partialSendOne();
      */
     // Entry point registration at startup
     
@@ -1108,13 +1108,13 @@ template < class key, class value > class CkIndex_Bucket:public CkIndex_ArrayEle
     }
 
     
-    inline static int idx_partialSendOne(void (Bucket < key, value > ::*)(void) ) {
+    inline static int idx_partialSendOne(void (Bucket < key, value > ::*)() ) {
       return idx_partialSendOne_void();
     }
 
 
     
-    static int partialSendOne(void) { return idx_partialSendOne_void(); }
+    static int partialSendOne() { return idx_partialSendOne_void(); }
     
     static void _call_partialSendOne_void(void* impl_msg, void* impl_obj);
     
@@ -1143,7 +1143,7 @@ template < class key, class value > class CkIndex_Bucket:public CkIndex_ArrayEle
     static void _call_finalProbes_array_msg(void* impl_msg, void* impl_obj);
     
     static void _call_sdag_finalProbes_array_msg(void* impl_msg, void* impl_obj);
-    /* DECLS: void finish(void);
+    /* DECLS: void finish();
      */
     // Entry point registration at startup
     
@@ -1156,13 +1156,13 @@ template < class key, class value > class CkIndex_Bucket:public CkIndex_ArrayEle
     }
 
     
-    inline static int idx_finish(void (Bucket < key, value > ::*)(void) ) {
+    inline static int idx_finish(void (Bucket < key, value > ::*)() ) {
       return idx_finish_void();
     }
 
 
     
-    static int finish(void) { return idx_finish_void(); }
+    static int finish() { return idx_finish_void(); }
     
     static void _call_finish_void(void* impl_msg, void* impl_obj);
     
@@ -1289,10 +1289,10 @@ template < class key, class value >  class CProxyElement_Bucket : public CProxyE
     
     void startBarrier(const CProxy_Sorter<key,value > &_sorter_proxy, const CProxy_Main<key,value > &_main_proxy, const CkEntryOptions *impl_e_opts=NULL) ;
 
-/* DECLS: void SetData(void);
+/* DECLS: void SetData();
  */
     
-    void SetData(void) ;
+    void SetData(const CkEntryOptions *impl_e_opts=NULL) ;
 
 /* DECLS: void genSample(const sampleInfo &sI);
  */
@@ -1319,15 +1319,15 @@ template < class key, class value >  class CProxyElement_Bucket : public CProxyE
     
     void genNextSamples(sampleMessage<key >* impl_msg) ;
 
-/* DECLS: void sortAll(void);
+/* DECLS: void sortAll();
  */
     
-    void sortAll(void) ;
+    void sortAll(const CkEntryOptions *impl_e_opts=NULL) ;
 
-/* DECLS: void stepSort(void);
+/* DECLS: void stepSort();
  */
     
-    void stepSort(void) ;
+    void stepSort(const CkEntryOptions *impl_e_opts=NULL) ;
 
 /* DECLS: void Load(data_msg<key,value >* impl_msg);
  */
@@ -1339,25 +1339,25 @@ template < class key, class value >  class CProxyElement_Bucket : public CProxyE
     
     void recvFinalKeys(int srcnode, const sendInfo &s, const CkEntryOptions *impl_e_opts=NULL) ;
 
-/* DECLS: void MergingWork(void);
+/* DECLS: void MergingWork();
  */
     
-    void MergingWork(void) ;
+    void MergingWork(const CkEntryOptions *impl_e_opts=NULL) ;
 
-/* DECLS: void partialSendOne(void);
+/* DECLS: void partialSendOne();
  */
     
-    void partialSendOne(void) ;
+    void partialSendOne(const CkEntryOptions *impl_e_opts=NULL) ;
 
 /* DECLS: void finalProbes(array_msg<key >* impl_msg);
  */
     
     void finalProbes(array_msg<key >* impl_msg) ;
 
-/* DECLS: void finish(void);
+/* DECLS: void finish();
  */
     
-    void finish(void) ;
+    void finish(const CkEntryOptions *impl_e_opts=NULL) ;
 
 /* DECLS: Bucket(CkMigrateMessage* impl_msg);
  */
@@ -1455,10 +1455,10 @@ template < class key, class value >  class CProxy_Bucket : public CProxy_ArrayEl
     
     void startBarrier(const CProxy_Sorter<key,value > &_sorter_proxy, const CProxy_Main<key,value > &_main_proxy, const CkEntryOptions *impl_e_opts=NULL) ;
 
-/* DECLS: void SetData(void);
+/* DECLS: void SetData();
  */
     
-    void SetData(void) ;
+    void SetData(const CkEntryOptions *impl_e_opts=NULL) ;
 
 /* DECLS: void genSample(const sampleInfo &sI);
  */
@@ -1485,15 +1485,15 @@ template < class key, class value >  class CProxy_Bucket : public CProxy_ArrayEl
     
     void genNextSamples(sampleMessage<key >* impl_msg) ;
 
-/* DECLS: void sortAll(void);
+/* DECLS: void sortAll();
  */
     
-    void sortAll(void) ;
+    void sortAll(const CkEntryOptions *impl_e_opts=NULL) ;
 
-/* DECLS: void stepSort(void);
+/* DECLS: void stepSort();
  */
     
-    void stepSort(void) ;
+    void stepSort(const CkEntryOptions *impl_e_opts=NULL) ;
 
 /* DECLS: void Load(data_msg<key,value >* impl_msg);
  */
@@ -1505,25 +1505,25 @@ template < class key, class value >  class CProxy_Bucket : public CProxy_ArrayEl
     
     void recvFinalKeys(int srcnode, const sendInfo &s, const CkEntryOptions *impl_e_opts=NULL) ;
 
-/* DECLS: void MergingWork(void);
+/* DECLS: void MergingWork();
  */
     
-    void MergingWork(void) ;
+    void MergingWork(const CkEntryOptions *impl_e_opts=NULL) ;
 
-/* DECLS: void partialSendOne(void);
+/* DECLS: void partialSendOne();
  */
     
-    void partialSendOne(void) ;
+    void partialSendOne(const CkEntryOptions *impl_e_opts=NULL) ;
 
 /* DECLS: void finalProbes(array_msg<key >* impl_msg);
  */
     
     void finalProbes(array_msg<key >* impl_msg) ;
 
-/* DECLS: void finish(void);
+/* DECLS: void finish();
  */
     
-    void finish(void) ;
+    void finish(const CkEntryOptions *impl_e_opts=NULL) ;
 
 /* DECLS: Bucket(CkMigrateMessage* impl_msg);
  */
@@ -1617,26 +1617,44 @@ template < class key, class value >  class CProxySection_Bucket : public CProxyS
         {return CProxyElement_Bucket < key, value > (ckGetArrayID(), *(CkArrayIndex1D*)&ckGetArrayElements()[idx], CK_DELCTOR_CALL);}
     CProxyElement_Bucket < key, value >  operator () (int idx) const 
         {return CProxyElement_Bucket < key, value > (ckGetArrayID(), *(CkArrayIndex1D*)&ckGetArrayElements()[idx], CK_DELCTOR_CALL);}
-    static CkSectionID ckNew(const CkArrayID &aid, CkArrayIndex1D *elems, int nElems) {
-      return CkSectionID(aid, elems, nElems);
+    static CkSectionID ckNew(const CkArrayID &aid, CkArrayIndex1D *elems, int nElems, int factor=USE_DEFAULT_BRANCH_FACTOR) {
+      return CkSectionID(aid, elems, nElems, factor);
     } 
-    static CkSectionID ckNew(const CkArrayID &aid, int l, int u, int s) {
+    static CkSectionID ckNew(const CkArrayID &aid, int l, int u, int s, int factor=USE_DEFAULT_BRANCH_FACTOR) {
       CkVec<CkArrayIndex1D> al;
       for (int i=l; i<=u; i+=s) al.push_back(CkArrayIndex1D(i));
-      return CkSectionID(aid, al.getVec(), al.size());
+      return CkSectionID(aid, al.getVec(), al.size(), factor);
     } 
     CProxySection_Bucket(const CkArrayID &aid, CkArrayIndex *elems, int nElems, CK_DELCTOR_PARAM) 
         :CProxySection_ArrayElement(aid,elems,nElems,CK_DELCTOR_ARGS) {}
-    CProxySection_Bucket(const CkArrayID &aid, CkArrayIndex *elems, int nElems) 
-        :CProxySection_ArrayElement(aid,elems,nElems) {}
-    CProxySection_Bucket(const CkSectionID &sid)       :CProxySection_ArrayElement(sid) {}
+    CProxySection_Bucket(const CkArrayID &aid, CkArrayIndex *elems, int nElems, int factor=USE_DEFAULT_BRANCH_FACTOR) 
+        :CProxySection_ArrayElement(aid,elems,nElems, factor) { ckAutoDelegate(); }
+    CProxySection_Bucket(const CkSectionID &sid)  
+        :CProxySection_ArrayElement(sid) { ckAutoDelegate(); }
     CProxySection_Bucket(int n, const CkArrayID *aid, CkArrayIndex const * const *elems, const int *nElems, CK_DELCTOR_PARAM) 
         :CProxySection_ArrayElement(n,aid,elems,nElems,CK_DELCTOR_ARGS) {}
     CProxySection_Bucket(int n, const CkArrayID *aid, CkArrayIndex const * const *elems, const int *nElems) 
-        :CProxySection_ArrayElement(n,aid,elems,nElems) {}
+        :CProxySection_ArrayElement(n,aid,elems,nElems) { ckAutoDelegate(); }
+    CProxySection_Bucket(int n, const CkArrayID *aid, CkArrayIndex const * const *elems, const int *nElems, int factor) 
+        :CProxySection_ArrayElement(n,aid,elems,nElems, factor) { ckAutoDelegate(); }
     static CkSectionID ckNew(const CkArrayID &aid, CkArrayIndex *elems, int nElems) {
       return CkSectionID(aid, elems, nElems);
     } 
+    static CkSectionID ckNew(const CkArrayID &aid, CkArrayIndex *elems, int nElems, int factor) {
+      return CkSectionID(aid, elems, nElems, factor);
+    } 
+    void ckAutoDelegate(int opts=1) {
+      if(ckIsDelegated()) return;
+      CProxySection_ArrayElement::ckAutoDelegate(opts);
+    } 
+    void setReductionClient(CkCallback *cb) {
+      CProxySection_ArrayElement::setReductionClient(cb);
+    } 
+    void resetSection() {
+      CProxySection_ArrayElement::resetSection();
+    } 
+    static void contribute(int dataSize,void *data,CkReduction::reducerType type, CkSectionInfo &sid, int userData=-1, int fragSize=-1);
+    static void contribute(int dataSize,void *data,CkReduction::reducerType type, CkSectionInfo &sid, CkCallback &cb, int userData=-1, int fragSize=-1);
 /* DECLS: Bucket(const tuning_params &par, const key &_min, const key &_max, int nBuckets_, const CkNodeGroupID &_nodeMgrID);
  */
     
@@ -1646,10 +1664,10 @@ template < class key, class value >  class CProxySection_Bucket : public CProxyS
     
     void startBarrier(const CProxy_Sorter<key,value > &_sorter_proxy, const CProxy_Main<key,value > &_main_proxy, const CkEntryOptions *impl_e_opts=NULL) ;
 
-/* DECLS: void SetData(void);
+/* DECLS: void SetData();
  */
     
-    void SetData(void) ;
+    void SetData(const CkEntryOptions *impl_e_opts=NULL) ;
 
 /* DECLS: void genSample(const sampleInfo &sI);
  */
@@ -1676,15 +1694,15 @@ template < class key, class value >  class CProxySection_Bucket : public CProxyS
     
     void genNextSamples(sampleMessage<key >* impl_msg) ;
 
-/* DECLS: void sortAll(void);
+/* DECLS: void sortAll();
  */
     
-    void sortAll(void) ;
+    void sortAll(const CkEntryOptions *impl_e_opts=NULL) ;
 
-/* DECLS: void stepSort(void);
+/* DECLS: void stepSort();
  */
     
-    void stepSort(void) ;
+    void stepSort(const CkEntryOptions *impl_e_opts=NULL) ;
 
 /* DECLS: void Load(data_msg<key,value >* impl_msg);
  */
@@ -1696,25 +1714,25 @@ template < class key, class value >  class CProxySection_Bucket : public CProxyS
     
     void recvFinalKeys(int srcnode, const sendInfo &s, const CkEntryOptions *impl_e_opts=NULL) ;
 
-/* DECLS: void MergingWork(void);
+/* DECLS: void MergingWork();
  */
     
-    void MergingWork(void) ;
+    void MergingWork(const CkEntryOptions *impl_e_opts=NULL) ;
 
-/* DECLS: void partialSendOne(void);
+/* DECLS: void partialSendOne();
  */
     
-    void partialSendOne(void) ;
+    void partialSendOne(const CkEntryOptions *impl_e_opts=NULL) ;
 
 /* DECLS: void finalProbes(array_msg<key >* impl_msg);
  */
     
     void finalProbes(array_msg<key >* impl_msg) ;
 
-/* DECLS: void finish(void);
+/* DECLS: void finish();
  */
     
-    void finish(void) ;
+    void finish(const CkEntryOptions *impl_e_opts=NULL) ;
 
 /* DECLS: Bucket(CkMigrateMessage* impl_msg);
  */
@@ -1733,12 +1751,12 @@ void collectSamples(const sampleInfo &sI);
 void assembleSamples(const std::vector<key > &proc_sample);
 void loadkeys(int dest, const sendInfo &inf);
 void sendOne(int dest);
-void releaseBufMsgs(void);
+void releaseBufMsgs();
 void recvOne(data_msg<key,value >* impl_msg);
 void handleOne(const wrap_ptr &msg, int sampleInd, int numsamples);
-void finishOne(void);
+void finishOne();
 void localhist(data_msg<key,value >* impl_msg);
-void depositHist(void);
+void depositHist();
 void sendToBuckets(data_msg<key,value >* impl_msg);
 };
  */
@@ -1912,7 +1930,7 @@ template < class key, class value > class CkIndex_NodeManager:public CkIndex_Nod
     static int _callmarshall_sendOne_marshall6(char* impl_buf, void* impl_obj_void);
     
     static void _marshallmessagepup_sendOne_marshall6(PUP::er &p,void *msg);
-    /* DECLS: void releaseBufMsgs(void);
+    /* DECLS: void releaseBufMsgs();
      */
     // Entry point registration at startup
     
@@ -1925,13 +1943,13 @@ template < class key, class value > class CkIndex_NodeManager:public CkIndex_Nod
     }
 
     
-    inline static int idx_releaseBufMsgs(void (NodeManager < key, value > ::*)(void) ) {
+    inline static int idx_releaseBufMsgs(void (NodeManager < key, value > ::*)() ) {
       return idx_releaseBufMsgs_void();
     }
 
 
     
-    static int releaseBufMsgs(void) { return idx_releaseBufMsgs_void(); }
+    static int releaseBufMsgs() { return idx_releaseBufMsgs_void(); }
     
     static void _call_releaseBufMsgs_void(void* impl_msg, void* impl_obj);
     
@@ -1988,7 +2006,7 @@ template < class key, class value > class CkIndex_NodeManager:public CkIndex_Nod
     static int _callmarshall_handleOne_marshall9(char* impl_buf, void* impl_obj_void);
     
     static void _marshallmessagepup_handleOne_marshall9(PUP::er &p,void *msg);
-    /* DECLS: void finishOne(void);
+    /* DECLS: void finishOne();
      */
     // Entry point registration at startup
     
@@ -2001,13 +2019,13 @@ template < class key, class value > class CkIndex_NodeManager:public CkIndex_Nod
     }
 
     
-    inline static int idx_finishOne(void (NodeManager < key, value > ::*)(void) ) {
+    inline static int idx_finishOne(void (NodeManager < key, value > ::*)() ) {
       return idx_finishOne_void();
     }
 
 
     
-    static int finishOne(void) { return idx_finishOne_void(); }
+    static int finishOne() { return idx_finishOne_void(); }
     
     static void _call_finishOne_void(void* impl_msg, void* impl_obj);
     
@@ -2036,7 +2054,7 @@ template < class key, class value > class CkIndex_NodeManager:public CkIndex_Nod
     static void _call_localhist_data_msg(void* impl_msg, void* impl_obj);
     
     static void _call_sdag_localhist_data_msg(void* impl_msg, void* impl_obj);
-    /* DECLS: void depositHist(void);
+    /* DECLS: void depositHist();
      */
     // Entry point registration at startup
     
@@ -2049,13 +2067,13 @@ template < class key, class value > class CkIndex_NodeManager:public CkIndex_Nod
     }
 
     
-    inline static int idx_depositHist(void (NodeManager < key, value > ::*)(void) ) {
+    inline static int idx_depositHist(void (NodeManager < key, value > ::*)() ) {
       return idx_depositHist_void();
     }
 
 
     
-    static int depositHist(void) { return idx_depositHist_void(); }
+    static int depositHist() { return idx_depositHist_void(); }
     
     static void _call_depositHist_void(void* impl_msg, void* impl_obj);
     
@@ -2175,10 +2193,10 @@ int ckGetGroupPe(void) const
     
     void sendOne(int dest, const CkEntryOptions *impl_e_opts=NULL);
 
-/* DECLS: void releaseBufMsgs(void);
+/* DECLS: void releaseBufMsgs();
  */
     
-    void releaseBufMsgs(void);
+    void releaseBufMsgs(const CkEntryOptions *impl_e_opts=NULL);
 
 /* DECLS: void recvOne(data_msg<key,value >* impl_msg);
  */
@@ -2190,20 +2208,20 @@ int ckGetGroupPe(void) const
     
     void handleOne(const wrap_ptr &msg, int sampleInd, int numsamples, const CkEntryOptions *impl_e_opts=NULL);
 
-/* DECLS: void finishOne(void);
+/* DECLS: void finishOne();
  */
     
-    void finishOne(void);
+    void finishOne(const CkEntryOptions *impl_e_opts=NULL);
 
 /* DECLS: void localhist(data_msg<key,value >* impl_msg);
  */
     
     void localhist(data_msg<key,value >* impl_msg);
 
-/* DECLS: void depositHist(void);
+/* DECLS: void depositHist();
  */
     
-    void depositHist(void);
+    void depositHist(const CkEntryOptions *impl_e_opts=NULL);
 
 /* DECLS: void sendToBuckets(data_msg<key,value >* impl_msg);
  */
@@ -2298,10 +2316,10 @@ operator CkGroupID () const { return ckGetGroupID(); }
     
     void sendOne(int dest, const CkEntryOptions *impl_e_opts=NULL);
 
-/* DECLS: void releaseBufMsgs(void);
+/* DECLS: void releaseBufMsgs();
  */
     
-    void releaseBufMsgs(void);
+    void releaseBufMsgs(const CkEntryOptions *impl_e_opts=NULL);
 
 /* DECLS: void recvOne(data_msg<key,value >* impl_msg);
  */
@@ -2313,20 +2331,20 @@ operator CkGroupID () const { return ckGetGroupID(); }
     
     void handleOne(const wrap_ptr &msg, int sampleInd, int numsamples, const CkEntryOptions *impl_e_opts=NULL);
 
-/* DECLS: void finishOne(void);
+/* DECLS: void finishOne();
  */
     
-    void finishOne(void);
+    void finishOne(const CkEntryOptions *impl_e_opts=NULL);
 
 /* DECLS: void localhist(data_msg<key,value >* impl_msg);
  */
     
     void localhist(data_msg<key,value >* impl_msg);
 
-/* DECLS: void depositHist(void);
+/* DECLS: void depositHist();
  */
     
-    void depositHist(void);
+    void depositHist(const CkEntryOptions *impl_e_opts=NULL);
 
 /* DECLS: void sendToBuckets(data_msg<key,value >* impl_msg);
  */
@@ -2439,10 +2457,10 @@ inline int ckGetNumElements(int i) const
     
     void sendOne(int dest, const CkEntryOptions *impl_e_opts=NULL);
 
-/* DECLS: void releaseBufMsgs(void);
+/* DECLS: void releaseBufMsgs();
  */
     
-    void releaseBufMsgs(void);
+    void releaseBufMsgs(const CkEntryOptions *impl_e_opts=NULL);
 
 /* DECLS: void recvOne(data_msg<key,value >* impl_msg);
  */
@@ -2454,20 +2472,20 @@ inline int ckGetNumElements(int i) const
     
     void handleOne(const wrap_ptr &msg, int sampleInd, int numsamples, const CkEntryOptions *impl_e_opts=NULL);
 
-/* DECLS: void finishOne(void);
+/* DECLS: void finishOne();
  */
     
-    void finishOne(void);
+    void finishOne(const CkEntryOptions *impl_e_opts=NULL);
 
 /* DECLS: void localhist(data_msg<key,value >* impl_msg);
  */
     
     void localhist(data_msg<key,value >* impl_msg);
 
-/* DECLS: void depositHist(void);
+/* DECLS: void depositHist();
  */
     
-    void depositHist(void);
+    void depositHist(const CkEntryOptions *impl_e_opts=NULL);
 
 /* DECLS: void sendToBuckets(data_msg<key,value >* impl_msg);
  */

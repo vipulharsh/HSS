@@ -82,7 +82,8 @@ Sorter<key, value>::Sorter(const CkArrayID &bucketArr, int _nBuckets, key min,
 template<class key, class value>
 void Sorter<key, value>::finishBarrier(CkReductionMsg *msg)
 {    c1 = CmiWallTimer();
-    buckets.SetData();
+     CkPrintf("$$$$$$$$$ [%d]finishBarrier \n", CkMyPe()); 
+     buckets.SetData();
 }
 
 
@@ -215,7 +216,7 @@ void Sorter<key, value>::recvSample(array_msg<key>* am){
     lastProbeSize = finalProbe->numElem;
 
 
-    CkPrintf("[%d]Samples collected, sending for histogramming... %lf .\n", CkMyPe(), (CmiWallTimer()-c1));   
+    CkPrintf("******** [%d] Samples size: %d collected, sending for histogramming... %lf .\n", CkMyPe(), finalProbe->numElem, (CmiWallTimer()-c1));   
     //ckout<<"Initiating Probe from sorter: "<<probeSize<<endl;
     //for(int i=0; i<lastProbeSize; i++)
     //	 ckout<<"Sample #"<<i<<" : "<<lastProbe[i]<<endl;
