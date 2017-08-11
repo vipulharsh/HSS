@@ -781,8 +781,9 @@ void CProxy_Main < key, value > ::Exit(const CkEntryOptions *impl_e_opts)
   if (ckIsDelegated()) {
     int destPE=CkChareMsgPrep(CkIndex_Main < key, value > ::idx_Exit_void(), impl_msg, &ckGetChareID());
     if (destPE!=-1) ckDelegatedTo()->ChareSend(ckDelegatedPtr(),CkIndex_Main < key, value > ::idx_Exit_void(), impl_msg, &ckGetChareID(),destPE);
+  } else {
+    CkSendMsg(CkIndex_Main < key, value > ::idx_Exit_void(), impl_msg, &ckGetChareID(),0);
   }
-  else CkSendMsg(CkIndex_Main < key, value > ::idx_Exit_void(), impl_msg, &ckGetChareID(),0);
 }
 
 // Entry point registration function
@@ -817,8 +818,9 @@ void CProxy_Main < key, value > ::DataReady(const CkEntryOptions *impl_e_opts)
   if (ckIsDelegated()) {
     int destPE=CkChareMsgPrep(CkIndex_Main < key, value > ::idx_DataReady_void(), impl_msg, &ckGetChareID());
     if (destPE!=-1) ckDelegatedTo()->ChareSend(ckDelegatedPtr(),CkIndex_Main < key, value > ::idx_DataReady_void(), impl_msg, &ckGetChareID(),destPE);
+  } else {
+    CkSendMsg(CkIndex_Main < key, value > ::idx_DataReady_void(), impl_msg, &ckGetChareID(),0);
   }
-  else CkSendMsg(CkIndex_Main < key, value > ::idx_DataReady_void(), impl_msg, &ckGetChareID(),0);
 }
 
 // Entry point registration function
@@ -852,8 +854,9 @@ void CProxy_Main < key, value > ::init_isum(CkReductionMsg* impl_msg)
   if (ckIsDelegated()) {
     int destPE=CkChareMsgPrep(CkIndex_Main < key, value > ::idx_init_isum_CkReductionMsg(), impl_msg, &ckGetChareID());
     if (destPE!=-1) ckDelegatedTo()->ChareSend(ckDelegatedPtr(),CkIndex_Main < key, value > ::idx_init_isum_CkReductionMsg(), impl_msg, &ckGetChareID(),destPE);
+  } else {
+    CkSendMsg(CkIndex_Main < key, value > ::idx_init_isum_CkReductionMsg(), impl_msg, &ckGetChareID(),0);
   }
-  else CkSendMsg(CkIndex_Main < key, value > ::idx_init_isum_CkReductionMsg(), impl_msg, &ckGetChareID(),0);
 }
 
 // Entry point registration function
@@ -886,8 +889,9 @@ void CProxy_Main < key, value > ::intermediate_isum(CkReductionMsg* impl_msg)
   if (ckIsDelegated()) {
     int destPE=CkChareMsgPrep(CkIndex_Main < key, value > ::idx_intermediate_isum_CkReductionMsg(), impl_msg, &ckGetChareID());
     if (destPE!=-1) ckDelegatedTo()->ChareSend(ckDelegatedPtr(),CkIndex_Main < key, value > ::idx_intermediate_isum_CkReductionMsg(), impl_msg, &ckGetChareID(),destPE);
+  } else {
+    CkSendMsg(CkIndex_Main < key, value > ::idx_intermediate_isum_CkReductionMsg(), impl_msg, &ckGetChareID(),0);
   }
-  else CkSendMsg(CkIndex_Main < key, value > ::idx_intermediate_isum_CkReductionMsg(), impl_msg, &ckGetChareID(),0);
 }
 
 // Entry point registration function
@@ -920,8 +924,9 @@ void CProxy_Main < key, value > ::final_isum(CkReductionMsg* impl_msg)
   if (ckIsDelegated()) {
     int destPE=CkChareMsgPrep(CkIndex_Main < key, value > ::idx_final_isum_CkReductionMsg(), impl_msg, &ckGetChareID());
     if (destPE!=-1) ckDelegatedTo()->ChareSend(ckDelegatedPtr(),CkIndex_Main < key, value > ::idx_final_isum_CkReductionMsg(), impl_msg, &ckGetChareID(),destPE);
+  } else {
+    CkSendMsg(CkIndex_Main < key, value > ::idx_final_isum_CkReductionMsg(), impl_msg, &ckGetChareID(),0);
   }
-  else CkSendMsg(CkIndex_Main < key, value > ::idx_final_isum_CkReductionMsg(), impl_msg, &ckGetChareID(),0);
 }
 
 // Entry point registration function
@@ -954,8 +959,9 @@ void CProxy_Main < key, value > ::init_dsum(CkReductionMsg* impl_msg)
   if (ckIsDelegated()) {
     int destPE=CkChareMsgPrep(CkIndex_Main < key, value > ::idx_init_dsum_CkReductionMsg(), impl_msg, &ckGetChareID());
     if (destPE!=-1) ckDelegatedTo()->ChareSend(ckDelegatedPtr(),CkIndex_Main < key, value > ::idx_init_dsum_CkReductionMsg(), impl_msg, &ckGetChareID(),destPE);
+  } else {
+    CkSendMsg(CkIndex_Main < key, value > ::idx_init_dsum_CkReductionMsg(), impl_msg, &ckGetChareID(),0);
   }
-  else CkSendMsg(CkIndex_Main < key, value > ::idx_init_dsum_CkReductionMsg(), impl_msg, &ckGetChareID(),0);
 }
 
 // Entry point registration function
@@ -988,8 +994,9 @@ void CProxy_Main < key, value > ::final_dsum(CkReductionMsg* impl_msg)
   if (ckIsDelegated()) {
     int destPE=CkChareMsgPrep(CkIndex_Main < key, value > ::idx_final_dsum_CkReductionMsg(), impl_msg, &ckGetChareID());
     if (destPE!=-1) ckDelegatedTo()->ChareSend(ckDelegatedPtr(),CkIndex_Main < key, value > ::idx_final_dsum_CkReductionMsg(), impl_msg, &ckGetChareID(),destPE);
+  } else {
+    CkSendMsg(CkIndex_Main < key, value > ::idx_final_dsum_CkReductionMsg(), impl_msg, &ckGetChareID(),0);
   }
-  else CkSendMsg(CkIndex_Main < key, value > ::idx_final_dsum_CkReductionMsg(), impl_msg, &ckGetChareID(),0);
 }
 
 // Entry point registration function
@@ -1628,8 +1635,9 @@ void CProxy_Sorter < key, value > ::finishBarrier(CkReductionMsg* impl_msg)
   if (ckIsDelegated()) {
     int destPE=CkChareMsgPrep(CkIndex_Sorter < key, value > ::idx_finishBarrier_CkReductionMsg(), impl_msg, &ckGetChareID());
     if (destPE!=-1) ckDelegatedTo()->ChareSend(ckDelegatedPtr(),CkIndex_Sorter < key, value > ::idx_finishBarrier_CkReductionMsg(), impl_msg, &ckGetChareID(),destPE);
+  } else {
+    CkSendMsg(CkIndex_Sorter < key, value > ::idx_finishBarrier_CkReductionMsg(), impl_msg, &ckGetChareID(),0);
   }
-  else CkSendMsg(CkIndex_Sorter < key, value > ::idx_finishBarrier_CkReductionMsg(), impl_msg, &ckGetChareID(),0);
 }
 
 // Entry point registration function
@@ -1662,8 +1670,9 @@ void CProxy_Sorter < key, value > ::Histogram(CkReductionMsg* impl_msg)
   if (ckIsDelegated()) {
     int destPE=CkChareMsgPrep(CkIndex_Sorter < key, value > ::idx_Histogram_CkReductionMsg(), impl_msg, &ckGetChareID());
     if (destPE!=-1) ckDelegatedTo()->ChareSend(ckDelegatedPtr(),CkIndex_Sorter < key, value > ::idx_Histogram_CkReductionMsg(), impl_msg, &ckGetChareID(),destPE);
+  } else {
+    CkSendMsg(CkIndex_Sorter < key, value > ::idx_Histogram_CkReductionMsg(), impl_msg, &ckGetChareID(),0+CK_MSG_EXPEDITED);
   }
-  else CkSendMsg(CkIndex_Sorter < key, value > ::idx_Histogram_CkReductionMsg(), impl_msg, &ckGetChareID(),0+CK_MSG_EXPEDITED);
 }
 
 // Entry point registration function
@@ -1696,8 +1705,9 @@ void CProxy_Sorter < key, value > ::Done(CkReductionMsg* impl_msg)
   if (ckIsDelegated()) {
     int destPE=CkChareMsgPrep(CkIndex_Sorter < key, value > ::idx_Done_CkReductionMsg(), impl_msg, &ckGetChareID());
     if (destPE!=-1) ckDelegatedTo()->ChareSend(ckDelegatedPtr(),CkIndex_Sorter < key, value > ::idx_Done_CkReductionMsg(), impl_msg, &ckGetChareID(),destPE);
+  } else {
+    CkSendMsg(CkIndex_Sorter < key, value > ::idx_Done_CkReductionMsg(), impl_msg, &ckGetChareID(),0);
   }
-  else CkSendMsg(CkIndex_Sorter < key, value > ::idx_Done_CkReductionMsg(), impl_msg, &ckGetChareID(),0);
 }
 
 // Entry point registration function
@@ -1730,8 +1740,9 @@ void CProxy_Sorter < key, value > ::SanityCheck(CkReductionMsg* impl_msg)
   if (ckIsDelegated()) {
     int destPE=CkChareMsgPrep(CkIndex_Sorter < key, value > ::idx_SanityCheck_CkReductionMsg(), impl_msg, &ckGetChareID());
     if (destPE!=-1) ckDelegatedTo()->ChareSend(ckDelegatedPtr(),CkIndex_Sorter < key, value > ::idx_SanityCheck_CkReductionMsg(), impl_msg, &ckGetChareID(),destPE);
+  } else {
+    CkSendMsg(CkIndex_Sorter < key, value > ::idx_SanityCheck_CkReductionMsg(), impl_msg, &ckGetChareID(),0);
   }
-  else CkSendMsg(CkIndex_Sorter < key, value > ::idx_SanityCheck_CkReductionMsg(), impl_msg, &ckGetChareID(),0);
 }
 
 // Entry point registration function
@@ -1764,8 +1775,9 @@ void CProxy_Sorter < key, value > ::recvSample(array_msg<key >* impl_msg)
   if (ckIsDelegated()) {
     int destPE=CkChareMsgPrep(CkIndex_Sorter < key, value > ::idx_recvSample_array_msg(), impl_msg, &ckGetChareID());
     if (destPE!=-1) ckDelegatedTo()->ChareSend(ckDelegatedPtr(),CkIndex_Sorter < key, value > ::idx_recvSample_array_msg(), impl_msg, &ckGetChareID(),destPE);
+  } else {
+    CkSendMsg(CkIndex_Sorter < key, value > ::idx_recvSample_array_msg(), impl_msg, &ckGetChareID(),0);
   }
-  else CkSendMsg(CkIndex_Sorter < key, value > ::idx_recvSample_array_msg(), impl_msg, &ckGetChareID(),0);
 }
 
 // Entry point registration function
@@ -3275,7 +3287,8 @@ template < class key, class value >
 void CkIndex_Bucket < key, value > ::_call_Bucket_CkMigrateMessage(void* impl_msg, void* impl_obj_void)
 {
   Bucket < key, value > * impl_obj = static_cast<Bucket < key, value >  *>(impl_obj_void);
-  new (impl_obj) Bucket < key, value > ((CkMigrateMessage*)impl_msg);
+  call_migration_constructor<Bucket < key, value > > c = impl_obj_void;
+  c((CkMigrateMessage*)impl_msg);
 }
 #endif /* CK_TEMPLATES_ONLY */
 
@@ -3749,7 +3762,9 @@ void CProxyElement_NodeManager < key, value > ::registerLocalChare(int nElem, in
   if (ckIsDelegated()) {
      CkNodeGroupMsgPrep(CkIndex_NodeManager < key, value > ::idx_registerLocalChare_marshall2(), impl_msg, ckGetGroupID());
      ckDelegatedTo()->NodeGroupSend(ckDelegatedPtr(),CkIndex_NodeManager < key, value > ::idx_registerLocalChare_marshall2(), impl_msg, ckGetGroupPe(), ckGetGroupID());
-  } else CkSendMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_registerLocalChare_marshall2(), impl_msg, ckGetGroupPe(), ckGetGroupID(),0);
+  } else {
+    CkSendMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_registerLocalChare_marshall2(), impl_msg, ckGetGroupPe(), ckGetGroupID(),0);
+  }
 }
 #endif /* CK_TEMPLATES_ONLY */
 
@@ -3778,7 +3793,9 @@ void CProxyElement_NodeManager < key, value > ::collectSamples(const sampleInfo 
   if (ckIsDelegated()) {
      CkNodeGroupMsgPrep(CkIndex_NodeManager < key, value > ::idx_collectSamples_marshall3(), impl_msg, ckGetGroupID());
      ckDelegatedTo()->NodeGroupSend(ckDelegatedPtr(),CkIndex_NodeManager < key, value > ::idx_collectSamples_marshall3(), impl_msg, ckGetGroupPe(), ckGetGroupID());
-  } else CkSendMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_collectSamples_marshall3(), impl_msg, ckGetGroupPe(), ckGetGroupID(),0+CK_MSG_EXPEDITED);
+  } else {
+    CkSendMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_collectSamples_marshall3(), impl_msg, ckGetGroupPe(), ckGetGroupID(),0+CK_MSG_EXPEDITED);
+  }
 }
 #endif /* CK_TEMPLATES_ONLY */
 
@@ -3807,7 +3824,9 @@ void CProxyElement_NodeManager < key, value > ::assembleSamples(const std::vecto
   if (ckIsDelegated()) {
      CkNodeGroupMsgPrep(CkIndex_NodeManager < key, value > ::idx_assembleSamples_marshall4(), impl_msg, ckGetGroupID());
      ckDelegatedTo()->NodeGroupSend(ckDelegatedPtr(),CkIndex_NodeManager < key, value > ::idx_assembleSamples_marshall4(), impl_msg, ckGetGroupPe(), ckGetGroupID());
-  } else CkSendMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_assembleSamples_marshall4(), impl_msg, ckGetGroupPe(), ckGetGroupID(),0);
+  } else {
+    CkSendMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_assembleSamples_marshall4(), impl_msg, ckGetGroupPe(), ckGetGroupID(),0);
+  }
 }
 #endif /* CK_TEMPLATES_ONLY */
 
@@ -3838,7 +3857,9 @@ void CProxyElement_NodeManager < key, value > ::loadkeys(int dest, const sendInf
   if (ckIsDelegated()) {
      CkNodeGroupMsgPrep(CkIndex_NodeManager < key, value > ::idx_loadkeys_marshall5(), impl_msg, ckGetGroupID());
      ckDelegatedTo()->NodeGroupSend(ckDelegatedPtr(),CkIndex_NodeManager < key, value > ::idx_loadkeys_marshall5(), impl_msg, ckGetGroupPe(), ckGetGroupID());
-  } else CkSendMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_loadkeys_marshall5(), impl_msg, ckGetGroupPe(), ckGetGroupID(),0);
+  } else {
+    CkSendMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_loadkeys_marshall5(), impl_msg, ckGetGroupPe(), ckGetGroupID(),0);
+  }
 }
 #endif /* CK_TEMPLATES_ONLY */
 
@@ -3865,7 +3886,9 @@ void CProxyElement_NodeManager < key, value > ::sendOne(int dest, const CkEntryO
   if (ckIsDelegated()) {
      CkNodeGroupMsgPrep(CkIndex_NodeManager < key, value > ::idx_sendOne_marshall6(), impl_msg, ckGetGroupID());
      ckDelegatedTo()->NodeGroupSend(ckDelegatedPtr(),CkIndex_NodeManager < key, value > ::idx_sendOne_marshall6(), impl_msg, ckGetGroupPe(), ckGetGroupID());
-  } else CkSendMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_sendOne_marshall6(), impl_msg, ckGetGroupPe(), ckGetGroupID(),0);
+  } else {
+    CkSendMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_sendOne_marshall6(), impl_msg, ckGetGroupPe(), ckGetGroupID(),0);
+  }
 }
 #endif /* CK_TEMPLATES_ONLY */
 
@@ -3881,7 +3904,9 @@ void CProxyElement_NodeManager < key, value > ::releaseBufMsgs(const CkEntryOpti
   if (ckIsDelegated()) {
      CkNodeGroupMsgPrep(CkIndex_NodeManager < key, value > ::idx_releaseBufMsgs_void(), impl_msg, ckGetGroupID());
      ckDelegatedTo()->NodeGroupSend(ckDelegatedPtr(),CkIndex_NodeManager < key, value > ::idx_releaseBufMsgs_void(), impl_msg, ckGetGroupPe(), ckGetGroupID());
-  } else CkSendMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_releaseBufMsgs_void(), impl_msg, ckGetGroupPe(), ckGetGroupID(),0);
+  } else {
+    CkSendMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_releaseBufMsgs_void(), impl_msg, ckGetGroupPe(), ckGetGroupID(),0);
+  }
 }
 #endif /* CK_TEMPLATES_ONLY */
 
@@ -3896,7 +3921,9 @@ void CProxyElement_NodeManager < key, value > ::recvOne(data_msg<key,value >* im
   if (ckIsDelegated()) {
      CkNodeGroupMsgPrep(CkIndex_NodeManager < key, value > ::idx_recvOne_data_msg(), impl_msg, ckGetGroupID());
      ckDelegatedTo()->NodeGroupSend(ckDelegatedPtr(),CkIndex_NodeManager < key, value > ::idx_recvOne_data_msg(), impl_msg, ckGetGroupPe(), ckGetGroupID());
-  } else CkSendMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_recvOne_data_msg(), impl_msg, ckGetGroupPe(), ckGetGroupID(),0);
+  } else {
+    CkSendMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_recvOne_data_msg(), impl_msg, ckGetGroupPe(), ckGetGroupID(),0);
+  }
 }
 #endif /* CK_TEMPLATES_ONLY */
 
@@ -3929,7 +3956,9 @@ void CProxyElement_NodeManager < key, value > ::handleOne(const wrap_ptr &msg, i
   if (ckIsDelegated()) {
      CkNodeGroupMsgPrep(CkIndex_NodeManager < key, value > ::idx_handleOne_marshall9(), impl_msg, ckGetGroupID());
      ckDelegatedTo()->NodeGroupSend(ckDelegatedPtr(),CkIndex_NodeManager < key, value > ::idx_handleOne_marshall9(), impl_msg, ckGetGroupPe(), ckGetGroupID());
-  } else CkSendMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_handleOne_marshall9(), impl_msg, ckGetGroupPe(), ckGetGroupID(),0);
+  } else {
+    CkSendMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_handleOne_marshall9(), impl_msg, ckGetGroupPe(), ckGetGroupID(),0);
+  }
 }
 #endif /* CK_TEMPLATES_ONLY */
 
@@ -3945,7 +3974,9 @@ void CProxyElement_NodeManager < key, value > ::finishOne(const CkEntryOptions *
   if (ckIsDelegated()) {
      CkNodeGroupMsgPrep(CkIndex_NodeManager < key, value > ::idx_finishOne_void(), impl_msg, ckGetGroupID());
      ckDelegatedTo()->NodeGroupSend(ckDelegatedPtr(),CkIndex_NodeManager < key, value > ::idx_finishOne_void(), impl_msg, ckGetGroupPe(), ckGetGroupID());
-  } else CkSendMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_finishOne_void(), impl_msg, ckGetGroupPe(), ckGetGroupID(),0);
+  } else {
+    CkSendMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_finishOne_void(), impl_msg, ckGetGroupPe(), ckGetGroupID(),0);
+  }
 }
 #endif /* CK_TEMPLATES_ONLY */
 
@@ -3960,7 +3991,9 @@ void CProxyElement_NodeManager < key, value > ::localhist(data_msg<key,value >* 
   if (ckIsDelegated()) {
      CkNodeGroupMsgPrep(CkIndex_NodeManager < key, value > ::idx_localhist_data_msg(), impl_msg, ckGetGroupID());
      ckDelegatedTo()->NodeGroupSend(ckDelegatedPtr(),CkIndex_NodeManager < key, value > ::idx_localhist_data_msg(), impl_msg, ckGetGroupPe(), ckGetGroupID());
-  } else CkSendMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_localhist_data_msg(), impl_msg, ckGetGroupPe(), ckGetGroupID(),0);
+  } else {
+    CkSendMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_localhist_data_msg(), impl_msg, ckGetGroupPe(), ckGetGroupID(),0);
+  }
 }
 #endif /* CK_TEMPLATES_ONLY */
 
@@ -3976,7 +4009,9 @@ void CProxyElement_NodeManager < key, value > ::depositHist(const CkEntryOptions
   if (ckIsDelegated()) {
      CkNodeGroupMsgPrep(CkIndex_NodeManager < key, value > ::idx_depositHist_void(), impl_msg, ckGetGroupID());
      ckDelegatedTo()->NodeGroupSend(ckDelegatedPtr(),CkIndex_NodeManager < key, value > ::idx_depositHist_void(), impl_msg, ckGetGroupPe(), ckGetGroupID());
-  } else CkSendMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_depositHist_void(), impl_msg, ckGetGroupPe(), ckGetGroupID(),0);
+  } else {
+    CkSendMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_depositHist_void(), impl_msg, ckGetGroupPe(), ckGetGroupID(),0);
+  }
 }
 #endif /* CK_TEMPLATES_ONLY */
 
@@ -3991,7 +4026,9 @@ void CProxyElement_NodeManager < key, value > ::sendToBuckets(data_msg<key,value
   if (ckIsDelegated()) {
      CkNodeGroupMsgPrep(CkIndex_NodeManager < key, value > ::idx_sendToBuckets_data_msg(), impl_msg, ckGetGroupID());
      ckDelegatedTo()->NodeGroupSend(ckDelegatedPtr(),CkIndex_NodeManager < key, value > ::idx_sendToBuckets_data_msg(), impl_msg, ckGetGroupPe(), ckGetGroupID());
-  } else CkSendMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_sendToBuckets_data_msg(), impl_msg, ckGetGroupPe(), ckGetGroupID(),0+CK_MSG_EXPEDITED);
+  } else {
+    CkSendMsgNodeBranch(CkIndex_NodeManager < key, value > ::idx_sendToBuckets_data_msg(), impl_msg, ckGetGroupPe(), ckGetGroupID(),0+CK_MSG_EXPEDITED);
+  }
 }
 #endif /* CK_TEMPLATES_ONLY */
 
