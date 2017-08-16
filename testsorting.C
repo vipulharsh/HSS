@@ -76,7 +76,8 @@ class dataManager : public CBase_dataManager{
         int peid = CkMyPe();
 	seed = CkMyPe();
         for (int i = 0; i < numElem; i++){
-            dataIn[i]  = getRandom() & getRandom();
+            dataIn[i]  = getRandom();
+            //dataIn[i]  = getRandom() & getRandom();
             //dataIn[i].k  = getRandom() & getRandom((peid + i) ^ numElem);
             //ckout<<"dataIn["<<i<<"]: "<<dataIn[i].k<<"  ::  "<<peid<<endl;
             //dataIn[i].k = (numpes - peid)*1000 + (numElem - i);

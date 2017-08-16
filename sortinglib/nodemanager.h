@@ -8,23 +8,26 @@
 
 const int SAMPLE_FACTOR = 1;
 
+
+const int SAMPLE_FACTOR_MULTIPLIER = 1;
+
 #define LS_EPS 5
 
 int maxSampleSize(){
 	int numprocs = CkNumPes(), numpes = CkNodeSize(CkMyNode()), lognprocs=1;
 	while((1<<lognprocs) <= numprocs) lognprocs++;
-	return SAMPLE_FACTOR * numprocs;
+	return SAMPLE_FACTOR * SAMPLE_FACTOR_MULTIPLIER * numprocs;
 }
 
 int sampleSizePerNode(){
 	int numproc = CkNumPes();
 	int lognprocs = 1, numpes = CkNodeSize(CkMyNode());
 	while((1<<lognprocs) <= numproc) lognprocs++;
-	return SAMPLE_FACTOR*numpes;
+	return SAMPLE_FACTOR * SAMPLE_FACTOR_MULTIPLIER * numpes;
 }
 
 int sampleSizePerPe(){
-	return SAMPLE_FACTOR;
+	return SAMPLE_FACTOR * SAMPLE_FACTOR_MULTIPLIER;
 }
 
 int ls_getStride(){

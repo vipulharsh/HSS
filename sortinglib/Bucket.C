@@ -399,8 +399,10 @@ void Bucket<key>::genNextSamples(sampleMessage<key> *sm){
 	static myclock::time_point beginning = myclock::now();
 	myclock::duration d = myclock::now() - beginning;
 	unsigned seed = d.count();
-	
-	int sampleSize = ceil(sampleSizePerPe() / sm->f);
+
+  //int sampleSize = ceil((sampleSizePerPe() * achievedSplitters) / (sm->f * nBuckets));
+  int sampleSize = ceil(sampleSizePerPe() / sm->f);
+
 	seed = (sampleSize * CkMyPe());
 	//ckout<<"Seed is "<<seed<<endl;
 	std::default_random_engine generator(seed);

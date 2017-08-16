@@ -100,6 +100,7 @@ void Sorter<key>::globalMinMax(CkReductionMsg *msg){
 
 
 extern int maxSampleSize();
+extern const int SAMPLE_FACTOR_MULTIPLIER;
 
 
 template<class key>
@@ -207,10 +208,17 @@ void Sorter<key>::recvSample(array_msg<key>* am){
     CkPrintf("Comes till here \n" );
     //CkExit();
     std::sort(collectedSample.begin(), collectedSample.end());
-    array_msg<key> *finalProbe = new (collectedSample.size() + 1) array_msg<key>;
-    finalProbe->numElem = collectedSample.size() + 1;
+
+    int histSampleSize = 1 + collectedSample.size()/SAMPLE_FACTOR_MULTIPLIER;
+
+    array_msg<key> *finalProbe = new (histSampleSize) array_msg<key>;
+    finalProbe->numElem = histSampleSize;
     lastProbe = new key[finalProbe->numElem];
-    memcpy(finalProbe->data, &collectedSample[0], collectedSample.size() * sizeof(key));
+  
+    for(int i=0; i<histSampleSize-1;  i++)
+      finalProbe->data[i] =  collectedSample[SAMPLE_FACTOR_MULTIPLIER*(i+1) - 1];
+    //memcpy(finalProbe->data, &collectedSample[0], collectedSample.size() * sizeof(key));
+
     ckout<<" maxkey: "<<maxkey<<endl;
     finalProbe->data[finalProbe->numElem-1] = maxkey;
     memcpy(lastProbe, finalProbe->data, finalProbe->numElem * sizeof(key));
@@ -592,7 +600,7 @@ void Sorter<key>::nextProbes(std::vector<std::pair<key, int> > &newachv, uint64_
 template <class key>
 void Sorter<key>::Done(CkReductionMsg *msg){ 
   c2 = CmiWallTimer();
-  VERBOSEPRINTF("\nCompleted in %lf seconds.\n", (c2-c1));
+  CkPrintf("\nCompleted in %lf seconds.\n", (c2-c1));
   CkPrintf("Elements sorted: %d (= %d MB)\n", nElements,  (nElements * sizeof(key))/(1024 * 1024));
   mainproxy.Exit();
 }
