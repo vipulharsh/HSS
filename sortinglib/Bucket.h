@@ -2,10 +2,10 @@
 #define __BUCKET_H__
 
 
-template <class key, class value>
-class data_msg : public CMessage_data_msg<key, value> {
+template <class key>
+class data_msg : public CMessage_data_msg<key> {
   public:
-    kv_pair<key, value> *data;
+    key *data;
     int num_vals;
     bool sorted;
 };
@@ -13,11 +13,11 @@ class data_msg : public CMessage_data_msg<key, value> {
 
 //struct for lb
 //! pup method, also pup method not implemented for kv_pair in sortinglib.h
-template <class key, class value>
+template <class key>
 struct lb_struct{
     int numVals;
     int start;
-    data_msg<key, value>* msg;
+    data_msg<key>* msg;
 };
 
 
@@ -30,11 +30,11 @@ class array_msg : public CMessage_array_msg<key> {
 
 
 
-template <class key, class value>
-class Bucket : public CBase_Bucket<key, value> {
+template <class key>
+class Bucket : public CBase_Bucket<key> {
   private:
 	
-	kv_pair<key, value>* bucket_data;
+	key* bucket_data;
 
 	int numElem;
 	static const int indexFactor = 3;
@@ -45,8 +45,8 @@ class Bucket : public CBase_Bucket<key, value> {
 	key minkey, maxkey;
 	key mymin, mymax;
 	
-	CProxy_Sorter<key, value> sorter_proxy;
-	CProxy_Main<key, value> main_proxy;
+	CProxy_Sorter<key> sorter_proxy;
+	CProxy_Main<key> main_proxy;
 
 	tuning_params *params;
 	
@@ -75,8 +75,8 @@ class Bucket : public CBase_Bucket<key, value> {
 
     int numProbes;
     
-   	std::vector < data_msg<key, value>* > incomingMsgBuffer;
-   	std::vector <lb_struct<key, value> > loadBuffer;	
+   	std::vector < data_msg<key>* > incomingMsgBuffer;
+   	std::vector <lb_struct<key> > loadBuffer;	
    	
     std::vector <int> toSend;
     int received;
@@ -89,10 +89,10 @@ class Bucket : public CBase_Bucket<key, value> {
     bool startMergingWork;
     int numSent;
 
-    kv_pair<key, value>* scratch;
+    key* scratch;
     int dummyCount, dummyCount2;
 
-    CProxy_NodeManager<key, value>  nodemgr;
+    CProxy_NodeManager<key>  nodemgr;
     CkNodeGroupID nodeMgrID;
 
 
@@ -103,19 +103,19 @@ class Bucket : public CBase_Bucket<key, value> {
    	void collapseAndMerge();
    	void totalMerge();
    	void mergeAt(int n);
-   	void forward_merge(kv_pair<key, value> *first1, kv_pair<key, value> *last1,
-								       kv_pair<key, value> *first2, kv_pair<key, value> *last2,
-								       kv_pair<key, value> *result);
-    void backward_merge(kv_pair<key, value> *first1, kv_pair<key, value> *last1,
-                        kv_pair<key, value> *first2, kv_pair<key, value> *last2,
-                        kv_pair<key, value> *result);
+   	void forward_merge(key *first1, key *last1,
+								       key *first2, key *last2,
+								       key *result);
+    void backward_merge(key *first1, key *last1,
+                        key *first2, key *last2,
+                        key *result);
     void postMerging();
 
     std::vector<sendInfo> recvData;
   public:
     Bucket(CkMigrateMessage *);
 	  Bucket(tuning_params par, key _min, key _max, int nBuckets_, CkNodeGroupID _nodeMgrID);
-    void startBarrier(CProxy_Sorter<key, value> _sorter_proxy, CProxy_Main<key, value> _main_proxy);
+    void startBarrier(CProxy_Sorter<key> _sorter_proxy, CProxy_Main<key> _main_proxy);
     void SetData();
 	  void genSample(sampleInfo sI);
     void finalProbes(array_msg<key>* finalprb);
@@ -132,7 +132,7 @@ class Bucket : public CBase_Bucket<key, value> {
 	  void firstLocalProbe(int lastProbeSize);
 	  void histCountProbes(probeMessage<key> *pm);
     void genNextSamples(sampleMessage<key> *sm);
-	  void Load(data_msg<key, value>* msg);
+	  void Load(data_msg<key>* msg);
     void MergingWork();
     void partialSendOne();
     void finish();

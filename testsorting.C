@@ -64,19 +64,19 @@ class testsorting : public CBase_testsorting{
 
 class dataManager : public CBase_dataManager{
   private:
-      kv_pair<uint64_t, int>* dataIn;
-      kv_pair<uint64_t, int>* dataOut;
+      uint64_t* dataIn;
+      uint64_t* dataOut;
       int out_elems;
       CkCallback CB;
       double startTime, endTime;
   public:
     dataManager(int numBuckets, int numElem, int probe_max){
         //num_elems = num_elems*(1+newid);
-        dataIn = new kv_pair<uint64_t, int>[numElem];
+        dataIn = new uint64_t[numElem];
         int peid = CkMyPe();
 	seed = CkMyPe();
         for (int i = 0; i < numElem; i++){
-            dataIn[i].k  = getRandom() & getRandom();
+            dataIn[i]  = getRandom() & getRandom();
             //dataIn[i].k  = getRandom() & getRandom((peid + i) ^ numElem);
             //ckout<<"dataIn["<<i<<"]: "<<dataIn[i].k<<"  ::  "<<peid<<endl;
             //dataIn[i].k = (numpes - peid)*1000 + (numElem - i);
@@ -87,7 +87,7 @@ class dataManager : public CBase_dataManager{
         int entryMethodIndex = CkIndex_dataManager::SortingDone(); 
         CB = CkCallback(entryMethodIndex, thisProxy[CkMyPe()]);
         startTime = CmiWallTimer();
-        HistSorting<uint64_t, int>(numElem, dataIn, &out_elems, &dataOut, probe_max, &CB);
+        HistSorting<uint64_t>(numElem, dataIn, &out_elems, &dataOut, probe_max, &CB);
     }
 
     void SortingDone(){

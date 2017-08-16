@@ -6,7 +6,7 @@
 #include <queue>
 #include <map>
 
-const int SAMPLE_FACTOR = 5;
+const int SAMPLE_FACTOR = 1;
 
 #define LS_EPS 5
 
@@ -101,16 +101,16 @@ public:
 
 
 
-template <class key, class value>
-class NodeManager : public CBase_NodeManager<key, value> {
+template <class key>
+class NodeManager : public CBase_NodeManager<key> {
 	private:
 		int numnodes;
 		int numpes;
 		int* pelist;
 		int* numElem;
 		int sampleSize;
-		CProxy_Sorter<key, value> sorter;
-		CProxy_Bucket<key, value> bucket_arr;
+		CProxy_Sorter<key> sorter;
+		CProxy_Bucket<key> bucket_arr;
 		array_msg<key> *sample;
 		key *nodeSample;
 		key minkey, maxkey;
@@ -124,13 +124,13 @@ class NodeManager : public CBase_NodeManager<key, value> {
 		int stride;
 		//assemble info
 		std::vector<std::vector<sendInfo> > ainfo;
-		std::vector<data_msg<key, value> *> recvdMsgs;
-		std::vector<data_msg<key, value> *> bufMsgs;
+		std::vector<data_msg<key> *> recvdMsgs;
+		std::vector<data_msg<key> *> bufMsgs;
 		std::map<int, uint64_t*> histLocCounts; //one for each pe
 		uint64_t* finalHistCounts;
-      Bucket<key, value>* getLocalBucket(){
+      Bucket<key>* getLocalBucket(){
 			for(int i=0; i<numpes; i++){
-				Bucket<key, value> *obj = bucket_arr[pelist[i]].ckLocal();
+				Bucket<key> *obj = bucket_arr[pelist[i]].ckLocal();
 				if(obj != NULL) return obj;
 			}
 			CkAbort("GetLocalBucket, getLocalBucket not found \n");
@@ -153,8 +153,8 @@ class NodeManager : public CBase_NodeManager<key, value> {
 			sampleMsgsRcvd=0;
 		}
 
-		void registerLocalChare(int nElem, int pe, CProxy_Bucket<key, value> _bucket_arr,
-				CProxy_Sorter<key, value> _sorter){
+		void registerLocalChare(int nElem, int pe, CProxy_Bucket<key> _bucket_arr,
+				CProxy_Sorter<key> _sorter){
 			//ckout<<"registerLocalchare called from PE "<<pe<<" at "<<CkMyNode()<<endl;
 			//ckout<<"numnodes :"<<numnodes<<" numpes:"<<numpes<<endl;
 			//!This should be a bucket_proxy ID
@@ -229,7 +229,7 @@ class NodeManager : public CBase_NodeManager<key, value> {
 			count++;
 			//can enter here twice, check on the basis of number of msgs received
 			if(count == numpes){
-				//ckout<<"Sending ******************* to Sorter ************** size: "<< s->numElem << "from "<<CkMyNode()<<endl;
+				//ckout<<"Sending ******************* to Sorter ************** size: "<< sample->numElem << "from "<<CkMyNode()<<endl;
 				//for(int i=0; i<sample->numElem; i++)
 				//	ckout<<"From nodemgr "<<CkMyNode()<<" : "<<sample->data[i]<<endl;
 				sorter.recvSample(sample);
@@ -267,25 +267,25 @@ class NodeManager : public CBase_NodeManager<key, value> {
 			}
 		}
 
-		void sortCopyMsg(data_msg<key, value> *dm,  int dest){
+		void sortCopyMsg(data_msg<key> *dm,  int dest){
 			std::priority_queue<sortItem<key> > heap;
  			CkAssert(ainfo[dest].size() == numpes);
 			int first[numpes]; //first element which is not in heap
 			for(int i=0; i<ainfo[dest].size(); i++){
 				first[i] = ainfo[dest][i].ind1;
 				if(first[i] <  ainfo[dest][i].ind2){//not empty
-					kv_pair<key, value>* bucket_data = (kv_pair<key, value>*)ainfo[dest][i].base;
-					heap.push(sortItem<key>(bucket_data[first[i]].k, i));
+					key* bucket_data = (key*)ainfo[dest][i].base;
+					heap.push(sortItem<key>(bucket_data[first[i]], i));
 					first[i]++;
 				}
 			}
 			for(int i=0; i<dm->num_vals; i++){
 				sortItem<key> sI = heap.top();
 				heap.pop();
-				kv_pair<key, value>* bucket_data = (kv_pair<key, value>*)ainfo[dest][sI.peId].base;
+				key* bucket_data = (key*)ainfo[dest][sI.peId].base;
 				dm->data[i] = bucket_data[first[sI.peId] - 1];
 				if(first[sI.peId] <  ainfo[dest][sI.peId].ind2){//not empty
-               heap.push(sortItem<key>(bucket_data[first[sI.peId]].k, sI.peId));
+               heap.push(sortItem<key>(bucket_data[first[sI.peId]], sI.peId));
 					first[sI.peId]++;
 				}
 			}
@@ -298,7 +298,7 @@ class NodeManager : public CBase_NodeManager<key, value> {
 			int numelem = 0;
 			for(int i=0; i<ainfo[dest].size(); i++)
 				numelem += ainfo[dest][i].ind2 - ainfo[dest][i].ind1;
-			data_msg<key, value> *dm = new (numelem) data_msg<key,value>;
+			data_msg<key> *dm = new (numelem) data_msg<key>;
 			dm->num_vals = numelem;
 
 			sortCopyMsg(dm, dest);
@@ -308,8 +308,8 @@ class NodeManager : public CBase_NodeManager<key, value> {
 			int curr = 0;
 			for(int i=0; i<ainfo[dest].size(); i++){
 				int ind1 = ainfo[dest][i].ind1, ind2 = ainfo[dest][i].ind2;
-				kv_pair<key, value>* bucket_data = (kv_pair<key, value>*)ainfo[dest][i].base;
-				memcpy(dm->data + curr, bucket_data + ind1, (ind2-ind1)*sizeof(kv_pair<key, value>));
+				key* bucket_data = (key*)ainfo[dest][i].base;
+				memcpy(dm->data + curr, bucket_data + ind1, (ind2-ind1)*sizeof(key));
 				curr += ind2 - ind1;
 			}
 */
@@ -325,10 +325,10 @@ class NodeManager : public CBase_NodeManager<key, value> {
 		}
 
 
-		void recvOne(data_msg<key, value> *dm){
+		void recvOne(data_msg<key> *dm){
 			//CkPrintf("[%d] message received of size: %d \n", CkMyNode(), dm->num_vals);
 			//for(int i=0; i<dm->num_vals; i++)
-			//	ckout<<"message  "<<i<<" : "<<dm->data[i].k<<endl;
+			//	ckout<<"message  "<<i<<" : "<<dm->data[i]<<endl;
 			if(numSent != CkNumNodes()){
 				bufMsgs.push_back(dm);
 				return;
@@ -336,7 +336,7 @@ class NodeManager : public CBase_NodeManager<key, value> {
 			}
 				
 			if(recvdMsgs.size() == 0){
-				Bucket<key, value> *obj = getLocalBucket();
+				Bucket<key> *obj = getLocalBucket();
 				obj->setTotalKeys();
 				stride = ls_getStride();
 				numElemFinal = 0;
@@ -363,7 +363,7 @@ class NodeManager : public CBase_NodeManager<key, value> {
 		void handleOne(wrap_ptr msg, int sampleInd, int numsamples){
 			//this->thisProxy[CkMyNode()].finishOne();
 			//return;
-			data_msg<key, value> *dm = (data_msg<key, value> *)msg.ptr;
+			data_msg<key> *dm = (data_msg<key> *)msg.ptr;
 			//CkPrintf("[%d, %d]handleOne,  numSamples: %d, msgsize: %d, sampleInd: %d, firstprintrand:%d \n", CkMyNode(), CkMyPe(), numsamples, dm->num_vals, sampleInd, firstprintrand);
 
 			if(!dm->sorted)
@@ -371,7 +371,7 @@ class NodeManager : public CBase_NodeManager<key, value> {
 
 			if(dm->num_vals > 0){
 				for(int i=stride-1; i<dm->num_vals; i+=stride)
-					ls_sample[sampleInd + (i/stride)] = dm->data[i].k;
+					ls_sample[sampleInd + (i/stride)] = dm->data[i];
 				if(sampleInd+numsamples >= ls_getMaxSampleSize())
 					CkAbort("Numsamples exceeds expectations\n"); 
 			}
@@ -407,7 +407,7 @@ class NodeManager : public CBase_NodeManager<key, value> {
 				//CkPrintf("[%d] RecvdMsgs.size: %d\n", CkMyNode(), recvdMsgs.size());
 				for(int i=0; i<recvdMsgs.size(); i++){
 					//for(int j=0; j<recvdMsgs[i]->num_vals; j++)
-					//	CkPrintf("[%d] recvdmsg[%d] #(%d): %llu\n", CkMyNode(), i, j, recvdMsgs[i]->data[j].k);
+					//	CkPrintf("[%d] recvdmsg[%d] #(%d): %llu\n", CkMyNode(), i, j, recvdMsgs[i]->data[j]);
 					this->thisProxy[CkMyNode()].sendToBuckets(recvdMsgs[i]);
 				}
 				//CkPrintf("[%d] Finished sorting, sampling from all messages \n", CkMyNode());
@@ -417,7 +417,7 @@ class NodeManager : public CBase_NodeManager<key, value> {
 			}
 		}
 
-		void localhist(data_msg<key, value>* dm){
+		void localhist(data_msg<key>* dm){
 		   	uint64_t* histCounts;
 		  	if(histLocCounts.find(CkMyPe()) == histLocCounts.end()){
 				histCounts = new uint64_t[ls_numTotSamples+1];	
@@ -428,13 +428,13 @@ class NodeManager : public CBase_NodeManager<key, value> {
 				histCounts = (histLocCounts.find(CkMyPe()))->second;
 			//CkPrintf("localhist [%d, %d] histCounts: %p \n", CkMyNode(), CkMyPe(), histCounts);
 			//for(int i=0; i<dm->num_vals; i++)
-			//	CkPrintf("dm->val[%d]: %llu \n", i, dm->data[i].k);	
+			//	CkPrintf("dm->val[%d]: %llu \n", i, dm->data[i]);	
 			int cumCount = 0;
-			kv_pair<key, value> comp;
+			key comp;
 			int prb = -1;
 			do{
 				prb++;
-				comp.k = ls_sample[prb];
+				comp = ls_sample[prb];
 				int cnt = std::lower_bound(dm->data + cumCount,
 						dm->data + dm->num_vals, comp) - dm->data;
 				histCounts[prb] += cnt - cumCount;
@@ -467,17 +467,17 @@ class NodeManager : public CBase_NodeManager<key, value> {
 	  }
 
 
-	void sendToBuckets(data_msg<key, value>* dm){
+	void sendToBuckets(data_msg<key>* dm){
 	    	key prev = minkey;	
 		for(int i=0; i<numpes; i++){
                 	key sep1 = prev;
                         key sep2 = splitters[i];
                 	//find keys and send
-                	kv_pair<key, value> comp;
-                	comp.k = sep1;
+                	key comp;
+                	comp = sep1;
                 	int ind1 = std::lower_bound(dm->data,
                                         dm->data + dm->num_vals, comp) - dm->data;
-                	comp.k = sep2;
+                	comp = sep2;
                 	int ind2 = std::lower_bound(dm->data,
                                         dm->data + dm->num_vals, comp) - dm->data;
                		 //ckout<<"Finalsending ["<< CkMyNode() <<"] "<<ind1<<"-"<<ind2<<" to "<<pelist[i]<<endl;

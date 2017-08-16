@@ -6,15 +6,13 @@ module HistSort{
   //readonly CkNodeGroupID nodeMgrID;
   
 
-  template <class key, class value> chare Main {
+  template <class key> chare Main {
     entry Main(int num_buckets_, int probe_max, int num_partitions_);
     entry void Exit();
-    entry void DataReady();
+    entry void DataReady(CkReductionMsg*);
     entry void init_isum(CkReductionMsg*);
     entry void intermediate_isum(CkReductionMsg*);
     entry void final_isum(CkReductionMsg*);
-    entry void init_dsum(CkReductionMsg*);
-    entry void final_dsum(CkReductionMsg*);
   };
 
   template <class key>
@@ -35,9 +33,9 @@ module HistSort{
     };
 
 
-  template <class key, class value>
+  template <class key>
     message data_msg {
-      kv_pair<key, value> data[];
+      key data[];
     };
 
   template <class key>
@@ -47,10 +45,10 @@ module HistSort{
 
 
  
-  template <class key, class value> chare Sorter {
+  template <class key> chare Sorter {
     entry Sorter();
     entry Sorter(const CkArrayID &bucketArr, int num_chares, key min, key max,  
-                 tuning_params par, CProxy_Main<key, value> mainproxy, CkNodeGroupID _nodeMgrID);
+                 tuning_params par, CProxy_Main<key> mainproxy, CkNodeGroupID _nodeMgrID);
     entry void finishBarrier(CkReductionMsg *msg);
     //entry void Begin();
     entry [expedited] void Histogram(CkReductionMsg *msg);
@@ -64,10 +62,10 @@ module HistSort{
   class sampleInfo;  
   class sendInfo;
 
-  template <class key, class value> array [1D] Bucket {
+  template <class key> array [1D] Bucket {
     entry Bucket(tuning_params par, key _min, key _max, int nBuckets_, CkNodeGroupID _nodeMgrID);	  
     //entry void SetCallback(const CkCallback &cb);
-    entry void startBarrier(CProxy_Sorter<key, value> _sorter_proxy, CProxy_Main<key, value> _main_proxy);
+    entry void startBarrier(CProxy_Sorter<key> _sorter_proxy, CProxy_Main<key> _main_proxy);
     entry void SetData();
     entry void genSample(sampleInfo sI);
     entry void firstProbe(key firstkey, key lastkey, key stepSize, int probeSize);
@@ -76,7 +74,7 @@ module HistSort{
     entry [expedited] void genNextSamples(sampleMessage<key> *sm);
     entry void sortAll();
     entry void stepSort();
-    entry void Load(data_msg<key, value>* msg);
+    entry void Load(data_msg<key>* msg);
     entry void recvFinalKeys(int srcnode, sendInfo s);
     entry void MergingWork();
     entry void partialSendOne();
@@ -89,25 +87,25 @@ module HistSort{
 
   class wrap_ptr;
 
-  template <class key, class value> nodegroup NodeManager{
+  template <class key> nodegroup NodeManager{
       entry NodeManager(key _minkey, key _maxkey);
       entry [exclusive] void registerLocalChare(
                   int nElem,
                   int pe,
-                  CProxy_Bucket<key, value> _bucket_arr,
-                  CProxy_Sorter<key, value> _sorter
+                  CProxy_Bucket<key> _bucket_arr,
+                  CProxy_Sorter<key> _sorter
                   );
       entry [exclusive, expedited] void collectSamples(sampleInfo sI);
       entry [exclusive] void assembleSamples(std::vector<key> proc_sample);
       entry [exclusive] void loadkeys(int dest, sendInfo inf);
       entry void sendOne(int dest);
       entry [exclusive] void releaseBufMsgs();
-      entry [exclusive] void recvOne(data_msg<key, value> *dm);
+      entry [exclusive] void recvOne(data_msg<key> *dm);
       entry void handleOne(wrap_ptr msg, int sampleInd, int numsamples);
       entry [exclusive] void finishOne();
-      entry void localhist(data_msg<key, value> *dm);
+      entry void localhist(data_msg<key> *dm);
       entry [exclusive] void depositHist();
-      entry [expedited] void sendToBuckets(data_msg<key, value>* dm);
+      entry [expedited] void sendToBuckets(data_msg<key>* dm);
   };
 };
 

@@ -38,11 +38,11 @@ class sampleMessage : public CMessage_sampleMessage<key> {
 
 
 
-template <class key, class value>
-class Sorter : public CBase_Sorter<key, value>  {
+template <class key>
+class Sorter : public CBase_Sorter<key>  {
   private:
-    CProxy_Bucket<key, value> buckets;
-    CProxy_Main<key, value> mainproxy;
+    CProxy_Bucket<key> buckets;
+    CProxy_Main<key> mainproxy;
     CkNodeGroupID nodeMgrID;
 
     int nBuckets, nNodes;
@@ -85,7 +85,7 @@ class Sorter : public CBase_Sorter<key, value>  {
     Sorter(CkMigrateMessage *msg);
     Sorter(){}
     Sorter(const CkArrayID &bucketArr, int num_chares, key min, key max,
-         tuning_params par, CProxy_Main<key, value> _mainproxy, CkNodeGroupID _nodeMgrID);
+         tuning_params par, CProxy_Main<key> _mainproxy, CkNodeGroupID _nodeMgrID);
     void finishBarrier(CkReductionMsg *msg);
     void recvSample(array_msg<key>* am);
     void Init();

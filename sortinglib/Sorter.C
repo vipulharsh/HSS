@@ -54,17 +54,16 @@ void register_minmax_uint64_t(void){
 
 
 
-template<class key, class value>
-Sorter<key, value>::Sorter(CkMigrateMessage *msg){}
+template<class key>
+Sorter<key>::Sorter(CkMigrateMessage *msg){}
 
 
-template<class key, class value>
-Sorter<key, value>::Sorter(const CkArrayID &bucketArr, int _nBuckets, key min,
-            key max, tuning_params par, CProxy_Main<key, value> _mainproxy, CkNodeGroupID _nodeMgrID) : 
+template<class key>
+Sorter<key>::Sorter(const CkArrayID &bucketArr, int _nBuckets, key min,
+            key max, tuning_params par, CProxy_Main<key> _mainproxy, CkNodeGroupID _nodeMgrID) : 
         mainproxy(_mainproxy), buckets(bucketArr), nBuckets(_nBuckets),  nodeMgrID(_nodeMgrID),
         minkey(min), maxkey(max){
     //VERBOSEPRINTF("Setting up sort. From Constructor\n");
-    c1 = CmiWallTimer();
     nNodes = CkNumNodes();
     params = new tuning_params();
     *params = par;
@@ -79,18 +78,18 @@ Sorter<key, value>::Sorter(const CkArrayID &bucketArr, int _nBuckets, key min,
 
 
 
-template<class key, class value>
-void Sorter<key, value>::finishBarrier(CkReductionMsg *msg)
+template<class key>
+void Sorter<key>::finishBarrier(CkReductionMsg *msg)
 {    c1 = CmiWallTimer();
-     CkPrintf("$$$$$$$$$ [%d]finishBarrier \n", CkMyPe()); 
+     CkPrintf("$$$$$$$$$ [%d/%d]finishBarrier \n", CkMyPe(), CkMyNode()); 
      buckets.SetData();
 }
 
 
 
 /*
-template <class key, class value>
-void Sorter<key, value>::globalMinMax(CkReductionMsg *msg){
+template <class key>
+void Sorter<key>::globalMinMax(CkReductionMsg *msg){
   key *m = (key *)msg->getData();
   globalmin = m[0];
   globalmax = m[1];
@@ -103,8 +102,8 @@ void Sorter<key, value>::globalMinMax(CkReductionMsg *msg){
 extern int maxSampleSize();
 
 
-template<class key, class value>
-void Sorter<key, value>::Init(){
+template<class key>
+void Sorter<key>::Init(){
 	      int maxprobe = std::max(params->probe_max, 2*maxSampleSize());
         ckout<<"maxprobe: "<<maxprobe<<endl;
         lastProbe = new key[maxprobe+1];
@@ -129,7 +128,7 @@ void Sorter<key, value>::Init(){
         achievedSplitters = 2;
         allPreviousProbes.clear();
         //allPreviousProbes[minkey] = 0;
-        ckout<<"Exiting Sorter Init... "<<maxprobe<<endl;
+        ckout<<"Exiting Sorter Init... "<<nBuckets<<endl;
 }
 
 
@@ -137,8 +136,8 @@ void Sorter<key, value>::Init(){
 
 
 /*
-template<class key, class value>
-void Sorter<key, value>::Begin(){
+template<class key>
+void Sorter<key>::Begin(){
 
 
     CkAbort("Should not come here");
@@ -193,8 +192,8 @@ void Sorter<key, value>::Begin(){
 }
 */
 
-template<class key, class value>
-void Sorter<key, value>::recvSample(array_msg<key>* am){
+template<class key>
+void Sorter<key>::recvSample(array_msg<key>* am){
   static int msgReceived = 0;
 
   //ckout<<"Received msg number "<<msgReceived<<" at "<<CkMyNode()<<endl;
@@ -205,6 +204,8 @@ void Sorter<key, value>::recvSample(array_msg<key>* am){
   msgReceived++;
   delete(am); 
   if(msgReceived == CkNumNodes()){
+    CkPrintf("Comes till here \n" );
+    //CkExit();
     std::sort(collectedSample.begin(), collectedSample.end());
     array_msg<key> *finalProbe = new (collectedSample.size() + 1) array_msg<key>;
     finalProbe->numElem = collectedSample.size() + 1;
@@ -225,17 +226,17 @@ void Sorter<key, value>::recvSample(array_msg<key>* am){
 
     collectedSample.clear();
     msgReceived = 0;
-    //CProxy_NodeManager<key, value> nodemgr = CProxy_NodeManager<key, value>(nodeMgrID);   
+    //CProxy_NodeManager<key> nodemgr = CProxy_NodeManager<key>(nodeMgrID);   
     //nodemgr.finalProbes(finalProbe);
-    //(Global<key, value>::nodemgr)->finalProbes(finalProbe);   
+    //(Global<key>::nodemgr)->finalProbes(finalProbe);   
   }
 }
 
 
 
 
-template <class key, class value>
-inline int Sorter<key, value>::checkGoal(int splitterInd, uint64_t histCount){
+template <class key>
+inline int Sorter<key>::checkGoal(int splitterInd, uint64_t histCount){
     uint64_t goal = (nElements * splitterInd)/nBuckets;
     uint64_t margin = (nElements * EPS)/(100 * nBuckets); //5%
     //ckout<<nElements<<" : "<<splitterInd<<" : "<<nBuckets<<" : "<<histCount<<endl;
@@ -245,8 +246,8 @@ inline int Sorter<key, value>::checkGoal(int splitterInd, uint64_t histCount){
 
 
 
-template <class key, class value>
-void Sorter<key, value>::Histogram(CkReductionMsg *msg){
+template <class key>
+void Sorter<key>::Histogram(CkReductionMsg *msg){
     traceRegisterUserEvent("Histogram: Sorter", 1);
     double startTime = CmiWallTimer();
     VERBOSEPRINTF("Doing Histogramming %lf seconds after start.\n", (CmiWallTimer()-c1));   
@@ -335,8 +336,8 @@ void Sorter<key, value>::Histogram(CkReductionMsg *msg){
 }
 
 
-template <class key, class value>
-void Sorter<key, value>::updateBounds(CkReductionMsg *msg){
+template <class key>
+void Sorter<key>::updateBounds(CkReductionMsg *msg){
     if(numProbes <= 1){
       ckout<<"***************************************####################comes here"<<endl;
       for(int i=0; i<nBuckets; i++){
@@ -374,8 +375,8 @@ void Sorter<key, value>::updateBounds(CkReductionMsg *msg){
 }
 
 
-template <class key, class value>
-void Sorter<key, value>::nextSamples(std::vector<std::pair<key, int> > &newachv, uint64_t* histCounts, CkReductionMsg *msg){
+template <class key>
+void Sorter<key>::nextSamples(std::vector<std::pair<key, int> > &newachv, uint64_t* histCounts, CkReductionMsg *msg){
     
     uint64_t totalLength = 0;
     uint64_t totalLength2 = 0;
@@ -481,8 +482,8 @@ void Sorter<key, value>::nextSamples(std::vector<std::pair<key, int> > &newachv,
 
 
 
-template <class key, class value>
-void Sorter<key, value>::nextProbes(std::vector<std::pair<key, int> > &newachv, uint64_t* histCounts, CkReductionMsg *msg){
+template <class key>
+void Sorter<key>::nextProbes(std::vector<std::pair<key, int> > &newachv, uint64_t* histCounts, CkReductionMsg *msg){
     //double cc1 = CmiWallTimer();
     int s = 1;
     key lastkey = globalmin;
@@ -588,16 +589,17 @@ void Sorter<key, value>::nextProbes(std::vector<std::pair<key, int> > &newachv, 
 }
 
 //Optionary reduction that informs the Sorter chare that sorting has completed
-template <class key, class value>
-void Sorter<key, value>::Done(CkReductionMsg *msg){ 
+template <class key>
+void Sorter<key>::Done(CkReductionMsg *msg){ 
   c2 = CmiWallTimer();
   VERBOSEPRINTF("\nCompleted in %lf seconds.\n", (c2-c1));
+  CkPrintf("Elements sorted: %d (= %d MB)\n", nElements,  (nElements * sizeof(key))/(1024 * 1024));
   mainproxy.Exit();
 }
 
 //A sanity check that insures global sorted order
-template <class key, class value>
-void Sorter<key, value>::SanityCheck(CkReductionMsg *msg){
+template <class key>
+void Sorter<key>::SanityCheck(CkReductionMsg *msg){
   DEBUGPRINTF("Doing global order sanity check.\n");
   key* borderkeys = (key*)msg->getData();
   int lenhist = (int)msg->getSize()/sizeof(key);
