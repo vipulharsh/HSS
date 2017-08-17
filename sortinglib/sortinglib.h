@@ -12,6 +12,7 @@
 #include <random>
 #include <algorithm>
 #include <chrono>
+#include <climits>
 #include "defs.h"
 
 #define UINT64_MAX (18446744073709551615ULL)
@@ -48,6 +49,41 @@ CProxy_NodeManager<key> * Global<key>::nodemgr = new CProxy_NodeManager<key>;
 
 
 template <class key>
+class tagged_key {
+  public:
+    key k;
+    int pe;
+    int ind;
+    tagged_key(){}
+    tagged_key(key _k, int _pe, int _ind): k(_k), pe(_pe), ind(_ind){}
+    /*inline*/ bool operator< (const tagged_key<key>& other) const{
+      return (k==other.k? (pe==other.pe? (ind<other.ind): (pe < other.pe)):(k < other.k));
+    }
+    friend std::ostream& operator<< (std::ostream &out, const tagged_key<key> &tk){
+      out<< "(" << tk.k << "," << tk.pe << "," << tk.ind << ")";
+      return out;
+    }
+    void pup(PUP::er &p){
+      p|k;
+      p|pe;
+      p|ind;
+    }
+};
+
+
+template <class key>
+tagged_key<key> getTaggedMaxKey(key maxkey){
+  return tagged_key<key>(maxkey, INT_MAX, 0);
+}
+
+
+template <class key>
+tagged_key<key> getTaggedMinKey(key minkey){
+  return tagged_key<key>(minkey, INT_MIN, 0);
+}
+
+
+template <class key>
 std::pair<int, key> grtstPow2(key n){
   key ret = 1;
   int cnt = 0;
@@ -74,7 +110,6 @@ template <class key>
 void HistSorting(int input_elems_, key* dataIn_, 
                  int *output_elems_, key** dataOut_,
                  int probe_max, CkCallback *CB_) {
-  //!! CHANGE registerSortingLib<key>();
   dataIn = (void*)dataIn_;
   dataOut = (void**)dataOut_;
   in_elems = input_elems_;
@@ -204,44 +239,6 @@ void Main<key>::DataReady(CkReductionMsg *msg) {
 #undef CK_TEMPLATES_ONLY 
 
 #ifndef CK_TEMPLATES_ONLY
-template <class key>
-void registerSortingLib() {
-  static int initDone = 0;
-  if(initDone) return;
-  initDone = 1;
-
-// REG: chare Main<uint64_t >: Chare;
-  CkIndex_Main<key >::__register("Main<key >", sizeof(Main<key >));
-
-// REG: chare Sorter<key >: Chare;
-  CkIndex_Sorter<key>::__register("Sorter<key >", sizeof(Sorter<key >));
-
-// REG: array Bucket<key >: ArrayElement;
-  CkIndex_Bucket<key >::__register("Bucket<key >", sizeof(Bucket<key >));
-
-// REG: array Bucket<key >: ArrayElement;
-  CkIndex_NodeManager<key >::__register("NodeManager<key >", sizeof(NodeManager<key >));
-
-/* REG: message probeMessage<key >;
-*/
-  CMessage_probeMessage<key >::__register("probeMessage<key >", sizeof(probeMessage<key >),(CkPackFnPtr) probeMessage<key >::pack,(CkUnpackFnPtr) probeMessage<key >::unpack);
-
-
-/* REG: message sampleMessage<key >;
-*/
-  CMessage_sampleMessage<key >::__register("sampleMessage<key >", sizeof(sampleMessage<key >),(CkPackFnPtr) sampleMessage<key >::pack,(CkUnpackFnPtr) sampleMessage<key >::unpack);
-
-
-/* REG: message data_msg<key >;
-*/
-  CMessage_data_msg<key >::__register("data_msg<key >", sizeof(data_msg<key >),(CkPackFnPtr) data_msg<key >::pack,(CkUnpackFnPtr) data_msg<key >::unpack);
-
-
-/* REG: message array_msg<key >;
-*/
-  CMessage_array_msg<key>::__register("array_msg<key >", sizeof(array_msg<key >),(CkPackFnPtr) array_msg<key >::pack,(CkUnpackFnPtr) array_msg<key >::unpack);
-
-}
 
 
 //template <class key>

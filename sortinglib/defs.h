@@ -50,4 +50,7 @@ class tuning_params{
 
 }; 
 
+  template <class key>
+    class tagged_key;
+
 #endif

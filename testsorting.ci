@@ -14,7 +14,6 @@ mainmodule testsorting {
     };
 
    chare Main<uint64_t>; 
-   message probeMessage<uint64_t>;
    message sampleMessage<uint64_t>;
    message data_msg<uint64_t>;
    message array_msg<uint64_t>;

@@ -249,49 +249,10 @@ template < class key > class CProxy_Main:public CProxy_Chare{
 template < class key > 
 struct CBase_Main;
 
-/* DECLS: template < class key > message probeMessage{
-key probe[];
-key newachv_key[];
-int newachv_id[];
-uint64_t newachv_count[];
-}
-;
- */
-template < class key > class probeMessage;
-template < class key > class CMessage_probeMessage:public CkMessage{
-  public:
-    static int __idx;
-    void* operator new(size_t, void*p) { return p; }
-    void* operator new(size_t);
-    void* operator new(size_t, int*, const int);
-    void* operator new(size_t, int*);
-#if CMK_MULTIPLE_DELETE
-    void operator delete(void*p, void*){dealloc(p);}
-    void operator delete(void*p){dealloc(p);}
-    void operator delete(void*p, int*, const int){dealloc(p);}
-    void operator delete(void*p, int*){dealloc(p);}
-#endif
-    void operator delete(void*p, size_t){dealloc(p);}
-    static void* alloc(int,size_t, int*, int);
-    static void dealloc(void *p);
-    CMessage_probeMessage < key > ();
-    static void *pack(probeMessage < key >  *p);
-    static probeMessage < key > * unpack(void* p);
-    void *operator new(size_t, int, int, int, int);
-    void *operator new(size_t, int, int, int, int, const int);
-#if CMK_MULTIPLE_DELETE
-    void operator delete(void *p, int, int, int, int){dealloc(p);}
-    void operator delete(void *p, int, int, int, int, const int){dealloc(p);}
-#endif
-    static void __register(const char *s, size_t size, CkPackFnPtr pack, CkUnpackFnPtr unpack) {
-      __idx = CkRegisterMsg(s, pack, unpack, dealloc, size);
-    }
-};
-
 /* DECLS: template < class key > message sampleMessage{
-key lb[];
-key ub[];
-key newachv_key[];
+tagged_key<key > lb[];
+tagged_key<key > ub[];
+tagged_key<key > newachv_key[];
 int newachv_id[];
 uint64_t newachv_count[];
 }
@@ -365,7 +326,7 @@ template < class key > class CMessage_data_msg:public CkMessage{
 };
 
 /* DECLS: template < class key > message array_msg{
-key data[];
+tagged_key<key > data[];
 }
 ;
  */
@@ -676,7 +637,6 @@ void SetData();
 void genSample(const sampleInfo &sI);
 void firstProbe(const key &firstkey, const key &lastkey, const key &stepSize, int probeSize);
 void firstLocalProbe(int lastProbeSize);
-void histCountProbes(probeMessage<key >* impl_msg);
 void genNextSamples(sampleMessage<key >* impl_msg);
 void sortAll();
 void stepSort();
@@ -863,30 +823,6 @@ template < class key > class CkIndex_Bucket:public CkIndex_ArrayElement{
     static int _callmarshall_firstLocalProbe_marshall6(char* impl_buf, void* impl_obj_void);
     
     static void _marshallmessagepup_firstLocalProbe_marshall6(PUP::er &p,void *msg);
-    /* DECLS: void histCountProbes(probeMessage<key >* impl_msg);
-     */
-    // Entry point registration at startup
-    
-    static int reg_histCountProbes_probeMessage();
-    // Entry point index lookup
-    
-    inline static int idx_histCountProbes_probeMessage() {
-      static int epidx = reg_histCountProbes_probeMessage();
-      return epidx;
-    }
-
-    
-    inline static int idx_histCountProbes(void (Bucket < key > ::*)(probeMessage<key >* impl_msg) ) {
-      return idx_histCountProbes_probeMessage();
-    }
-
-
-    
-    static int histCountProbes(probeMessage<key >* impl_msg) { return idx_histCountProbes_probeMessage(); }
-    
-    static void _call_histCountProbes_probeMessage(void* impl_msg, void* impl_obj);
-    
-    static void _call_sdag_histCountProbes_probeMessage(void* impl_msg, void* impl_obj);
     /* DECLS: void genNextSamples(sampleMessage<key >* impl_msg);
      */
     // Entry point registration at startup
@@ -987,30 +923,30 @@ template < class key > class CkIndex_Bucket:public CkIndex_ArrayElement{
      */
     // Entry point registration at startup
     
-    static int reg_recvFinalKeys_marshall12();
+    static int reg_recvFinalKeys_marshall11();
     // Entry point index lookup
     
-    inline static int idx_recvFinalKeys_marshall12() {
-      static int epidx = reg_recvFinalKeys_marshall12();
+    inline static int idx_recvFinalKeys_marshall11() {
+      static int epidx = reg_recvFinalKeys_marshall11();
       return epidx;
     }
 
     
     inline static int idx_recvFinalKeys(void (Bucket < key > ::*)(int srcnode, const sendInfo &s) ) {
-      return idx_recvFinalKeys_marshall12();
+      return idx_recvFinalKeys_marshall11();
     }
 
 
     
-    static int recvFinalKeys(int srcnode, const sendInfo &s) { return idx_recvFinalKeys_marshall12(); }
+    static int recvFinalKeys(int srcnode, const sendInfo &s) { return idx_recvFinalKeys_marshall11(); }
     
-    static void _call_recvFinalKeys_marshall12(void* impl_msg, void* impl_obj);
+    static void _call_recvFinalKeys_marshall11(void* impl_msg, void* impl_obj);
     
-    static void _call_sdag_recvFinalKeys_marshall12(void* impl_msg, void* impl_obj);
+    static void _call_sdag_recvFinalKeys_marshall11(void* impl_msg, void* impl_obj);
     
-    static int _callmarshall_recvFinalKeys_marshall12(char* impl_buf, void* impl_obj_void);
+    static int _callmarshall_recvFinalKeys_marshall11(char* impl_buf, void* impl_obj_void);
     
-    static void _marshallmessagepup_recvFinalKeys_marshall12(PUP::er &p,void *msg);
+    static void _marshallmessagepup_recvFinalKeys_marshall11(PUP::er &p,void *msg);
     /* DECLS: void MergingWork();
      */
     // Entry point registration at startup
@@ -1249,11 +1185,6 @@ template < class key >  class CProxyElement_Bucket : public CProxyElement_ArrayE
     
     void firstLocalProbe(int lastProbeSize, const CkEntryOptions *impl_e_opts=NULL) ;
 
-/* DECLS: void histCountProbes(probeMessage<key >* impl_msg);
- */
-    
-    void histCountProbes(probeMessage<key >* impl_msg) ;
-
 /* DECLS: void genNextSamples(sampleMessage<key >* impl_msg);
  */
     
@@ -1414,11 +1345,6 @@ template < class key >  class CProxy_Bucket : public CProxy_ArrayElement{
  */
     
     void firstLocalProbe(int lastProbeSize, const CkEntryOptions *impl_e_opts=NULL) ;
-
-/* DECLS: void histCountProbes(probeMessage<key >* impl_msg);
- */
-    
-    void histCountProbes(probeMessage<key >* impl_msg) ;
 
 /* DECLS: void genNextSamples(sampleMessage<key >* impl_msg);
  */
@@ -1624,11 +1550,6 @@ template < class key >  class CProxySection_Bucket : public CProxySection_ArrayE
     
     void firstLocalProbe(int lastProbeSize, const CkEntryOptions *impl_e_opts=NULL) ;
 
-/* DECLS: void histCountProbes(probeMessage<key >* impl_msg);
- */
-    
-    void histCountProbes(probeMessage<key >* impl_msg) ;
-
 /* DECLS: void genNextSamples(sampleMessage<key >* impl_msg);
  */
     
@@ -1688,16 +1609,16 @@ class wrap_ptr;
 NodeManager(const key &_minkey, const key &_maxkey);
 void registerLocalChare(int nElem, int pe, const CProxy_Bucket<key > &_bucket_arr, const CProxy_Sorter<key > &_sorter);
 void collectSamples(const sampleInfo &sI);
-void assembleSamples(const std::vector<key > &proc_sample);
+void assembleSamples(const std::vector<tagged_key<key > > &proc_sample);
 void loadkeys(int dest, const sendInfo &inf);
 void sendOne(int dest);
 void releaseBufMsgs();
 void recvOne(data_msg<key >* impl_msg);
-void handleOne(const wrap_ptr &msg, int sampleInd, int numsamples);
+void handleOne(const wrap_ptr &msg, int sampleInd, int numsamples, int msgnum);
 void finishOne();
 void localhist(data_msg<key >* impl_msg);
 void depositHist();
-void sendToBuckets(data_msg<key >* impl_msg);
+void sendToBuckets(int msg_num);
 };
  */
 template < class key >  class NodeManager;
@@ -1790,7 +1711,7 @@ template < class key > class CkIndex_NodeManager:public CkIndex_NodeGroup{
     static void _call_sdag_collectSamples_marshall3(void* impl_msg, void* impl_obj);
     
     static void _marshallmessagepup_collectSamples_marshall3(PUP::er &p,void *msg);
-    /* DECLS: void assembleSamples(const std::vector<key > &proc_sample);
+    /* DECLS: void assembleSamples(const std::vector<tagged_key<key > > &proc_sample);
      */
     // Entry point registration at startup
     
@@ -1803,13 +1724,13 @@ template < class key > class CkIndex_NodeManager:public CkIndex_NodeGroup{
     }
 
     
-    inline static int idx_assembleSamples(void (NodeManager < key > ::*)(const std::vector<key > &proc_sample) ) {
+    inline static int idx_assembleSamples(void (NodeManager < key > ::*)(const std::vector<tagged_key<key > > &proc_sample) ) {
       return idx_assembleSamples_marshall4();
     }
 
 
     
-    static int assembleSamples(const std::vector<key > &proc_sample) { return idx_assembleSamples_marshall4(); }
+    static int assembleSamples(const std::vector<tagged_key<key > > &proc_sample) { return idx_assembleSamples_marshall4(); }
     
     static void _call_assembleSamples_marshall4(void* impl_msg, void* impl_obj);
     
@@ -1918,7 +1839,7 @@ template < class key > class CkIndex_NodeManager:public CkIndex_NodeGroup{
     static void _call_recvOne_data_msg(void* impl_msg, void* impl_obj);
     
     static void _call_sdag_recvOne_data_msg(void* impl_msg, void* impl_obj);
-    /* DECLS: void handleOne(const wrap_ptr &msg, int sampleInd, int numsamples);
+    /* DECLS: void handleOne(const wrap_ptr &msg, int sampleInd, int numsamples, int msgnum);
      */
     // Entry point registration at startup
     
@@ -1931,13 +1852,13 @@ template < class key > class CkIndex_NodeManager:public CkIndex_NodeGroup{
     }
 
     
-    inline static int idx_handleOne(void (NodeManager < key > ::*)(const wrap_ptr &msg, int sampleInd, int numsamples) ) {
+    inline static int idx_handleOne(void (NodeManager < key > ::*)(const wrap_ptr &msg, int sampleInd, int numsamples, int msgnum) ) {
       return idx_handleOne_marshall9();
     }
 
 
     
-    static int handleOne(const wrap_ptr &msg, int sampleInd, int numsamples) { return idx_handleOne_marshall9(); }
+    static int handleOne(const wrap_ptr &msg, int sampleInd, int numsamples, int msgnum) { return idx_handleOne_marshall9(); }
     
     static void _call_handleOne_marshall9(void* impl_msg, void* impl_obj);
     
@@ -2018,30 +1939,34 @@ template < class key > class CkIndex_NodeManager:public CkIndex_NodeGroup{
     static void _call_depositHist_void(void* impl_msg, void* impl_obj);
     
     static void _call_sdag_depositHist_void(void* impl_msg, void* impl_obj);
-    /* DECLS: void sendToBuckets(data_msg<key >* impl_msg);
+    /* DECLS: void sendToBuckets(int msg_num);
      */
     // Entry point registration at startup
     
-    static int reg_sendToBuckets_data_msg();
+    static int reg_sendToBuckets_marshall13();
     // Entry point index lookup
     
-    inline static int idx_sendToBuckets_data_msg() {
-      static int epidx = reg_sendToBuckets_data_msg();
+    inline static int idx_sendToBuckets_marshall13() {
+      static int epidx = reg_sendToBuckets_marshall13();
       return epidx;
     }
 
     
-    inline static int idx_sendToBuckets(void (NodeManager < key > ::*)(data_msg<key >* impl_msg) ) {
-      return idx_sendToBuckets_data_msg();
+    inline static int idx_sendToBuckets(void (NodeManager < key > ::*)(int msg_num) ) {
+      return idx_sendToBuckets_marshall13();
     }
 
 
     
-    static int sendToBuckets(data_msg<key >* impl_msg) { return idx_sendToBuckets_data_msg(); }
+    static int sendToBuckets(int msg_num) { return idx_sendToBuckets_marshall13(); }
     
-    static void _call_sendToBuckets_data_msg(void* impl_msg, void* impl_obj);
+    static void _call_sendToBuckets_marshall13(void* impl_msg, void* impl_obj);
     
-    static void _call_sdag_sendToBuckets_data_msg(void* impl_msg, void* impl_obj);
+    static void _call_sdag_sendToBuckets_marshall13(void* impl_msg, void* impl_obj);
+    
+    static int _callmarshall_sendToBuckets_marshall13(char* impl_buf, void* impl_obj_void);
+    
+    static void _marshallmessagepup_sendToBuckets_marshall13(PUP::er &p,void *msg);
 };
 /* --------------- element proxy ------------------ */
 template < class key > class CProxyElement_NodeManager: public CProxyElement_NodeGroup{
@@ -2118,10 +2043,10 @@ int ckGetGroupPe(void) const
     
     void collectSamples(const sampleInfo &sI, const CkEntryOptions *impl_e_opts=NULL);
 
-/* DECLS: void assembleSamples(const std::vector<key > &proc_sample);
+/* DECLS: void assembleSamples(const std::vector<tagged_key<key > > &proc_sample);
  */
     
-    void assembleSamples(const std::vector<key > &proc_sample, const CkEntryOptions *impl_e_opts=NULL);
+    void assembleSamples(const std::vector<tagged_key<key > > &proc_sample, const CkEntryOptions *impl_e_opts=NULL);
 
 /* DECLS: void loadkeys(int dest, const sendInfo &inf);
  */
@@ -2143,10 +2068,10 @@ int ckGetGroupPe(void) const
     
     void recvOne(data_msg<key >* impl_msg);
 
-/* DECLS: void handleOne(const wrap_ptr &msg, int sampleInd, int numsamples);
+/* DECLS: void handleOne(const wrap_ptr &msg, int sampleInd, int numsamples, int msgnum);
  */
     
-    void handleOne(const wrap_ptr &msg, int sampleInd, int numsamples, const CkEntryOptions *impl_e_opts=NULL);
+    void handleOne(const wrap_ptr &msg, int sampleInd, int numsamples, int msgnum, const CkEntryOptions *impl_e_opts=NULL);
 
 /* DECLS: void finishOne();
  */
@@ -2163,10 +2088,10 @@ int ckGetGroupPe(void) const
     
     void depositHist(const CkEntryOptions *impl_e_opts=NULL);
 
-/* DECLS: void sendToBuckets(data_msg<key >* impl_msg);
+/* DECLS: void sendToBuckets(int msg_num);
  */
     
-    void sendToBuckets(data_msg<key >* impl_msg);
+    void sendToBuckets(int msg_num, const CkEntryOptions *impl_e_opts=NULL);
 
 };
 /* ---------------- collective proxy -------------- */
@@ -2241,10 +2166,10 @@ operator CkGroupID () const { return ckGetGroupID(); }
     
     void collectSamples(const sampleInfo &sI, const CkEntryOptions *impl_e_opts=NULL);
 
-/* DECLS: void assembleSamples(const std::vector<key > &proc_sample);
+/* DECLS: void assembleSamples(const std::vector<tagged_key<key > > &proc_sample);
  */
     
-    void assembleSamples(const std::vector<key > &proc_sample, const CkEntryOptions *impl_e_opts=NULL);
+    void assembleSamples(const std::vector<tagged_key<key > > &proc_sample, const CkEntryOptions *impl_e_opts=NULL);
 
 /* DECLS: void loadkeys(int dest, const sendInfo &inf);
  */
@@ -2266,10 +2191,10 @@ operator CkGroupID () const { return ckGetGroupID(); }
     
     void recvOne(data_msg<key >* impl_msg);
 
-/* DECLS: void handleOne(const wrap_ptr &msg, int sampleInd, int numsamples);
+/* DECLS: void handleOne(const wrap_ptr &msg, int sampleInd, int numsamples, int msgnum);
  */
     
-    void handleOne(const wrap_ptr &msg, int sampleInd, int numsamples, const CkEntryOptions *impl_e_opts=NULL);
+    void handleOne(const wrap_ptr &msg, int sampleInd, int numsamples, int msgnum, const CkEntryOptions *impl_e_opts=NULL);
 
 /* DECLS: void finishOne();
  */
@@ -2286,10 +2211,10 @@ operator CkGroupID () const { return ckGetGroupID(); }
     
     void depositHist(const CkEntryOptions *impl_e_opts=NULL);
 
-/* DECLS: void sendToBuckets(data_msg<key >* impl_msg);
+/* DECLS: void sendToBuckets(int msg_num);
  */
     
-    void sendToBuckets(data_msg<key >* impl_msg);
+    void sendToBuckets(int msg_num, const CkEntryOptions *impl_e_opts=NULL);
 
 };
 /* ---------------- section proxy -------------- */
@@ -2382,10 +2307,10 @@ inline int ckGetNumElements(int i) const
     
     void collectSamples(const sampleInfo &sI, const CkEntryOptions *impl_e_opts=NULL);
 
-/* DECLS: void assembleSamples(const std::vector<key > &proc_sample);
+/* DECLS: void assembleSamples(const std::vector<tagged_key<key > > &proc_sample);
  */
     
-    void assembleSamples(const std::vector<key > &proc_sample, const CkEntryOptions *impl_e_opts=NULL);
+    void assembleSamples(const std::vector<tagged_key<key > > &proc_sample, const CkEntryOptions *impl_e_opts=NULL);
 
 /* DECLS: void loadkeys(int dest, const sendInfo &inf);
  */
@@ -2407,10 +2332,10 @@ inline int ckGetNumElements(int i) const
     
     void recvOne(data_msg<key >* impl_msg);
 
-/* DECLS: void handleOne(const wrap_ptr &msg, int sampleInd, int numsamples);
+/* DECLS: void handleOne(const wrap_ptr &msg, int sampleInd, int numsamples, int msgnum);
  */
     
-    void handleOne(const wrap_ptr &msg, int sampleInd, int numsamples, const CkEntryOptions *impl_e_opts=NULL);
+    void handleOne(const wrap_ptr &msg, int sampleInd, int numsamples, int msgnum, const CkEntryOptions *impl_e_opts=NULL);
 
 /* DECLS: void finishOne();
  */
@@ -2427,10 +2352,10 @@ inline int ckGetNumElements(int i) const
     
     void depositHist(const CkEntryOptions *impl_e_opts=NULL);
 
-/* DECLS: void sendToBuckets(data_msg<key >* impl_msg);
+/* DECLS: void sendToBuckets(int msg_num);
  */
     
-    void sendToBuckets(data_msg<key >* impl_msg);
+    void sendToBuckets(int msg_num, const CkEntryOptions *impl_e_opts=NULL);
 
 };
 #define NodeManager_SDAG_CODE 
@@ -2452,7 +2377,6 @@ template < class key > class Closure_Main {
 
 
 };
-
 
 
 
@@ -2492,25 +2416,24 @@ template < class key > class Closure_Bucket {
 
 
 
-
-    struct sortAll_9_closure;
-
-
-    struct stepSort_10_closure;
+    struct sortAll_8_closure;
 
 
-
-    struct recvFinalKeys_12_closure;
-
-
-    struct MergingWork_13_closure;
-
-
-    struct partialSendOne_14_closure;
+    struct stepSort_9_closure;
 
 
 
-    struct finish_16_closure;
+    struct recvFinalKeys_11_closure;
+
+
+    struct MergingWork_12_closure;
+
+
+    struct partialSendOne_13_closure;
+
+
+
+    struct finish_15_closure;
 
 
 };
@@ -2549,6 +2472,8 @@ template < class key > class Closure_NodeManager {
 
     struct depositHist_12_closure;
 
+
+    struct sendToBuckets_13_closure;
 
 };
 

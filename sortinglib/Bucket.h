@@ -24,10 +24,48 @@ struct lb_struct{
 template <class key>
 class array_msg : public CMessage_array_msg<key> {
   public:
-    key* data;
+    tagged_key<key>* data;
     int numElem;
 };
 
+
+template <class key>
+key* lower_bound_tagged(key *first, key *last, tagged_key<key> val, int pe=CkMyPe()){
+  key *base = first;
+  key *it;
+  int  count, step;
+  count = last - first;
+  while (count>0)
+  {
+    it = first; step=count/2; std::advance(it,step);
+    if (tagged_key<key>(*it,pe,it-base) < val) {
+      first=++it;
+      count-=step+1;
+    }
+    else count=step;
+  }
+  return first;
+}
+
+
+
+template <class key>
+key* upper_bound_tagged(key *first, key *last, tagged_key<key> val){
+  key *base = first;
+  key *it;
+  int count, step;
+  count = last - first;
+  while (count>0)
+  {
+    it = first; step=count/2; std::advance(it,step);
+    if (! (val < tagged_key<key>(*it,CkMyPe(),it-base))) {
+      first=++it;
+      count-=step+1;
+    }
+    else count=step;
+  }
+  return first;
+}
 
 
 template <class key>
@@ -50,13 +88,13 @@ class Bucket : public CBase_Bucket<key> {
 
 	tuning_params *params;
 	
-	key* finalSplitters;
+	tagged_key<key>* finalSplitters;
 	bool* achieved;
 	uint64_t* achievedCounts;
     int achievedSplitters;
     bool* sent;
 
-    key* lastProbe;
+    tagged_key<key>* lastProbe;
     int lastProbeSize;
 
     int *sepCounts;
@@ -130,7 +168,6 @@ class Bucket : public CBase_Bucket<key> {
     void stepSort();
 	  void firstProbe(key firstkey, key lastkey, key step, int probeSize);
 	  void firstLocalProbe(int lastProbeSize);
-	  void histCountProbes(probeMessage<key> *pm);
     void genNextSamples(sampleMessage<key> *sm);
 	  void Load(data_msg<key>* msg);
     void MergingWork();

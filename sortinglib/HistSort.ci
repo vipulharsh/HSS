@@ -2,9 +2,7 @@ module HistSort{
   include "defs.h";
   initnode void register_sum_uint64_t(void);
   initnode void register_minmax_uint64_t(void);
-
   //readonly CkNodeGroupID nodeMgrID;
-  
 
   template <class key> chare Main {
     entry Main(int num_buckets_, int probe_max, int num_partitions_);
@@ -16,18 +14,10 @@ module HistSort{
   };
 
   template <class key>
-    message probeMessage {
-      key probe[];
-      key newachv_key[];
-      int newachv_id[];
-      uint64_t newachv_count[];
-    };
-
-  template <class key>
     message sampleMessage {
-      key lb[];
-      key ub[];
-      key newachv_key[];
+      tagged_key<key> lb[];
+      tagged_key<key> ub[];
+      tagged_key<key> newachv_key[];
       int newachv_id[];
       uint64_t newachv_count[];
     };
@@ -40,7 +30,7 @@ module HistSort{
 
   template <class key>
     message array_msg {
-      key data[];
+      tagged_key<key> data[];
     };
 
 
@@ -70,7 +60,6 @@ module HistSort{
     entry void genSample(sampleInfo sI);
     entry void firstProbe(key firstkey, key lastkey, key stepSize, int probeSize);
     entry [expedited] void firstLocalProbe(int lastProbeSize);
-    entry [expedited] void histCountProbes(probeMessage<key> *pm);
     entry [expedited] void genNextSamples(sampleMessage<key> *sm);
     entry void sortAll();
     entry void stepSort();
@@ -96,16 +85,16 @@ module HistSort{
                   CProxy_Sorter<key> _sorter
                   );
       entry [exclusive, expedited] void collectSamples(sampleInfo sI);
-      entry [exclusive] void assembleSamples(std::vector<key> proc_sample);
+      entry [exclusive] void assembleSamples(std::vector<tagged_key<key> > proc_sample);
       entry [exclusive] void loadkeys(int dest, sendInfo inf);
       entry void sendOne(int dest);
       entry [exclusive] void releaseBufMsgs();
       entry [exclusive] void recvOne(data_msg<key> *dm);
-      entry void handleOne(wrap_ptr msg, int sampleInd, int numsamples);
+      entry void handleOne(wrap_ptr msg, int sampleInd, int numsamples, int msgnum);
       entry [exclusive] void finishOne();
       entry void localhist(data_msg<key> *dm);
       entry [exclusive] void depositHist();
-      entry [expedited] void sendToBuckets(data_msg<key>* dm);
+      entry [expedited] void sendToBuckets(int msg_num);
   };
 };
 
