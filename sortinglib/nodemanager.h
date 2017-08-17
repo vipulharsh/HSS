@@ -4,7 +4,17 @@
 #include <chrono>
 #include <random>
 #include <queue>
+#include <climits>
 #include <map>
+
+
+unsigned getRandomSeed(){
+  typedef std::chrono::high_resolution_clock myclock;
+  myclock::time_point beginning = myclock::now();
+  myclock::duration d = myclock::now() - beginning;
+  return d.count();
+}
+
 
 const int SAMPLE_FACTOR = 1;
 
@@ -36,8 +46,28 @@ int ls_getStride(){
 	return std::max(1, (int)(((double)elemsPerPe * LS_EPS)/(CkNumNodes() * 100)));
 }
 
+
+
+/* For random sampling */
 int ls_getMaxSampleSize(){
-    uint64_t stride = ls_getStride();
+  int lognpes = 1, numpes = CkNodeSize(CkMyNode());
+  while((1<<lognpes) <= numpes) lognpes++;
+  return std::max(CkNumNodes()+2, (4 * lognpes * numpes * EPS)/100);
+}
+
+
+int ls_getSampleSize(int locElems){
+	uint64_t elemsPerNode = numTotalElems/CkNumNodes();
+	elemsPerNode += ((elemsPerNode * EPS * 2)/100);
+	return std::max(1, (int)((ls_getMaxSampleSize() * locElems)/elemsPerNode));
+}
+
+
+
+
+/*  For Regular sampling
+int ls_getMaxSampleSize(){
+  uint64_t stride = ls_getStride();
 	uint64_t elemsPerNode = numTotalElems/CkNumNodes();
 	elemsPerNode += ((elemsPerNode * EPS * 2)/100);
 	int sampleSize = elemsPerNode/stride;
@@ -47,7 +77,7 @@ int ls_getMaxSampleSize(){
 int ls_getSampleSize(int locElems){
 	return locElems/ls_getStride();
 }
-
+*/
 
 
 
@@ -180,10 +210,7 @@ class NodeManager : public CBase_NodeManager<key> {
 			for(int i=1; i<numpes; i++)
 				cum += numElem[i]; 
 
-			typedef std::chrono::high_resolution_clock myclock;
-			myclock::time_point beginning = myclock::now();
-			myclock::duration d = myclock::now() - beginning;
-			unsigned seed = d.count();
+			unsigned seed = getRandomSeed();
 			seed = CkMyNode();
 			//ckout<<"Seed is "<<seed<<endl;
 
@@ -372,63 +399,81 @@ class NodeManager : public CBase_NodeManager<key> {
 			if(!dm->sorted)
 				std::sort(dm->data, dm->data + dm->num_vals);
 
+
+/****** Random Sample *******  ===> use for histogram */
+      if(dm->num_vals > 0){
+        unsigned seed = sampleInd;
+        //ckout<<"Seed is "<<seed<<endl;
+        std::default_random_engine generator(seed);
+        std::uniform_int_distribution<int> distribution(0,dm->num_vals-1);
+        distribution(generator);
+
+        for(int i=0; i<numsamples; i++){
+          int randIdx = distribution(generator); 
+          ls_sample[sampleInd + i] = dm->data[randIdx];
+          distribution.reset();
+        }
+        if(sampleInd+numsamples >= ls_getMaxSampleSize())
+          CkAbort("Numsamples exceeds expectations\n"); 
+      }
+
+
+/****** Regular Sampling *******
 			if(dm->num_vals > 0){
 				for(int i=stride-1; i<dm->num_vals; i+=stride)
 					ls_sample[sampleInd + (i/stride)] = dm->data[i];
 				if(sampleInd+numsamples >= ls_getMaxSampleSize())
 					CkAbort("Numsamples exceeds expectations\n"); 
 			}
+*/
 			this->thisProxy[CkMyNode()].finishOne();
 		}
 
 
-		void finishOne(){
-			++numFinished;	
-			if(numFinished == CkNumNodes()){ //all messages have been received, processed
-				
-				//for(int i=0; i<numpes; i++){
-				//	 bucket_arr[pelist[i]].finish();				
-				//}
-				//return;
+    void finishOne(){
+      ++numFinished;	
+      if(numFinished == CkNumNodes()){ //all messages have been received, processed
+        //for(int i=0; i<numpes; i++){
+        //	 bucket_arr[pelist[i]].finish();				
+        //}
+        //return;
+        ls_sample[ls_numTotSamples++] = maxkey;
+        std::sort(ls_sample, ls_sample + ls_numTotSamples); //sort all sampled keys
+        /*
+        int numpes = CkNodeSize(CkMyNode());
+        uint64_t elemPerPe = numElemFinal/numpes;
+        uint64_t threshold = (elemPerPe * LS_EPS)/100;
 
-				ls_sample[ls_numTotSamples++] = maxkey;
-				std::sort(ls_sample, ls_sample + ls_numTotSamples); //sort all sampled keys
-				int numpes = CkNodeSize(CkMyNode());
-				uint64_t elemPerPe = numElemFinal/numpes;
-				uint64_t threshold = (elemPerPe * LS_EPS)/100;
-				
-				for(int i=0; i<numpes-1; i++){
-					uint64_t target = (elemPerPe * (i+1)) - threshold;
-					int idx = target/stride;
-					splitters[i] = ls_sample[idx];
-				}
-				splitters[numpes-1] = maxkey;
-				std::sort(pelist, pelist + numpes);
-				//for(int i=0; i<numpes; i++){
-				//	CkPrintf("[%d] Splitterss #%d: %llu\n", CkMyNode(), i, splitters[i]);
-				//}
-				//CkPrintf("[%d] RecvdMsgs.size: %d\n", CkMyNode(), recvdMsgs.size());
-				for(int i=0; i<recvdMsgs.size(); i++){
-					//for(int j=0; j<recvdMsgs[i]->num_vals; j++)
-					//	CkPrintf("[%d] recvdmsg[%d] #(%d): %llu\n", CkMyNode(), i, j, recvdMsgs[i]->data[j]);
-					this->thisProxy[CkMyNode()].sendToBuckets(recvdMsgs[i]);
-				}
-				//CkPrintf("[%d] Finished sorting, sampling from all messages \n", CkMyNode());
-				//for(int i=0; i<recvdMsgs.size(); i++){
-				//	this->thisProxy[CkMyNode()].localhist(recvdMsgs[i]);
-				//}
-			}
-		}
+        for(int i=0; i<numpes-1; i++){
+          uint64_t target = (elemPerPe * (i+1)) - threshold;
+          int idx = target/stride;
+          splitters[i] = ls_sample[idx];
+        }
+        splitters[numpes-1] = maxkey;
+        std::sort(pelist, pelist + numpes);
+        //for(int i=0; i<numpes; i++){
+        //	CkPrintf("[%d] Splitterss #%d: %llu\n", CkMyNode(), i, splitters[i]);
+        //}
+        //CkPrintf("[%d] RecvdMsgs.size: %d\n", CkMyNode(), recvdMsgs.size());
+        for(int i=0; i<recvdMsgs.size(); i++){
+          //for(int j=0; j<recvdMsgs[i]->num_vals; j++)
+          //	CkPrintf("[%d] recvdmsg[%d] #(%d): %llu\n", CkMyNode(), i, j, recvdMsgs[i]->data[j]);
+          this->thisProxy[CkMyNode()].sendToBuckets(recvdMsgs[i]);
+        }
+        */
+        //CkPrintf("[%d] Finished sorting, sampling from all messages \n", CkMyNode());
+        for(int i=0; i<numpes; i++){
+            uint64_t* histCounts = new uint64_t[ls_numTotSamples+1];	
+            histLocCounts[pelist[i]] =  histCounts;
+        }
+        for(int i=0; i<recvdMsgs.size(); i++){
+        	this->thisProxy[CkMyNode()].localhist(recvdMsgs[i]);
+        }
+      }
+    }
 
 		void localhist(data_msg<key>* dm){
-		   	uint64_t* histCounts;
-		  	if(histLocCounts.find(CkMyPe()) == histLocCounts.end()){
-				histCounts = new uint64_t[ls_numTotSamples+1];	
-				memset(histCounts, 0, (ls_numTotSamples+1) * sizeof(uint64_t));
-				histLocCounts[CkMyPe()] = histCounts;
-			}
-			else
-				histCounts = (histLocCounts.find(CkMyPe()))->second;
+		    uint64_t* histCounts = (histLocCounts.find(CkMyPe()))->second;
 			//CkPrintf("localhist [%d, %d] histCounts: %p \n", CkMyNode(), CkMyPe(), histCounts);
 			//for(int i=0; i<dm->num_vals; i++)
 			//	CkPrintf("dm->val[%d]: %llu \n", i, dm->data[i]);	
@@ -446,27 +491,54 @@ class NodeManager : public CBase_NodeManager<key> {
 			this->thisProxy[CkMyNode()].depositHist();
 	  }
 
-	  //how will this be an entry method
-	  void depositHist(){
-		numDeposited++;
-		if(numDeposited == CkNumNodes()){
-			int numHists = histLocCounts.size();
-			uint64_t *histograms[numHists];
-			std::map<int, uint64_t*>::iterator it;
-			int i;
-			for(i=0,it = histLocCounts.begin(); it != histLocCounts.end(); it++, i++)
-				histograms[i] = it->second;
-			uint64_t cum = 0;
-			for(int i=0; i<ls_numTotSamples; i++){
-				for(int j=1; j<numHists; j++)
-					histograms[0][i] += histograms[j][i];
-				cum += histograms[0][i];
-				//CkPrintf("[%d] FinalHist[%llu]: %llu \n",  CkMyNode(), ls_sample[i], cum);
-			}
-			CkPrintf("[%d] FinalHist: %llu, sample-size: %d \n",  CkMyNode(),  cum, ls_numTotSamples);
-			finalHistCounts	= histograms[0];
-			CkPrintf("Deposited [%d] All localsort hists deposited \n", CkMyNode());
-		}
+    //how will this be an entry method
+    void depositHist(){
+      numDeposited++;
+      if(numDeposited == CkNumNodes()){
+        int numHists = histLocCounts.size();
+        uint64_t *histograms[numHists];
+        std::map<int, uint64_t*>::iterator it;
+        int i;
+        for(i=0,it = histLocCounts.begin(); it != histLocCounts.end(); it++, i++)
+          histograms[i] = it->second;
+        uint64_t cum = 0;
+        for(int i=0; i<ls_numTotSamples; i++){
+          for(int j=1; j<numHists; j++)
+            histograms[0][i] += histograms[j][i];
+          cum += histograms[0][i];
+          //CkPrintf("[%d] FinalHist[%llu]: %llu \n",  CkMyNode(), ls_sample[i], cum);
+        }
+        CkPrintf("[%d] FinalHist: %llu, sample-size: %d \n",  CkMyNode(),  cum, ls_numTotSamples);
+        finalHistCounts	= histograms[0];
+        CkPrintf("Deposited [%d] All localsort hists deposited \n", CkMyNode());
+
+
+        /* Finalize splitters : brute force*/
+        int numpes = CkNodeSize(CkMyNode());
+        uint64_t elemPerPe = numElemFinal/numpes;
+        for(int i=0; i<numpes-1; i++){
+          long long target = (elemPerPe * (i+1));
+          int bestSpltr = -1;
+          long long closest = LONG_MAX;
+          for(int j=1; j<ls_numTotSamples; j++){
+            long long dist = labs(target - ((long long)histograms[0][i]));
+            if(dist < closest)
+               closest = dist, bestSpltr = j;
+          }
+          splitters[i] = ls_sample[bestSpltr];
+        }
+        splitters[numpes-1] = maxkey;
+        std::sort(pelist, pelist + numpes);
+        //for(int i=0; i<numpes; i++){
+        //	CkPrintf("[%d] Splitterss #%d: %llu\n", CkMyNode(), i, splitters[i]);
+        //}
+        //Now distribute data among all local threads
+        for(int i=0; i<recvdMsgs.size(); i++){
+          //for(int j=0; j<recvdMsgs[i]->num_vals; j++)
+          //	CkPrintf("[%d] recvdmsg[%d] #(%d): %llu\n", CkMyNode(), i, j, recvdMsgs[i]->data[j]);
+          this->thisProxy[CkMyNode()].sendToBuckets(recvdMsgs[i]);
+        }
+      }
 	  }
 
 
