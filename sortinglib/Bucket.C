@@ -162,7 +162,11 @@ void Bucket<key>::sortAll(){
         sepKeys[1] = maxkey ;
         sepCounts[0] = 0;
         sepCounts[1] = numElem;
+        double wtime = -CmiWallTimer();
         std::sort(bucket_data, bucket_data + numElem);
+        wtime +=  CmiWallTimer();
+        if(!CkMyPe())
+            ckout<<"Local sorting on pe, numElem: "<<numElem<<" - "<<wtime<<endl;
         lastSortedChunk = 1;
         sorted[1] = true; 
 }
@@ -359,13 +363,14 @@ void Bucket<key>::genNextSamples(sampleMessage<key> *sm){
 
 	seed = (sampleSize * CkMyPe());
 	//ckout<<"Seed is "<<seed<<endl;
-	std::default_random_engine generator(seed);
-	std::uniform_int_distribution<int> distribution(0,numElem-1);
-	distribution(generator);
+	//std::default_random_engine generator(seed);
+	//std::uniform_int_distribution<int> distribution(0,numElem-1);
+	//distribution(generator);
 	
 	for(int i=0; i<sampleSize; i++){
-		int randIndex = distribution(generator);
-		key k = bucket_data[randIndex];
+		//int randIndex = distribution(generator);
+		int randIndex = getRandom()%numElem;
+		key k = bucket_data[randIndex]; 
     tagged_key<key> tk(k,CkMyPe(),randIndex);
 		int l = std::lower_bound(sm->lb, sm->lb + sm->nIntervals, tk) - (sm->lb+1);
 		int u = std::upper_bound(sm->ub, sm->ub + sm->nIntervals, tk) - (sm->ub+1);
@@ -424,6 +429,8 @@ void Bucket<key>::recvFinalKeys(int srcnode, sendInfo s){
 		for(int i=0; i<recvData.size(); i++)
 			out_num += recvData[i].ind2 - recvData[i].ind1;
 		key *out_data = new key[out_num];
+
+
 		int prev = 0;
 		for(int i=0; i<recvData.size(); i++){
 			int n = recvData[i].ind2 - recvData[i].ind1;
@@ -433,6 +440,8 @@ void Bucket<key>::recvFinalKeys(int srcnode, sendInfo s){
 			prev += n;
 		}
 		std::sort(out_data, out_data + out_num);
+
+   // heapSort(out_data, out_num);
 		//ckout<<" Finished sorting, out_elems: "<<out_num<<" - "<<CkMyPe()<<endl;
 		//for(int i=0; i<out_num; i++){
 		//	ckout<<"out_data["<<i<<"]: "<<out_data[i]<<" : "<<CkMyPe()<<endl;
@@ -445,6 +454,31 @@ void Bucket<key>::recvFinalKeys(int srcnode, sendInfo s){
 
 
 
+template <class key>
+void Bucket<key>::heapSort(key *out_data, int out_num){
+
+  std::priority_queue<sortItem<key> > heap;
+  CkAssert(recvData.size() == CkNumNodes());
+  int first[CkNumNodes()]; //first element which is not in heap
+  for(int i=0; i<recvData.size(); i++){
+    first[i] = recvData[i].ind1;
+    if(first[i] <  recvData[i].ind2){//not empty
+			key *base = (key *)recvData[i].base;
+      heap.push(sortItem<key>(base[first[i]], i));
+      first[i]++;
+    }
+  }
+  for(int i=0; i<out_num; i++){
+    sortItem<key> sI = heap.top();
+    heap.pop();
+    key* base = (key*)recvData[sI.peId].base;
+    out_data[i] = base[first[sI.peId] - 1];
+    if(first[sI.peId] <  recvData[sI.peId].ind2){//not empty
+      heap.push(sortItem<key>(base[first[sI.peId]], sI.peId));
+      first[sI.peId]++;
+    }
+  }
+}
 
 
 

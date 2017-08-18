@@ -1,5 +1,6 @@
 #CHARMDIR ?= $(HOME)/work/parallel_sorting/charm-nonsmp/verbs-linux-x86_64-icc
-CHARMDIR ?= $(HOME)/software/parsort/charm/pamilrts-bluegeneq-smp-clang
+#CHARMDIR ?= $(HOME)/software/parsort/charm/pamilrts-bluegeneq-smp-clang
+CHARMDIR ?= $(HOME)/software/parsort/charm/pamilrts-bluegeneq-smp-gcc
 #CHARMDIR ?= $(HOME)/work/parallel_sorting/charm-old/verbs-linux-x86_64-smp-icc
 
 #Optimizations need to be enabled
