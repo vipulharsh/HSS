@@ -1,5 +1,6 @@
 mainmodule testsorting {
 
+
     readonly uint64_t m_w;
     readonly uint64_t m_z;
 
@@ -8,7 +9,7 @@ mainmodule testsorting {
     };
 
     group dataManager{
-    	entry dataManager(int numBuckets, int numElem, int probe_max);
+    	entry dataManager(int numBuckets, int numElem, int probe_max, int input_dist);
 	entry void SortingDone();
 	//entry void foo(int x);
     };

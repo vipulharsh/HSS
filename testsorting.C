@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+#include <iostream>
+#include <string.h>
 #include "testsorting.decl.h"
 
 //header files for libraries in Charm
@@ -43,6 +45,19 @@ uint64_t getRandom(uint64_t value){
     return value ^ getRandom();
 }
 */
+const int NUM_DISTS = 6; 
+const std::string distributions[NUM_DISTS]={"UNIF", "SKEW1", "SKEW2", "SKEW3", "GAUSS", "AllZeros"};
+
+
+int getDistCode(std::string input_dist){
+    for(int i=0; i<NUM_DISTS; i++){
+       if(distributions[i] == input_dist)
+          return i;
+    }
+    return 0; //default
+}
+
+
 
 class testsorting : public CBase_testsorting{
   public:
@@ -53,13 +68,28 @@ class testsorting : public CBase_testsorting{
         int probe_max = -1;
         if(m->argc > 2)
             probe_max = atoi(m->argv[3]);
- 
+        std::string input_dist = "UNIF";
+        if(m->argc > 3)
+            input_dist = m->argv[4];
+        
+
   	//Create this Node Mgr
         //*(Global<key, value>::nodemgr) = CProxy_NodeManager<key, value>::ckNew();
         //Call dataManager
-        CProxy_dataManager dMProxy = CProxy_dataManager::ckNew(CkNumPes() ,num_elems, probe_max);
+        CProxy_dataManager dMProxy = CProxy_dataManager::ckNew(CkNumPes() ,num_elems, probe_max, getDistCode(input_dist));
     }
 };
+
+
+uint64_t getDuplicateDist1(){
+    int coin = rand_r(&seed)%2;
+    if(coin==0)
+       return getRandom();
+    else{
+       uint64_t base = 1000000;
+       return base + (getRandom() & (uint64_t)1023);
+    }
+}
 
 
 
@@ -84,16 +114,27 @@ class dataManager : public CBase_dataManager{
       CkCallback CB;
       double startTime, endTime;
   public:
-    dataManager(int numBuckets, int numElem, int probe_max){
+    dataManager(int numBuckets, int numElem, int probe_max, int input_dist){
         //num_elems = num_elems*(1+newid);
         dataIn = new uint64_t[numElem];
         int peid = CkMyPe();
         seed = CkMyPe();
+        if(!CkMyPe())
+          std::cout<<"Using Input distribution: ["<<distributions[input_dist]<<"]"<<std::endl;
         for (int i = 0; i < numElem; i++){
-            dataIn[i]  = getRandom();
-            //dataIn[i]  = getGaussianRandom();
-            //dataIn[i]  = getRandom()%100;
-            //dataIn[i]  = 0;
+            if(distributions[input_dist] == "UNIF")
+              dataIn[i]  = getRandom();
+            else if(distributions[input_dist] == "SKEW1")
+              dataIn[i]  = getDuplicateDist1();
+            else if(distributions[input_dist] == "SKEW2")
+              dataIn[i]  = getRandom()%100;
+            else if(distributions[input_dist] == "SKEW3")
+              dataIn[i]  = getRandom() & getRandom();
+            else if(distributions[input_dist] == "GAUSS")
+              dataIn[i]  = getGaussianRandom();
+            else if(distributions[input_dist] == "AllZeros")
+              dataIn[i]  = 0;
+            //dataIn[i]  = getRandom();
             //dataIn[i]  = getRandom()%5;
             //dataIn[i]  = getRandom() & getRandom();
             //dataIn[i].k  = getRandom() & getRandom((peid + i) ^ numElem);

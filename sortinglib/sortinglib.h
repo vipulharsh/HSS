@@ -57,7 +57,7 @@ class tagged_key {
     tagged_key(){}
     tagged_key(key _k, int _pe, int _ind): k(_k), pe(_pe), ind(_ind){}
     /*inline*/ bool operator< (const tagged_key<key>& other) const{
-      return (k==other.k? (pe==other.pe? (ind<other.ind): (pe < other.pe)):(k < other.k));
+      return (k==other.k? (ind==other.ind? (pe<other.pe): (ind < other.ind)):(k < other.k));
     }
     friend std::ostream& operator<< (std::ostream &out, const tagged_key<key> &tk){
       out<< "(" << tk.k << "," << tk.pe << "," << tk.ind << ")";
@@ -73,13 +73,13 @@ class tagged_key {
 
 template <class key>
 tagged_key<key> getTaggedMaxKey(key maxkey){
-  return tagged_key<key>(maxkey, INT_MAX, 0);
+  return tagged_key<key>(maxkey, INT_MAX, INT_MAX);
 }
 
 
 template <class key>
 tagged_key<key> getTaggedMinKey(key minkey){
-  return tagged_key<key>(minkey, INT_MIN, 0);
+  return tagged_key<key>(minkey, INT_MIN, INT_MIN);
 }
 
 
