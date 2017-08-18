@@ -76,8 +76,8 @@ template < class key >
 template < class key > 
 
     struct Closure_Bucket < key > ::startBarrier_2_closure : public SDAG::Closure {
-            CProxy_Sorter<key > _sorter_proxy;
-            CProxy_Main<key > _main_proxy;
+      CProxy_Sorter<key > _sorter_proxy;
+      CProxy_Main<key > _main_proxy;
 
 
       startBarrier_2_closure() {
@@ -86,8 +86,8 @@ template < class key >
       startBarrier_2_closure(CkMigrateMessage*) {
         init();
       }
-            CProxy_Sorter<key > & getP0() { return _sorter_proxy;}
-            CProxy_Main<key > & getP1() { return _main_proxy;}
+      CProxy_Sorter<key > & getP0() { return _sorter_proxy;}
+      CProxy_Main<key > & getP1() { return _main_proxy;}
       void pup(PUP::er& __p) {
         __p | _sorter_proxy;
         __p | _main_proxy;
@@ -124,7 +124,7 @@ template < class key >
 template < class key > 
 
     struct Closure_Bucket < key > ::genSample_4_closure : public SDAG::Closure {
-            sampleInfo sI;
+      sampleInfo sI;
 
 
       genSample_4_closure() {
@@ -133,7 +133,7 @@ template < class key >
       genSample_4_closure(CkMigrateMessage*) {
         init();
       }
-            sampleInfo & getP0() { return sI;}
+      sampleInfo & getP0() { return sI;}
       void pup(PUP::er& __p) {
         __p | sI;
         packClosure(__p);
@@ -148,10 +148,10 @@ template < class key >
 template < class key > 
 
     struct Closure_Bucket < key > ::firstProbe_5_closure : public SDAG::Closure {
-            key firstkey;
-            key lastkey;
-            key stepSize;
-            int probeSize;
+      key firstkey;
+      key lastkey;
+      key stepSize;
+      int probeSize;
 
 
       firstProbe_5_closure() {
@@ -160,10 +160,10 @@ template < class key >
       firstProbe_5_closure(CkMigrateMessage*) {
         init();
       }
-            key & getP0() { return firstkey;}
-            key & getP1() { return lastkey;}
-            key & getP2() { return stepSize;}
-            int & getP3() { return probeSize;}
+      key & getP0() { return firstkey;}
+      key & getP1() { return lastkey;}
+      key & getP2() { return stepSize;}
+      int & getP3() { return probeSize;}
       void pup(PUP::er& __p) {
         __p | firstkey;
         __p | lastkey;
@@ -181,7 +181,7 @@ template < class key >
 template < class key > 
 
     struct Closure_Bucket < key > ::firstLocalProbe_6_closure : public SDAG::Closure {
-            int lastProbeSize;
+      int lastProbeSize;
 
 
       firstLocalProbe_6_closure() {
@@ -190,7 +190,7 @@ template < class key >
       firstLocalProbe_6_closure(CkMigrateMessage*) {
         init();
       }
-            int & getP0() { return lastProbeSize;}
+      int & getP0() { return lastProbeSize;}
       void pup(PUP::er& __p) {
         __p | lastProbeSize;
         packClosure(__p);
@@ -256,8 +256,8 @@ template < class key >
 template < class key > 
 
     struct Closure_Bucket < key > ::recvFinalKeys_12_closure : public SDAG::Closure {
-            int srcnode;
-            sendInfo s;
+      int srcnode;
+      sendInfo s;
 
 
       recvFinalKeys_12_closure() {
@@ -266,8 +266,8 @@ template < class key >
       recvFinalKeys_12_closure(CkMigrateMessage*) {
         init();
       }
-            int & getP0() { return srcnode;}
-            sendInfo & getP1() { return s;}
+      int & getP0() { return srcnode;}
+      sendInfo & getP1() { return s;}
       void pup(PUP::er& __p) {
         __p | srcnode;
         __p | s;
@@ -358,10 +358,10 @@ template < class key >
 template < class key > 
 
     struct Closure_NodeManager < key > ::registerLocalChare_2_closure : public SDAG::Closure {
-            int nElem;
-            int pe;
-            CProxy_Bucket<key > _bucket_arr;
-            CProxy_Sorter<key > _sorter;
+      int nElem;
+      int pe;
+      CProxy_Bucket<key > _bucket_arr;
+      CProxy_Sorter<key > _sorter;
 
 
       registerLocalChare_2_closure() {
@@ -370,10 +370,10 @@ template < class key >
       registerLocalChare_2_closure(CkMigrateMessage*) {
         init();
       }
-            int & getP0() { return nElem;}
-            int & getP1() { return pe;}
-            CProxy_Bucket<key > & getP2() { return _bucket_arr;}
-            CProxy_Sorter<key > & getP3() { return _sorter;}
+      int & getP0() { return nElem;}
+      int & getP1() { return pe;}
+      CProxy_Bucket<key > & getP2() { return _bucket_arr;}
+      CProxy_Sorter<key > & getP3() { return _sorter;}
       void pup(PUP::er& __p) {
         __p | nElem;
         __p | pe;
@@ -391,7 +391,7 @@ template < class key >
 template < class key > 
 
     struct Closure_NodeManager < key > ::collectSamples_3_closure : public SDAG::Closure {
-            sampleInfo sI;
+      sampleInfo sI;
 
 
       collectSamples_3_closure() {
@@ -400,7 +400,7 @@ template < class key >
       collectSamples_3_closure(CkMigrateMessage*) {
         init();
       }
-            sampleInfo & getP0() { return sI;}
+      sampleInfo & getP0() { return sI;}
       void pup(PUP::er& __p) {
         __p | sI;
         packClosure(__p);
@@ -415,7 +415,7 @@ template < class key >
 template < class key > 
 
     struct Closure_NodeManager < key > ::assembleSamples_4_closure : public SDAG::Closure {
-            std::vector<key > proc_sample;
+      std::vector<key > proc_sample;
 
 
       assembleSamples_4_closure() {
@@ -424,7 +424,7 @@ template < class key >
       assembleSamples_4_closure(CkMigrateMessage*) {
         init();
       }
-            std::vector<key > & getP0() { return proc_sample;}
+      std::vector<key > & getP0() { return proc_sample;}
       void pup(PUP::er& __p) {
         __p | proc_sample;
         packClosure(__p);
@@ -439,8 +439,8 @@ template < class key >
 template < class key > 
 
     struct Closure_NodeManager < key > ::loadkeys_5_closure : public SDAG::Closure {
-            int dest;
-            sendInfo inf;
+      int dest;
+      sendInfo inf;
 
 
       loadkeys_5_closure() {
@@ -449,8 +449,8 @@ template < class key >
       loadkeys_5_closure(CkMigrateMessage*) {
         init();
       }
-            int & getP0() { return dest;}
-            sendInfo & getP1() { return inf;}
+      int & getP0() { return dest;}
+      sendInfo & getP1() { return inf;}
       void pup(PUP::er& __p) {
         __p | dest;
         __p | inf;
@@ -466,7 +466,7 @@ template < class key >
 template < class key > 
 
     struct Closure_NodeManager < key > ::sendOne_6_closure : public SDAG::Closure {
-            int dest;
+      int dest;
 
 
       sendOne_6_closure() {
@@ -475,7 +475,7 @@ template < class key >
       sendOne_6_closure(CkMigrateMessage*) {
         init();
       }
-            int & getP0() { return dest;}
+      int & getP0() { return dest;}
       void pup(PUP::er& __p) {
         __p | dest;
         packClosure(__p);
@@ -514,9 +514,9 @@ template < class key >
 template < class key > 
 
     struct Closure_NodeManager < key > ::handleOne_9_closure : public SDAG::Closure {
-            wrap_ptr msg;
-            int sampleInd;
-            int numsamples;
+      wrap_ptr msg;
+      int sampleInd;
+      int numsamples;
 
 
       handleOne_9_closure() {
@@ -525,9 +525,9 @@ template < class key >
       handleOne_9_closure(CkMigrateMessage*) {
         init();
       }
-            wrap_ptr & getP0() { return msg;}
-            int & getP1() { return sampleInd;}
-            int & getP2() { return numsamples;}
+      wrap_ptr & getP0() { return msg;}
+      int & getP1() { return sampleInd;}
+      int & getP2() { return numsamples;}
       void pup(PUP::er& __p) {
         __p | msg;
         __p | sampleInd;
@@ -706,7 +706,7 @@ void CkIndex_Main < key > ::_call_Main_marshall1(void* impl_msg, void* impl_obj_
   int num_partitions_; implP|num_partitions_;
   impl_buf+=CK_ALIGN(implP.size(),16);
   /*Unmarshall arrays:*/
-  new (impl_obj_void) Main < key > (num_buckets_, probe_max, num_partitions_);
+  new (impl_obj) Main < key > (num_buckets_, probe_max, num_partitions_);
 }
 template < class key > 
 
@@ -719,7 +719,7 @@ int CkIndex_Main < key > ::_callmarshall_Main_marshall1(char* impl_buf, void* im
   int num_partitions_; implP|num_partitions_;
   impl_buf+=CK_ALIGN(implP.size(),16);
   /*Unmarshall arrays:*/
-  new (impl_obj_void) Main < key > (num_buckets_, probe_max, num_partitions_);
+  new (impl_obj) Main < key > (num_buckets_, probe_max, num_partitions_);
   return implP.size();
 }
 template < class key > 
@@ -751,7 +751,6 @@ template < class key >
 void CProxy_Main < key > ::Exit(const CkEntryOptions *impl_e_opts)
 {
   ckCheck();
-  static_cast<void>(impl_e_opts);
   void *impl_msg = CkAllocSysMsg();
   if (ckIsDelegated()) {
     int destPE=CkChareMsgPrep(CkIndex_Main < key > ::idx_Exit_void(), impl_msg, &ckGetChareID());
@@ -1272,7 +1271,6 @@ template < class key >
 
 CkChareID CProxy_Sorter < key > ::ckNew(int impl_onPE, const CkEntryOptions *impl_e_opts)
 {
-  static_cast<void>(impl_e_opts);
   void *impl_msg = CkAllocSysMsg();
   CkChareID impl_ret;
   CkCreateChare(CkIndex_Sorter < key > ::__idx, CkIndex_Sorter < key > ::idx_Sorter_void(), impl_msg, &impl_ret, impl_onPE);
@@ -1282,7 +1280,6 @@ template < class key >
 
 void CProxy_Sorter < key > ::ckNew(CkChareID* pcid, int impl_onPE, const CkEntryOptions *impl_e_opts)
 {
-  static_cast<void>(impl_e_opts);
   void *impl_msg = CkAllocSysMsg();
   CkCreateChare(CkIndex_Sorter < key > ::__idx, CkIndex_Sorter < key > ::idx_Sorter_void(), impl_msg, pcid, impl_onPE);
 }
@@ -1302,7 +1299,7 @@ void CkIndex_Sorter < key > ::_call_Sorter_void(void* impl_msg, void* impl_obj_v
 {
   Sorter < key > * impl_obj = static_cast<Sorter < key >  *>(impl_obj_void);
   CkFreeSysMsg(impl_msg);
-  new (impl_obj_void) Sorter < key > ();
+  new (impl_obj) Sorter < key > ();
 }
 #endif /* CK_TEMPLATES_ONLY */
 
@@ -1470,7 +1467,7 @@ void CkIndex_Sorter < key > ::_call_Sorter_marshall2(void* impl_msg, void* impl_
   CkNodeGroupID _nodeMgrID; implP|_nodeMgrID;
   impl_buf+=CK_ALIGN(implP.size(),16);
   /*Unmarshall arrays:*/
-  new (impl_obj_void) Sorter < key > (bucketArr, num_chares, min, max, par, mainproxy, _nodeMgrID);
+  new (impl_obj) Sorter < key > (bucketArr, num_chares, min, max, par, mainproxy, _nodeMgrID);
 }
 template < class key > 
 
@@ -1487,7 +1484,7 @@ int CkIndex_Sorter < key > ::_callmarshall_Sorter_marshall2(char* impl_buf, void
   CkNodeGroupID _nodeMgrID; implP|_nodeMgrID;
   impl_buf+=CK_ALIGN(implP.size(),16);
   /*Unmarshall arrays:*/
-  new (impl_obj_void) Sorter < key > (bucketArr, num_chares, min, max, par, mainproxy, _nodeMgrID);
+  new (impl_obj) Sorter < key > (bucketArr, num_chares, min, max, par, mainproxy, _nodeMgrID);
   return implP.size();
 }
 template < class key > 
@@ -1803,7 +1800,7 @@ template < class key >
 
 void CProxyElement_Bucket < key > ::insert(const tuning_params &par, const key &_min, const key &_max, int nBuckets_, const CkNodeGroupID &_nodeMgrID, int onPE, const CkEntryOptions *impl_e_opts)
 { 
-   //Marshall: const tuning_params &par, const key &_min, const key &_max, int nBuckets_, const CkNodeGroupID &_nodeMgrID
+  //Marshall: const tuning_params &par, const key &_min, const key &_max, int nBuckets_, const CkNodeGroupID &_nodeMgrID
   int impl_off=0;
   { //Find the size of the PUP'd data
     PUP::sizer implP;
@@ -1876,7 +1873,6 @@ template < class key >
 
 void CProxyElement_Bucket < key > ::SetData(const CkEntryOptions *impl_e_opts) 
 {
-  static_cast<void>(impl_e_opts);
   ckCheck();
   void *impl_msg = CkAllocSysMsg();
   UsrToEnv(impl_msg)->setMsgtype(ForArrayEltMsg);
@@ -2018,7 +2014,6 @@ template < class key >
 
 void CProxyElement_Bucket < key > ::sortAll(const CkEntryOptions *impl_e_opts) 
 {
-  static_cast<void>(impl_e_opts);
   ckCheck();
   void *impl_msg = CkAllocSysMsg();
   UsrToEnv(impl_msg)->setMsgtype(ForArrayEltMsg);
@@ -2035,7 +2030,6 @@ template < class key >
 
 void CProxyElement_Bucket < key > ::stepSort(const CkEntryOptions *impl_e_opts) 
 {
-  static_cast<void>(impl_e_opts);
   ckCheck();
   void *impl_msg = CkAllocSysMsg();
   UsrToEnv(impl_msg)->setMsgtype(ForArrayEltMsg);
@@ -2098,7 +2092,6 @@ template < class key >
 
 void CProxyElement_Bucket < key > ::MergingWork(const CkEntryOptions *impl_e_opts) 
 {
-  static_cast<void>(impl_e_opts);
   ckCheck();
   void *impl_msg = CkAllocSysMsg();
   UsrToEnv(impl_msg)->setMsgtype(ForArrayEltMsg);
@@ -2115,7 +2108,6 @@ template < class key >
 
 void CProxyElement_Bucket < key > ::partialSendOne(const CkEntryOptions *impl_e_opts) 
 {
-  static_cast<void>(impl_e_opts);
   ckCheck();
   void *impl_msg = CkAllocSysMsg();
   UsrToEnv(impl_msg)->setMsgtype(ForArrayEltMsg);
@@ -2147,7 +2139,6 @@ template < class key >
 
 void CProxyElement_Bucket < key > ::finish(const CkEntryOptions *impl_e_opts) 
 {
-  static_cast<void>(impl_e_opts);
   ckCheck();
   void *impl_msg = CkAllocSysMsg();
   UsrToEnv(impl_msg)->setMsgtype(ForArrayEltMsg);
@@ -2338,7 +2329,7 @@ void CkIndex_Bucket < key > ::_call_Bucket_marshall1(void* impl_msg, void* impl_
   CkNodeGroupID _nodeMgrID; implP|_nodeMgrID;
   impl_buf+=CK_ALIGN(implP.size(),16);
   /*Unmarshall arrays:*/
-  new (impl_obj_void) Bucket < key > (par, _min, _max, nBuckets_, _nodeMgrID);
+  new (impl_obj) Bucket < key > (par, _min, _max, nBuckets_, _nodeMgrID);
 }
 template < class key > 
 
@@ -2353,7 +2344,7 @@ int CkIndex_Bucket < key > ::_callmarshall_Bucket_marshall1(char* impl_buf, void
   CkNodeGroupID _nodeMgrID; implP|_nodeMgrID;
   impl_buf+=CK_ALIGN(implP.size(),16);
   /*Unmarshall arrays:*/
-  new (impl_obj_void) Bucket < key > (par, _min, _max, nBuckets_, _nodeMgrID);
+  new (impl_obj) Bucket < key > (par, _min, _max, nBuckets_, _nodeMgrID);
   return implP.size();
 }
 template < class key > 
@@ -2481,7 +2472,6 @@ template < class key >
 
 void CProxy_Bucket < key > ::SetData(const CkEntryOptions *impl_e_opts) 
 {
-  static_cast<void>(impl_e_opts);
   ckCheck();
   void *impl_msg = CkAllocSysMsg();
   UsrToEnv(impl_msg)->setMsgtype(ForArrayEltMsg);
@@ -2852,7 +2842,6 @@ template < class key >
 
 void CProxy_Bucket < key > ::sortAll(const CkEntryOptions *impl_e_opts) 
 {
-  static_cast<void>(impl_e_opts);
   ckCheck();
   void *impl_msg = CkAllocSysMsg();
   UsrToEnv(impl_msg)->setMsgtype(ForArrayEltMsg);
@@ -2888,7 +2877,6 @@ template < class key >
 
 void CProxy_Bucket < key > ::stepSort(const CkEntryOptions *impl_e_opts) 
 {
-  static_cast<void>(impl_e_opts);
   ckCheck();
   void *impl_msg = CkAllocSysMsg();
   UsrToEnv(impl_msg)->setMsgtype(ForArrayEltMsg);
@@ -3046,7 +3034,6 @@ template < class key >
 
 void CProxy_Bucket < key > ::MergingWork(const CkEntryOptions *impl_e_opts) 
 {
-  static_cast<void>(impl_e_opts);
   ckCheck();
   void *impl_msg = CkAllocSysMsg();
   UsrToEnv(impl_msg)->setMsgtype(ForArrayEltMsg);
@@ -3082,7 +3069,6 @@ template < class key >
 
 void CProxy_Bucket < key > ::partialSendOne(const CkEntryOptions *impl_e_opts) 
 {
-  static_cast<void>(impl_e_opts);
   ckCheck();
   void *impl_msg = CkAllocSysMsg();
   UsrToEnv(impl_msg)->setMsgtype(ForArrayEltMsg);
@@ -3151,7 +3137,6 @@ template < class key >
 
 void CProxy_Bucket < key > ::finish(const CkEntryOptions *impl_e_opts) 
 {
-  static_cast<void>(impl_e_opts);
   ckCheck();
   void *impl_msg = CkAllocSysMsg();
   UsrToEnv(impl_msg)->setMsgtype(ForArrayEltMsg);
@@ -3197,6 +3182,7 @@ template < class key >
 
 void CkIndex_Bucket < key > ::_call_Bucket_CkMigrateMessage(void* impl_msg, void* impl_obj_void)
 {
+  Bucket < key > * impl_obj = static_cast<Bucket < key >  *>(impl_obj_void);
   call_migration_constructor<Bucket < key > > c = impl_obj_void;
   c((CkMigrateMessage*)impl_msg);
 }
@@ -3247,7 +3233,6 @@ template < class key >
 
 void CProxySection_Bucket < key > ::SetData(const CkEntryOptions *impl_e_opts) 
 {
-  static_cast<void>(impl_e_opts);
   ckCheck();
   void *impl_msg = CkAllocSysMsg();
   UsrToEnv(impl_msg)->setMsgtype(ForArrayEltMsg);
@@ -3389,7 +3374,6 @@ template < class key >
 
 void CProxySection_Bucket < key > ::sortAll(const CkEntryOptions *impl_e_opts) 
 {
-  static_cast<void>(impl_e_opts);
   ckCheck();
   void *impl_msg = CkAllocSysMsg();
   UsrToEnv(impl_msg)->setMsgtype(ForArrayEltMsg);
@@ -3406,7 +3390,6 @@ template < class key >
 
 void CProxySection_Bucket < key > ::stepSort(const CkEntryOptions *impl_e_opts) 
 {
-  static_cast<void>(impl_e_opts);
   ckCheck();
   void *impl_msg = CkAllocSysMsg();
   UsrToEnv(impl_msg)->setMsgtype(ForArrayEltMsg);
@@ -3469,7 +3452,6 @@ template < class key >
 
 void CProxySection_Bucket < key > ::MergingWork(const CkEntryOptions *impl_e_opts) 
 {
-  static_cast<void>(impl_e_opts);
   ckCheck();
   void *impl_msg = CkAllocSysMsg();
   UsrToEnv(impl_msg)->setMsgtype(ForArrayEltMsg);
@@ -3486,7 +3468,6 @@ template < class key >
 
 void CProxySection_Bucket < key > ::partialSendOne(const CkEntryOptions *impl_e_opts) 
 {
-  static_cast<void>(impl_e_opts);
   ckCheck();
   void *impl_msg = CkAllocSysMsg();
   UsrToEnv(impl_msg)->setMsgtype(ForArrayEltMsg);
@@ -3518,7 +3499,6 @@ template < class key >
 
 void CProxySection_Bucket < key > ::finish(const CkEntryOptions *impl_e_opts) 
 {
-  static_cast<void>(impl_e_opts);
   ckCheck();
   void *impl_msg = CkAllocSysMsg();
   UsrToEnv(impl_msg)->setMsgtype(ForArrayEltMsg);
@@ -3815,7 +3795,6 @@ template < class key >
 
 void CProxyElement_NodeManager < key > ::releaseBufMsgs(const CkEntryOptions *impl_e_opts)
 {
-  static_cast<void>(impl_e_opts);
   ckCheck();
   void *impl_msg = CkAllocSysMsg();
   if (ckIsDelegated()) {
@@ -3886,7 +3865,6 @@ template < class key >
 
 void CProxyElement_NodeManager < key > ::finishOne(const CkEntryOptions *impl_e_opts)
 {
-  static_cast<void>(impl_e_opts);
   ckCheck();
   void *impl_msg = CkAllocSysMsg();
   if (ckIsDelegated()) {
@@ -3922,7 +3900,6 @@ template < class key >
 
 void CProxyElement_NodeManager < key > ::depositHist(const CkEntryOptions *impl_e_opts)
 {
-  static_cast<void>(impl_e_opts);
   ckCheck();
   void *impl_msg = CkAllocSysMsg();
   if (ckIsDelegated()) {
@@ -4035,7 +4012,7 @@ void CkIndex_NodeManager < key > ::_call_NodeManager_marshall1(void* impl_msg, v
   key _maxkey; implP|_maxkey;
   impl_buf+=CK_ALIGN(implP.size(),16);
   /*Unmarshall arrays:*/
-  new (impl_obj_void) NodeManager < key > (_minkey, _maxkey);
+  new (impl_obj) NodeManager < key > (_minkey, _maxkey);
 }
 template < class key > 
 
@@ -4047,7 +4024,7 @@ int CkIndex_NodeManager < key > ::_callmarshall_NodeManager_marshall1(char* impl
   key _maxkey; implP|_maxkey;
   impl_buf+=CK_ALIGN(implP.size(),16);
   /*Unmarshall arrays:*/
-  new (impl_obj_void) NodeManager < key > (_minkey, _maxkey);
+  new (impl_obj) NodeManager < key > (_minkey, _maxkey);
   return implP.size();
 }
 template < class key > 
@@ -4481,7 +4458,6 @@ template < class key >
 
 void CProxy_NodeManager < key > ::releaseBufMsgs(const CkEntryOptions *impl_e_opts)
 {
-  static_cast<void>(impl_e_opts);
   ckCheck();
   void *impl_msg = CkAllocSysMsg();
   if (ckIsDelegated()) {
@@ -4656,7 +4632,6 @@ template < class key >
 
 void CProxy_NodeManager < key > ::finishOne(const CkEntryOptions *impl_e_opts)
 {
-  static_cast<void>(impl_e_opts);
   ckCheck();
   void *impl_msg = CkAllocSysMsg();
   if (ckIsDelegated()) {
@@ -4730,7 +4705,6 @@ template < class key >
 
 void CProxy_NodeManager < key > ::depositHist(const CkEntryOptions *impl_e_opts)
 {
-  static_cast<void>(impl_e_opts);
   ckCheck();
   void *impl_msg = CkAllocSysMsg();
   if (ckIsDelegated()) {
@@ -4987,7 +4961,6 @@ template < class key >
 
 void CProxySection_NodeManager < key > ::releaseBufMsgs(const CkEntryOptions *impl_e_opts)
 {
-  static_cast<void>(impl_e_opts);
   ckCheck();
   void *impl_msg = CkAllocSysMsg();
   if (ckIsDelegated()) {
@@ -5067,7 +5040,6 @@ template < class key >
 
 void CProxySection_NodeManager < key > ::finishOne(const CkEntryOptions *impl_e_opts)
 {
-  static_cast<void>(impl_e_opts);
   ckCheck();
   void *impl_msg = CkAllocSysMsg();
   if (ckIsDelegated()) {
@@ -5109,7 +5081,6 @@ template < class key >
 
 void CProxySection_NodeManager < key > ::depositHist(const CkEntryOptions *impl_e_opts)
 {
-  static_cast<void>(impl_e_opts);
   ckCheck();
   void *impl_msg = CkAllocSysMsg();
   if (ckIsDelegated()) {

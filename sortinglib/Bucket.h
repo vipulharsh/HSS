@@ -100,6 +100,7 @@ class Bucket : public CBase_Bucket<key> {
    	void Reset(); 
    	void localProbe();
    	void partialSend(sampleMessage<key> *sm);
+     void heapSort(key *out_data, int out_num);
    	void collapseAndMerge();
    	void totalMerge();
    	void mergeAt(int n);
@@ -110,8 +111,9 @@ class Bucket : public CBase_Bucket<key> {
                         key *first2, key *last2,
                         key *result);
     void postMerging();
-
+  
     std::vector<sendInfo> recvData;
+    
   public:
     Bucket(CkMigrateMessage *);
 	  Bucket(tuning_params par, key _min, key _max, int nBuckets_, CkNodeGroupID _nodeMgrID);

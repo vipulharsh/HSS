@@ -52,7 +52,7 @@ int ls_getStride(){
 int ls_getMaxSampleSize(){
   int lognpes = 1, numpes = CkNodeSize(CkMyNode());
   while((1<<lognpes) <= numpes) lognpes++;
-  return std::max(CkNumNodes()+2, (4 * lognpes * numpes * 100)/LS_EPS);
+  return std::max(CkNumNodes()+2, (3 * lognpes * numpes * 100)/LS_EPS);
 }
 
 
@@ -123,8 +123,8 @@ template<class key>
 class sortItem{
 public:
 	key k;
-	int peId;
-   sortItem(key _k, int _peId): k(_k), peId(_peId) {}
+	short int peId;
+   sortItem(key _k, char _peId): k(_k), peId(_peId) {}
    friend bool operator<(const sortItem<key>& a, const sortItem<key>& b){
 	   return (a.k > b.k); //emulate min heap
    }
@@ -333,6 +333,7 @@ class NodeManager : public CBase_NodeManager<key> {
 
 			sortCopyMsg(dm, dest);
 			dm->sorted = true;
+
 /*
 			dm->sorted = false;
 			int curr = 0;

@@ -519,6 +519,8 @@ void Bucket<key>::recvFinalKeys(int srcnode, sendInfo s){
 		for(int i=0; i<recvData.size(); i++)
 			out_num += recvData[i].ind2 - recvData[i].ind1;
 		key *out_data = new key[out_num];
+
+/*
 		int prev = 0;
 		for(int i=0; i<recvData.size(); i++){
 			int n = recvData[i].ind2 - recvData[i].ind1;
@@ -528,6 +530,8 @@ void Bucket<key>::recvFinalKeys(int srcnode, sendInfo s){
 			prev += n;
 		}
 		std::sort(out_data, out_data + out_num);
+*/
+    heapSort(out_data, out_num);
 		//ckout<<" Finished sorting, out_elems: "<<out_num<<" - "<<CkMyPe()<<endl;
 		//for(int i=0; i<out_num; i++){
 		//	ckout<<"out_data["<<i<<"]: "<<out_data[i]<<" : "<<CkMyPe()<<endl;
@@ -540,6 +544,31 @@ void Bucket<key>::recvFinalKeys(int srcnode, sendInfo s){
 
 
 
+template <class key>
+void Bucket<key>::heapSort(key *out_data, int out_num){
+
+  std::priority_queue<sortItem<key> > heap;
+  CkAssert(recvData.size() == CkNumNodes());
+  int first[CkNumNodes()]; //first element which is not in heap
+  for(int i=0; i<recvData.size(); i++){
+    first[i] = recvData[i].ind1;
+    if(first[i] <  recvData[i].ind2){//not empty
+			key *base = (key *)recvData[i].base;
+      heap.push(sortItem<key>(base[first[i]], i));
+      first[i]++;
+    }
+  }
+  for(int i=0; i<out_num; i++){
+    sortItem<key> sI = heap.top();
+    heap.pop();
+    key* base = (key*)recvData[sI.peId].base;
+    out_data[i] = base[first[sI.peId] - 1];
+    if(first[sI.peId] <  recvData[sI.peId].ind2){//not empty
+      heap.push(sortItem<key>(base[first[sI.peId]], sI.peId));
+      first[sI.peId]++;
+    }
+  }
+}
 
 
 
