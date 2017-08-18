@@ -8,6 +8,9 @@
 #include <map>
 
 
+extern uint64_t getRandom(); 
+
+
 unsigned getRandomSeed(){
   typedef std::chrono::high_resolution_clock myclock;
   myclock::time_point beginning = myclock::now();
@@ -124,7 +127,7 @@ class sortItem{
 public:
 	key k;
 	short int peId;
-   sortItem(key _k, char _peId): k(_k), peId(_peId) {}
+   sortItem(key _k, short int _peId): k(_k), peId(_peId) {}
    friend bool operator<(const sortItem<key>& a, const sortItem<key>& b){
 	   return (a.k > b.k); //emulate min heap
    }
@@ -214,15 +217,16 @@ class NodeManager : public CBase_NodeManager<key> {
 			seed = CkMyNode();
 			//ckout<<"Seed is "<<seed<<endl;
 
-			std::default_random_engine generator(seed);
-			std::uniform_int_distribution<int> distribution(0,cum-1);
+			//std::default_random_engine generator(seed);
+			//std::uniform_int_distribution<int> distribution(0,cum-1);
 
-			distribution(generator);
+			//distribution(generator);
 
 			for(int i=0; i<sampleSize; i++){
-				randIndices[i] = distribution(generator); 
+				//randIndices[i] = distribution(generator); 
+				randIndices[i] = getRandom()%cum; 
 				//ckout<<"randIndices "<<randIndices[i]<<endl;
-				distribution.reset();
+				//distribution.reset();
 			}
 
 			sample= new (sampleSize) array_msg<key>;
@@ -331,10 +335,10 @@ class NodeManager : public CBase_NodeManager<key> {
 			data_msg<key> *dm = new (numelem) data_msg<key>;
 			dm->num_vals = numelem;
 
-			sortCopyMsg(dm, dest);
-			dm->sorted = true;
+			//sortCopyMsg(dm, dest);
+			//dm->sorted = true;
 
-/*
+
 			dm->sorted = false;
 			int curr = 0;
 			for(int i=0; i<ainfo[dest].size(); i++){
@@ -343,7 +347,9 @@ class NodeManager : public CBase_NodeManager<key> {
 				memcpy(dm->data + curr, bucket_data + ind1, (ind2-ind1)*sizeof(key));
 				curr += ind2 - ind1;
 			}
-*/
+      //std::sort(dm->data, dm->data + dm->num_vals);
+      //dm->sorted = true;
+
 			this->thisProxy[dest].recvOne(dm);
 		}
 
@@ -405,14 +411,16 @@ class NodeManager : public CBase_NodeManager<key> {
       if(dm->num_vals > 0){
         unsigned seed = sampleInd;
         //ckout<<"Seed is "<<seed<<endl;
+        /*
         std::default_random_engine generator(seed);
         std::uniform_int_distribution<int> distribution(0,dm->num_vals-1);
         distribution(generator);
-
+        */
         for(int i=0; i<numsamples; i++){
-          int randIdx = distribution(generator); 
+          //int randIdx = distribution(generator); 
+          int randIdx = getRandom()%dm->num_vals; 
           ls_sample[sampleInd + i] = dm->data[randIdx];
-          distribution.reset();
+          //distribution.reset();
         }
         if(sampleInd+numsamples >= ls_getMaxSampleSize())
           CkAbort("Numsamples exceeds expectations\n"); 

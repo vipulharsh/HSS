@@ -161,7 +161,11 @@ void Bucket<key>::sortAll(){
         sepKeys[1] = maxkey ;
         sepCounts[0] = 0;
         sepCounts[1] = numElem;
+        double wtime = -CmiWallTimer();
         std::sort(bucket_data, bucket_data + numElem);
+        wtime +=  CmiWallTimer();
+        if(!CkMyPe())
+            ckout<<"Local sorting on pe, numElem: "<<numElem<<" - "<<wtime<<endl;
         lastSortedChunk = 1;
         sorted[1] = true; 
 }
@@ -405,12 +409,13 @@ void Bucket<key>::genNextSamples(sampleMessage<key> *sm){
 
 	seed = (sampleSize * CkMyPe());
 	//ckout<<"Seed is "<<seed<<endl;
-	std::default_random_engine generator(seed);
-	std::uniform_int_distribution<int> distribution(0,numElem-1);
-	distribution(generator);
+	//std::default_random_engine generator(seed);
+	//std::uniform_int_distribution<int> distribution(0,numElem-1);
+	//distribution(generator);
 	
 	for(int i=0; i<sampleSize; i++){
-		int randIndex = distribution(generator);
+		//int randIndex = distribution(generator);
+		int randIndex = getRandom()%numElem;
 		key k = bucket_data[randIndex]; 
 		int l = std::lower_bound(sm->lb, sm->lb + sm->nIntervals, k) - (sm->lb+1);
 		int u = std::upper_bound(sm->ub, sm->ub + sm->nIntervals, k) - (sm->ub+1);
@@ -520,7 +525,7 @@ void Bucket<key>::recvFinalKeys(int srcnode, sendInfo s){
 			out_num += recvData[i].ind2 - recvData[i].ind1;
 		key *out_data = new key[out_num];
 
-/*
+
 		int prev = 0;
 		for(int i=0; i<recvData.size(); i++){
 			int n = recvData[i].ind2 - recvData[i].ind1;
@@ -530,8 +535,8 @@ void Bucket<key>::recvFinalKeys(int srcnode, sendInfo s){
 			prev += n;
 		}
 		std::sort(out_data, out_data + out_num);
-*/
-    heapSort(out_data, out_num);
+
+   // heapSort(out_data, out_num);
 		//ckout<<" Finished sorting, out_elems: "<<out_num<<" - "<<CkMyPe()<<endl;
 		//for(int i=0; i<out_num; i++){
 		//	ckout<<"out_data["<<i<<"]: "<<out_data[i]<<" : "<<CkMyPe()<<endl;
