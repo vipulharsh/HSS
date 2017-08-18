@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <math.h>
 #include "testsorting.decl.h"
 
 //header files for libraries in Charm
@@ -62,6 +63,19 @@ class testsorting : public CBase_testsorting{
 
 
 
+
+//Box-Muller method
+uint64_t getGaussianRandom(){
+  double e=2.7182818284590452;
+  double log_e=log(e);
+  uint64_t mean = ((uint64_t)1)<<(sizeof(uint64_t) * 4);
+  uint64_t std_dev = ((uint64_t)1)<<(sizeof(uint64_t) * 2);
+  return mean + (sqrt(-2*log(rand_r(&seed)*1.0/RAND_MAX)/log_e)
+                 * cos(rand_r(&seed)*2*M_PI/RAND_MAX)
+                 * (double)std_dev);
+}
+
+
 class dataManager : public CBase_dataManager{
   private:
       uint64_t* dataIn;
@@ -74,9 +88,10 @@ class dataManager : public CBase_dataManager{
         //num_elems = num_elems*(1+newid);
         dataIn = new uint64_t[numElem];
         int peid = CkMyPe();
-	seed = CkMyPe();
+        seed = CkMyPe();
         for (int i = 0; i < numElem; i++){
-            dataIn[i]  = getRandom();
+            //dataIn[i]  = getRandom();
+            dataIn[i]  = getGaussianRandom();
             //dataIn[i]  = getRandom() & getRandom();
             //dataIn[i].k  = getRandom() & getRandom((peid + i) ^ numElem);
             //ckout<<"dataIn["<<i<<"]: "<<dataIn[i].k<<"  ::  "<<peid<<endl;
