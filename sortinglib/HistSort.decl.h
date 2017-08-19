@@ -1616,7 +1616,7 @@ void releaseBufMsgs();
 void recvOne(data_msg<key >* impl_msg);
 void handleOne(const wrap_ptr &msg, int sampleInd, int numsamples, int msgnum);
 void finishOne();
-void localhist(data_msg<key >* impl_msg);
+void localhist(int i);
 void depositHist();
 void sendToBuckets(int msg_num);
 };
@@ -1891,30 +1891,34 @@ template < class key > class CkIndex_NodeManager:public CkIndex_NodeGroup{
     static void _call_finishOne_void(void* impl_msg, void* impl_obj);
     
     static void _call_sdag_finishOne_void(void* impl_msg, void* impl_obj);
-    /* DECLS: void localhist(data_msg<key >* impl_msg);
+    /* DECLS: void localhist(int i);
      */
     // Entry point registration at startup
     
-    static int reg_localhist_data_msg();
+    static int reg_localhist_marshall11();
     // Entry point index lookup
     
-    inline static int idx_localhist_data_msg() {
-      static int epidx = reg_localhist_data_msg();
+    inline static int idx_localhist_marshall11() {
+      static int epidx = reg_localhist_marshall11();
       return epidx;
     }
 
     
-    inline static int idx_localhist(void (NodeManager < key > ::*)(data_msg<key >* impl_msg) ) {
-      return idx_localhist_data_msg();
+    inline static int idx_localhist(void (NodeManager < key > ::*)(int i) ) {
+      return idx_localhist_marshall11();
     }
 
 
     
-    static int localhist(data_msg<key >* impl_msg) { return idx_localhist_data_msg(); }
+    static int localhist(int i) { return idx_localhist_marshall11(); }
     
-    static void _call_localhist_data_msg(void* impl_msg, void* impl_obj);
+    static void _call_localhist_marshall11(void* impl_msg, void* impl_obj);
     
-    static void _call_sdag_localhist_data_msg(void* impl_msg, void* impl_obj);
+    static void _call_sdag_localhist_marshall11(void* impl_msg, void* impl_obj);
+    
+    static int _callmarshall_localhist_marshall11(char* impl_buf, void* impl_obj_void);
+    
+    static void _marshallmessagepup_localhist_marshall11(PUP::er &p,void *msg);
     /* DECLS: void depositHist();
      */
     // Entry point registration at startup
@@ -2078,10 +2082,10 @@ int ckGetGroupPe(void) const
     
     void finishOne(const CkEntryOptions *impl_e_opts=NULL);
 
-/* DECLS: void localhist(data_msg<key >* impl_msg);
+/* DECLS: void localhist(int i);
  */
     
-    void localhist(data_msg<key >* impl_msg);
+    void localhist(int i, const CkEntryOptions *impl_e_opts=NULL);
 
 /* DECLS: void depositHist();
  */
@@ -2201,10 +2205,10 @@ operator CkGroupID () const { return ckGetGroupID(); }
     
     void finishOne(const CkEntryOptions *impl_e_opts=NULL);
 
-/* DECLS: void localhist(data_msg<key >* impl_msg);
+/* DECLS: void localhist(int i);
  */
     
-    void localhist(data_msg<key >* impl_msg);
+    void localhist(int i, const CkEntryOptions *impl_e_opts=NULL);
 
 /* DECLS: void depositHist();
  */
@@ -2342,10 +2346,10 @@ inline int ckGetNumElements(int i) const
     
     void finishOne(const CkEntryOptions *impl_e_opts=NULL);
 
-/* DECLS: void localhist(data_msg<key >* impl_msg);
+/* DECLS: void localhist(int i);
  */
     
-    void localhist(data_msg<key >* impl_msg);
+    void localhist(int i, const CkEntryOptions *impl_e_opts=NULL);
 
 /* DECLS: void depositHist();
  */
@@ -2468,6 +2472,8 @@ template < class key > class Closure_NodeManager {
 
     struct finishOne_10_closure;
 
+
+    struct localhist_11_closure;
 
 
     struct depositHist_12_closure;

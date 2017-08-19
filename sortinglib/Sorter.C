@@ -3,7 +3,7 @@
 /*global*/ CkReduction::reducerType sum_uint64_t_type; 
 
 //epsilon  = 10% imbalance
-#define EPS 2
+#define EPS 5
 
 
 ///reduction for summing arrays of unsigned 64-bit integers

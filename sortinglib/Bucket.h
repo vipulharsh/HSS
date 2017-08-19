@@ -30,8 +30,9 @@ class array_msg : public CMessage_array_msg<key> {
 
 
 template <class key>
-key* lower_bound_tagged(key *first, key *last, tagged_key<key> val, int pe=CkMyPe()){
-  key *base = first;
+key* lower_bound_tagged(key *first, key *last, tagged_key<key> val, int pe=CkMyPe(), key* base=NULL){
+  if(base == NULL)
+    base = first;
   key *it;
   int  count, step;
   count = last - first;

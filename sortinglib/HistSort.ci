@@ -92,7 +92,7 @@ module HistSort{
       entry [exclusive] void recvOne(data_msg<key> *dm);
       entry void handleOne(wrap_ptr msg, int sampleInd, int numsamples, int msgnum);
       entry [exclusive] void finishOne();
-      entry void localhist(data_msg<key> *dm);
+      entry void localhist(int i);
       entry [exclusive] void depositHist();
       entry [expedited] void sendToBuckets(int msg_num);
   };

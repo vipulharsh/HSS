@@ -7,7 +7,8 @@
 #include <unistd.h>
 #include <climits>
 #include <map>
-
+#include <cstdlib>
+#include <ctime>
 
 extern uint64_t getRandom(); 
 
@@ -50,20 +51,34 @@ int ls_getStride(){
 	return std::max(1, (int)(((double)elemsPerPe * LS_EPS)/(CkNumNodes() * 100)));
 }
 
-
-
 /* For random sampling */
+
 int ls_getMaxSampleSize(){
   int lognpes = 1, numpes = CkNodeSize(CkMyNode());
   while((1<<lognpes) <= numpes) lognpes++;
-  return std::max(CkNumNodes()+2, (3 * lognpes * numpes * 100)/LS_EPS);
+  return std::max(CkNumNodes()+2, (3 * lognpes * (numpes-1) * 100)/LS_EPS);
 }
+
+
+
+int ls_getExpectedSampleSize(){
+  int lognpes = 1, numpes = CkNodeSize(CkMyNode());
+  while((1<<lognpes) <= numpes) lognpes++;
+  return (3 * lognpes * (numpes-1) * 100)/LS_EPS;
+}
+
 
 
 int ls_getSampleSize(int locElems){
 	uint64_t elemsPerNode = numTotalElems/CkNumNodes();
 	elemsPerNode += ((elemsPerNode * EPS * 2)/100);
-	return std::max(1, (int)(((uint64_t)ls_getMaxSampleSize() * (uint64_t)locElems)/elemsPerNode));
+  
+	if(elemsPerNode >= ((uint64_t)ls_getExpectedSampleSize() * (uint64_t)locElems)){
+	  double prob = ((double)ls_getExpectedSampleSize() * (double)locElems)/(double)elemsPerNode;
+    return (drand48() <= prob? 1 : 0);
+  }
+
+	return std::max(1, (int)(((uint64_t)ls_getExpectedSampleSize() * (uint64_t)locElems)/elemsPerNode));
 }
 
 
@@ -163,8 +178,8 @@ class NodeManager : public CBase_NodeManager<key> {
 		std::vector<std::vector<sendInfo> > ainfo;
 		std::vector<data_msg<key> *> recvdMsgs;
 		std::vector<data_msg<key> *> bufMsgs;
-		std::map<int, uint64_t*> histLocCounts; //one for each pe
-		uint64_t* finalHistCounts;
+		std::map<int, uint32_t*> histLocCounts; //one for each pe
+		uint32_t* finalHistCounts;
 
 		Bucket<key>* getLocalBucket(){
 			for(int i=0; i<numpes; i++){
@@ -452,6 +467,10 @@ class NodeManager : public CBase_NodeManager<key> {
 				//CkPrintf("[%d] My elems: %d\n", CkMyNode(), numElemFinal);
 
 				ls_sample[ls_numTotSamples++] = getTaggedMaxKey<key>(maxkey);
+
+        if(!CkMyNode())
+            CkPrintf("ls_numTotSamples: %d, ls_getMaxSampleSize(): %d, ls_getExpectedSampleSize(): %d\n", ls_numTotSamples, ls_getMaxSampleSize(), ls_getExpectedSampleSize());
+
 				std::sort(ls_sample, ls_sample + ls_numTotSamples); //sort all sampled keys
         /*
 				int numpes = CkNodeSize(CkMyNode());
@@ -479,18 +498,20 @@ class NodeManager : public CBase_NodeManager<key> {
 				//CkPrintf("[%d] Finished sorting, sampling from all messages \n", CkMyNode());
         */
         for(int i=0; i<numpes; i++){
-            uint64_t* histCounts = new uint64_t[ls_numTotSamples+1];	
+            uint32_t* histCounts = new uint32_t[ls_numTotSamples+1]; //32bits should suffice
             std::fill(histCounts, histCounts + ls_numTotSamples + 1, 0);
             histLocCounts[pelist[i]] =  histCounts;
         }
         for(int i=0; i<recvdMsgs.size(); i++){
-        	this->thisProxy[CkMyNode()].localhist(recvdMsgs[i]);
+        	this->thisProxy[CkMyNode()].localhist(i);
+        	//this->thisProxy[CkMyNode()].localhist(recvdMsgs[i]);
         }
 			}
 		}
 
-		void localhist(data_msg<key>* dm){
-		    uint64_t* histCounts = (histLocCounts.find(CkMyPe()))->second;
+		void localhist(int msg_num){
+        data_msg<key>* dm = recvdMsgs[msg_num];
+		    uint32_t* histCounts = (histLocCounts.find(CkMyPe()))->second;
 			//CkPrintf("localhist [%d, %d] histCounts: %p \n", CkMyNode(), CkMyPe(), histCounts);
 			//for(int i=0; i<dm->num_vals; i++)
 			//	CkPrintf("dm->val[%d]: %llu \n", i, dm->data[i]);	
@@ -500,8 +521,8 @@ class NodeManager : public CBase_NodeManager<key> {
 			do{
 				prb++;
 				comp = ls_sample[prb];
-				int cnt = lower_bound_tagged(dm->data,
-						dm->data + dm->num_vals, comp) - dm->data;
+				int cnt = lower_bound_tagged(dm->data + cumCount,
+						dm->data + dm->num_vals, comp, msg_num, dm->data) - dm->data;
 				histCounts[prb] += cnt - cumCount;
 				cumCount = cnt;
 			}while(prb<ls_numTotSamples-1);  //the second condition from Bucket.C is not necessary
@@ -513,12 +534,12 @@ class NodeManager : public CBase_NodeManager<key> {
       numDeposited++;
       if(numDeposited == CkNumNodes()){
         int numHists = histLocCounts.size();
-        uint64_t *histograms[numHists];
-        std::map<int, uint64_t*>::iterator it;
+        uint32_t *histograms[numHists];
+        std::map<int, uint32_t*>::iterator it;
         int i;
         for(i=0,it = histLocCounts.begin(); it != histLocCounts.end(); it++, i++)
           histograms[i] = it->second;
-        uint64_t cum = 0;
+        uint32_t cum = 0;
         for(int i=0; i<ls_numTotSamples; i++){
           for(int j=1; j<numHists; j++)
             histograms[0][i] += histograms[j][i];
@@ -536,15 +557,15 @@ class NodeManager : public CBase_NodeManager<key> {
 
         /* Finalize splitters : brute force*/
         int numpes = CkNodeSize(CkMyNode());
-        uint64_t elemPerPe = numElemFinal/numpes;
+        uint32_t elemPerPe = (uint32_t)(numElemFinal/numpes);
         for(int i=0; i<numpes-1; i++){
-          long long target = (elemPerPe * (i+1));
+          int target = (elemPerPe * (i+1));
           //if(!CkMyNode())
           //    CkPrintf("#%d, target: %ld, elemPerPe: %llu \n", i, target, elemPerPe);
           int bestSpltr = -1;
-          long long closest = LONG_MAX;
+          int closest = INT_MAX;
           for(int j=1; j<ls_numTotSamples; j++){
-            long long dist = labs(target - ((long long)finalHistCounts[j]));
+            int dist = abs(target - ((int)finalHistCounts[j]));
             if(dist < closest){
                closest = dist;
                bestSpltr = j;

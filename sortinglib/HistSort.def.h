@@ -561,6 +561,27 @@ template < class key >
 #endif /* CK_TEMPLATES_ONLY */
 
 #ifdef CK_TEMPLATES_ONLY
+template < class key > 
+
+    struct Closure_NodeManager < key > ::localhist_11_closure : public SDAG::Closure {
+            int i;
+
+
+      localhist_11_closure() {
+        init();
+      }
+      localhist_11_closure(CkMigrateMessage*) {
+        init();
+      }
+            int & getP0() { return i;}
+      void pup(PUP::er& __p) {
+        __p | i;
+        packClosure(__p);
+      }
+      virtual ~localhist_11_closure() {
+      }
+      PUPable_decl_template(SINGLE_ARG(localhist_11_closure));
+    };
 #endif /* CK_TEMPLATES_ONLY */
 
 #ifdef CK_TEMPLATES_ONLY
@@ -3501,7 +3522,7 @@ void releaseBufMsgs();
 void recvOne(data_msg<key >* impl_msg);
 void handleOne(const wrap_ptr &msg, int sampleInd, int numsamples, int msgnum);
 void finishOne();
-void localhist(data_msg<key >* impl_msg);
+void localhist(int i);
 void depositHist();
 void sendToBuckets(int msg_num);
 };
@@ -3772,18 +3793,30 @@ void CProxyElement_NodeManager < key > ::finishOne(const CkEntryOptions *impl_e_
 #endif /* CK_TEMPLATES_ONLY */
 
 #ifdef CK_TEMPLATES_ONLY
-/* DEFS: void localhist(data_msg<key >* impl_msg);
+/* DEFS: void localhist(int i);
  */
 template < class key > 
 
-void CProxyElement_NodeManager < key > ::localhist(data_msg<key >* impl_msg)
+void CProxyElement_NodeManager < key > ::localhist(int i, const CkEntryOptions *impl_e_opts)
 {
   ckCheck();
+  //Marshall: int i
+  int impl_off=0;
+  { //Find the size of the PUP'd data
+    PUP::sizer implP;
+    implP|i;
+    impl_off+=implP.size();
+  }
+  CkMarshallMsg *impl_msg=CkAllocateMarshallMsg(impl_off,impl_e_opts);
+  { //Copy over the PUP'd data
+    PUP::toMem implP((void *)impl_msg->msgBuf);
+    implP|i;
+  }
   if (ckIsDelegated()) {
-     CkNodeGroupMsgPrep(CkIndex_NodeManager < key > ::idx_localhist_data_msg(), impl_msg, ckGetGroupID());
-     ckDelegatedTo()->NodeGroupSend(ckDelegatedPtr(),CkIndex_NodeManager < key > ::idx_localhist_data_msg(), impl_msg, ckGetGroupPe(), ckGetGroupID());
+     CkNodeGroupMsgPrep(CkIndex_NodeManager < key > ::idx_localhist_marshall11(), impl_msg, ckGetGroupID());
+     ckDelegatedTo()->NodeGroupSend(ckDelegatedPtr(),CkIndex_NodeManager < key > ::idx_localhist_marshall11(), impl_msg, ckGetGroupPe(), ckGetGroupID());
   } else {
-    CkSendMsgNodeBranch(CkIndex_NodeManager < key > ::idx_localhist_data_msg(), impl_msg, ckGetGroupPe(), ckGetGroupID(),0);
+    CkSendMsgNodeBranch(CkIndex_NodeManager < key > ::idx_localhist_marshall11(), impl_msg, ckGetGroupPe(), ckGetGroupID(),0);
   }
 }
 #endif /* CK_TEMPLATES_ONLY */
@@ -4583,36 +4616,83 @@ template < class key > PUPable_def_template_nonInst(SINGLE_ARG(Closure_NodeManag
 #endif /* CK_TEMPLATES_ONLY */
 
 #ifdef CK_TEMPLATES_ONLY
-/* DEFS: void localhist(data_msg<key >* impl_msg);
+/* DEFS: void localhist(int i);
  */
 template < class key > 
 
-void CProxy_NodeManager < key > ::localhist(data_msg<key >* impl_msg)
+void CProxy_NodeManager < key > ::localhist(int i, const CkEntryOptions *impl_e_opts)
 {
   ckCheck();
+  //Marshall: int i
+  int impl_off=0;
+  { //Find the size of the PUP'd data
+    PUP::sizer implP;
+    implP|i;
+    impl_off+=implP.size();
+  }
+  CkMarshallMsg *impl_msg=CkAllocateMarshallMsg(impl_off,impl_e_opts);
+  { //Copy over the PUP'd data
+    PUP::toMem implP((void *)impl_msg->msgBuf);
+    implP|i;
+  }
   if (ckIsDelegated()) {
-     CkNodeGroupMsgPrep(CkIndex_NodeManager < key > ::idx_localhist_data_msg(), impl_msg, ckGetGroupID());
-     ckDelegatedTo()->NodeGroupBroadcast(ckDelegatedPtr(),CkIndex_NodeManager < key > ::idx_localhist_data_msg(), impl_msg, ckGetGroupID());
-  } else CkBroadcastMsgNodeBranch(CkIndex_NodeManager < key > ::idx_localhist_data_msg(), impl_msg, ckGetGroupID(),0);
+     CkNodeGroupMsgPrep(CkIndex_NodeManager < key > ::idx_localhist_marshall11(), impl_msg, ckGetGroupID());
+     ckDelegatedTo()->NodeGroupBroadcast(ckDelegatedPtr(),CkIndex_NodeManager < key > ::idx_localhist_marshall11(), impl_msg, ckGetGroupID());
+  } else CkBroadcastMsgNodeBranch(CkIndex_NodeManager < key > ::idx_localhist_marshall11(), impl_msg, ckGetGroupID(),0);
 }
 
 // Entry point registration function
 template < class key > 
 
-int CkIndex_NodeManager < key > ::reg_localhist_data_msg() {
-  int epidx = CkRegisterEp("localhist(data_msg<key >* impl_msg)",
-      _call_localhist_data_msg, CMessage_data_msg<key >::__idx, __idx, 0);
-  CkRegisterMessagePupFn(epidx, (CkMessagePupFn)data_msg<key >::ckDebugPup);
+int CkIndex_NodeManager < key > ::reg_localhist_marshall11() {
+  int epidx = CkRegisterEp("localhist(int i)",
+      _call_localhist_marshall11, CkMarshallMsg::__idx, __idx, 0+CK_EP_NOKEEP);
+  CkRegisterMarshallUnpackFn(epidx, _callmarshall_localhist_marshall11);
+  CkRegisterMessagePupFn(epidx, _marshallmessagepup_localhist_marshall11);
+
   return epidx;
 }
 
 template < class key > 
 
-void CkIndex_NodeManager < key > ::_call_localhist_data_msg(void* impl_msg, void* impl_obj_void)
+void CkIndex_NodeManager < key > ::_call_localhist_marshall11(void* impl_msg, void* impl_obj_void)
 {
   NodeManager < key > * impl_obj = static_cast<NodeManager < key >  *>(impl_obj_void);
-  impl_obj->localhist((data_msg<key >*)impl_msg);
+  CkMarshallMsg *impl_msg_typed=(CkMarshallMsg *)impl_msg;
+  char *impl_buf=impl_msg_typed->msgBuf;
+  /*Unmarshall pup'd fields: int i*/
+  PUP::fromMem implP(impl_buf);
+  int i; implP|i;
+  impl_buf+=CK_ALIGN(implP.size(),16);
+  /*Unmarshall arrays:*/
+  impl_obj->localhist(i);
 }
+template < class key > 
+
+int CkIndex_NodeManager < key > ::_callmarshall_localhist_marshall11(char* impl_buf, void* impl_obj_void) {
+  NodeManager < key > * impl_obj = static_cast< NodeManager < key >  *>(impl_obj_void);
+  /*Unmarshall pup'd fields: int i*/
+  PUP::fromMem implP(impl_buf);
+  int i; implP|i;
+  impl_buf+=CK_ALIGN(implP.size(),16);
+  /*Unmarshall arrays:*/
+  impl_obj->localhist(i);
+  return implP.size();
+}
+template < class key > 
+
+void CkIndex_NodeManager < key > ::_marshallmessagepup_localhist_marshall11(PUP::er &implDestP,void *impl_msg) {
+  CkMarshallMsg *impl_msg_typed=(CkMarshallMsg *)impl_msg;
+  char *impl_buf=impl_msg_typed->msgBuf;
+  /*Unmarshall pup'd fields: int i*/
+  PUP::fromMem implP(impl_buf);
+  int i; implP|i;
+  impl_buf+=CK_ALIGN(implP.size(),16);
+  /*Unmarshall arrays:*/
+  if (implDestP.hasComments()) implDestP.comment("i");
+  implDestP|i;
+}
+template < class key > PUPable_def_template_nonInst(SINGLE_ARG(Closure_NodeManager < key > ::localhist_11_closure))
 #endif /* CK_TEMPLATES_ONLY */
 
 #ifdef CK_TEMPLATES_ONLY
@@ -5024,20 +5104,32 @@ void CProxySection_NodeManager < key > ::finishOne(const CkEntryOptions *impl_e_
 #endif /* CK_TEMPLATES_ONLY */
 
 #ifdef CK_TEMPLATES_ONLY
-/* DEFS: void localhist(data_msg<key >* impl_msg);
+/* DEFS: void localhist(int i);
  */
 template < class key > 
 
-void CProxySection_NodeManager < key > ::localhist(data_msg<key >* impl_msg)
+void CProxySection_NodeManager < key > ::localhist(int i, const CkEntryOptions *impl_e_opts)
 {
   ckCheck();
+  //Marshall: int i
+  int impl_off=0;
+  { //Find the size of the PUP'd data
+    PUP::sizer implP;
+    implP|i;
+    impl_off+=implP.size();
+  }
+  CkMarshallMsg *impl_msg=CkAllocateMarshallMsg(impl_off,impl_e_opts);
+  { //Copy over the PUP'd data
+    PUP::toMem implP((void *)impl_msg->msgBuf);
+    implP|i;
+  }
   if (ckIsDelegated()) {
-     ckDelegatedTo()->NodeGroupSectionSend(ckDelegatedPtr(),CkIndex_NodeManager < key > ::idx_localhist_data_msg(), impl_msg, ckGetNumSections(), ckGetSectionIDs());
+     ckDelegatedTo()->NodeGroupSectionSend(ckDelegatedPtr(),CkIndex_NodeManager < key > ::idx_localhist_marshall11(), impl_msg, ckGetNumSections(), ckGetSectionIDs());
   } else {
     void *impl_msg_tmp;
     for (int i=0; i<ckGetNumSections(); ++i) {
        impl_msg_tmp= (i<ckGetNumSections()-1) ? CkCopyMsg((void **) &impl_msg):impl_msg;
-       CkSendMsgNodeBranchMulti(CkIndex_NodeManager < key > ::idx_localhist_data_msg(), impl_msg_tmp, ckGetGroupIDn(i), ckGetNumElements(i), ckGetElements(i),0);
+       CkSendMsgNodeBranchMulti(CkIndex_NodeManager < key > ::idx_localhist_marshall11(), impl_msg_tmp, ckGetGroupIDn(i), ckGetNumElements(i), ckGetElements(i),0);
     }
   }
 }
@@ -5134,8 +5226,8 @@ template < class key > void CkIndex_NodeManager < key > ::__register(const char 
   // REG: void finishOne();
   idx_finishOne_void();
 
-  // REG: void localhist(data_msg<key >* impl_msg);
-  idx_localhist_data_msg();
+  // REG: void localhist(int i);
+  idx_localhist_marshall11();
 
   // REG: void depositHist();
   idx_depositHist_void();
