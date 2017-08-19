@@ -4,36 +4,19 @@
 #include <map>
 #include <vector>
 
-template <class key>
-class probeMessage : public CMessage_probeMessage<key> {
-  public:
-    key* probe;
-    int probeSize;
-    key* newachv_key;
-    int* newachv_id;
-    uint64_t* newachv_count;
-    int num_newachv;
-};
-
 
 template <class key>
 class sampleMessage : public CMessage_sampleMessage<key> {
   public:
     double f;
     int nIntervals;
-    key* lb;
-    key* ub;
-    
-    key* newachv_key;
+    tagged_key<key>* lb;
+    tagged_key<key>* ub;
+    tagged_key<key>* newachv_key;
     int* newachv_id;
     uint64_t* newachv_count;
     int num_newachv;
 };
-
-
-
-
-
 
 
 
@@ -48,24 +31,23 @@ class Sorter : public CBase_Sorter<key>  {
     int nBuckets, nNodes;
     uint64_t nElements;
 
-    key* lastProbe;
-    std::map<key, uint64_t> allPreviousProbes;
-    key* scratch;
+    tagged_key<key>* lastProbe;
     int lastProbeSize;
 
-    key* finalSplitters;
+    tagged_key<key>* finalSplitters;
     bool* achieved;
     int achievedSplitters;
     uint64_t* achievedCounts;
 
     key minkey, maxkey;
+    tagged_key<key> minkey_tagged, maxkey_tagged;
     key globalmin, globalmax;
     tuning_params *params;
     bool firstUse;
 
-    std::vector<key> collectedSample;
+    std::vector<tagged_key<key> > collectedSample;
 
-    key *lb_keys, *ub_keys;
+    tagged_key<key> *lb_keys, *ub_keys;
     uint64_t *lb_ranks, *ub_ranks;
 
     /**
@@ -75,8 +57,7 @@ class Sorter : public CBase_Sorter<key>  {
     double c1, c2;
 
     int checkGoal(int splitterInd, uint64_t histCount);
-    void nextProbes(std::vector<std::pair<key, int> > &newachv, uint64_t* histCounts, CkReductionMsg *msg);
-    void nextSamples(std::vector<std::pair<key, int> > &newachv, uint64_t* histCounts, CkReductionMsg *msg);
+    void nextSamples(std::vector<std::pair<tagged_key<key>, int> > &newachv, uint64_t* histCounts, CkReductionMsg *msg);
     
   public:
 
