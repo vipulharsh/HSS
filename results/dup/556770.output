@@ -1,0 +1,36 @@
+Choosing optimized barrier algorithm name I0:MultiSync2Device:SHMEM:GI
+Charm++> Running in SMP mode: numNodes 256,  16 worker threads per process
+Charm++> The comm. thread both sends and receives messages
+Converse/Charm++ Commit ID: v6.8.0-11-g938cb13
+[0] isomalloc.c> Disabling isomalloc because isomalloc disabled by conv-mach
+CharmLB> Load balancer assumes all CPUs are same.
+Charm++> Running on 64 unique compute nodes (64-way SMP).
+Using Input distribution: [UNIF]
+[0] Histogram Sorting on 4096 at 153.004 MB
+CONS Params->probe_max: 10001
+maxprobe: 10001
+Exiting Sorter Init... 256
+((((((((( [0/0]DataReady 
+$$$$$$$$$ [864/54]finishBarrier 
+Local sorting on pe, numElem: 2097152 - 1.028939
+Comes till here 
+ maxkey: 18446744073709551615, tagged maxkey: 18446744073709551615
+******** [864] Samples size: 4097 collected, sending for histogramming... 1.312753 .
+Probe Number : #### : 1, maxprobesize: 10001,  lastProbeSize: 4097
+***************************************####################comes here
+Fraction of input to be sampled: 0.046161, 0.121899 achieved: 203
+Sending sample intervals to buckets, nIntervals: 53 frac: 0.046161 Not achieved: 53 - 864
+0.003436 : 1  - srtr0 
+Comes till here 
+ maxkey: 18446744073709551615, tagged maxkey: 18446744073709551615
+******** [864] Samples size: 4277 collected, sending for histogramming... 1.349688 .
+Probe Number : #### : 2, maxprobesize: 10001,  lastProbeSize: 4277
+Fraction of input to be sampled: 0.000000, 0.076820 achieved: 53
+Done Histogramming in 1.371488 seconds, numprobes: 2
+Sending sample intervals to buckets, nIntervals: 0 frac: 0.000000 Not achieved: 0 - 864
+0.002966 : 2  - srtr0 
+ls_numTotSamples: 3841, ls_getMaxSampleSize(): 4500, ls_getExpectedSampleSize(): 4500
+
+Completed in 3.896406 seconds.
+Elements sorted: 0 (= 65536 MB)
+[Partition 0][Node 0] End of program

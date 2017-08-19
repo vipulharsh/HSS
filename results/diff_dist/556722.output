@@ -1,0 +1,81 @@
+Choosing optimized barrier algorithm name I0:MultiSync2Device:SHMEM:GI
+Charm++> Running in SMP mode: numNodes 32768,  1 worker threads per process
+Charm++> The comm. thread both sends and receives messages
+Converse/Charm++ Commit ID: v6.8.0-11-g938cb13
+[0] isomalloc.c> Disabling isomalloc because isomalloc disabled by conv-mach
+CharmLB> Load balancer assumes all CPUs are same.
+Charm++> Running on 512 unique compute nodes (64-way SMP).
+Using Input distribution: [SKEW3]
+[0] Histogram Sorting on 32768 at 83.141 MB
+CONS Params->probe_max: 10001
+maxprobe: 65536
+Exiting Sorter Init... 32768
+((((((((( [0/0]DataReady 
+$$$$$$$$$ [21344/21344]finishBarrier 
+Local sorting on pe, numElem: 2097152 - 1.032721
+Initial key sum -638837144
+Comes till here 
+ maxkey: 18446744073709551615, tagged maxkey: (18446744073709551615,2147483647,2147483647)
+******** [21344] Samples size: 32769 collected, sending for histogramming... 1.943722 .
+Doing Histogramming 2.231430 seconds after start.
+Probe Number : #### : 1, maxprobesize: 10001,  lastProbeSize: 32769
+***************************************####################comes here
+Fraction of input to be sampled: 0.835443, 1.969705 achieved: 3061
+Sending sample intervals to buckets, nIntervals: 18311 frac: 0.835443 Not achieved: 29707 - 21344
+0.029639 : 1  - srtr0 
+Comes till here 
+ maxkey: 18446744073709551615, tagged maxkey: (18446744073709551615,2147483647,2147483647)
+******** [21344] Samples size: 55783 collected, sending for histogramming... 2.910326 .
+Doing Histogramming 3.400546 seconds after start.
+Probe Number : #### : 2, maxprobesize: 10001,  lastProbeSize: 55783
+Fraction of input to be sampled: 0.502880, 0.704517 achieved: 5255
+Sending sample intervals to buckets, nIntervals: 22820 frac: 0.502880 Not achieved: 24452 - 21344
+0.034107 : 2  - srtr0 
+Comes till here 
+ maxkey: 18446744073709551615, tagged maxkey: (18446744073709551615,2147483647,2147483647)
+******** [21344] Samples size: 33492 collected, sending for histogramming... 4.063945 .
+Doing Histogramming 4.348113 seconds after start.
+Probe Number : #### : 3, maxprobesize: 10001,  lastProbeSize: 33492
+Fraction of input to be sampled: 0.313906, 0.465680 achieved: 4299
+Sending sample intervals to buckets, nIntervals: 19756 frac: 0.313906 Not achieved: 20153 - 21344
+0.024629 : 3  - srtr0 
+Comes till here 
+ maxkey: 18446744073709551615, tagged maxkey: (18446744073709551615,2147483647,2147483647)
+******** [21344] Samples size: 41229 collected, sending for histogramming... 5.009811 .
+Doing Histogramming 5.361668 seconds after start.
+Probe Number : #### : 4, maxprobesize: 10001,  lastProbeSize: 41229
+Fraction of input to be sampled: 0.138280, 0.300853 achieved: 6643
+Sending sample intervals to buckets, nIntervals: 13487 frac: 0.138280 Not achieved: 13510 - 21344
+0.026361 : 4  - srtr0 
+Comes till here 
+ maxkey: 18446744073709551615, tagged maxkey: (18446744073709551615,2147483647,2147483647)
+******** [21344] Samples size: 36198 collected, sending for histogramming... 6.027597 .
+Doing Histogramming 6.322364 seconds after start.
+Probe Number : #### : 5, maxprobesize: 10001,  lastProbeSize: 36198
+Fraction of input to be sampled: 0.040832, 0.228254 achieved: 7424
+Sending sample intervals to buckets, nIntervals: 6086 frac: 0.040832 Not achieved: 6086 - 21344
+0.022972 : 5  - srtr0 
+Comes till here 
+ maxkey: 18446744073709551615, tagged maxkey: (18446744073709551615,2147483647,2147483647)
+******** [21344] Samples size: 33228 collected, sending for histogramming... 7.009286 .
+Doing Histogramming 7.282154 seconds after start.
+Probe Number : #### : 6, maxprobesize: 10001,  lastProbeSize: 33228
+Fraction of input to be sampled: 0.002119, 0.200637 achieved: 5616
+Sending sample intervals to buckets, nIntervals: 470 frac: 0.002119 Not achieved: 470 - 21344
+0.019574 : 6  - srtr0 
+Comes till here 
+ maxkey: 18446744073709551615, tagged maxkey: (18446744073709551615,2147483647,2147483647)
+******** [21344] Samples size: 32695 collected, sending for histogramming... 7.969967 .
+Doing Histogramming 8.240994 seconds after start.
+Probe Number : #### : 7, maxprobesize: 10001,  lastProbeSize: 32695
+Fraction of input to be sampled: 0.000000, 0.198579 achieved: 470
+Done Histogramming in 8.256986 seconds, numprobes: 7
+Sending sample intervals to buckets, nIntervals: 0 frac: 0.000000 Not achieved: 0 - 21344
+0.016383 : 7  - srtr0 
+ls_numTotSamples: 1, ls_getMaxSampleSize(): 32770, ls_getExpectedSampleSize(): 0
+Final key sum -638837144
+-638837144 0 -638837144
+
+Completed in 16.631912 seconds.
+Elements sorted: 0 (= 524288 MB)
+[Partition 0][Node 0] End of program
