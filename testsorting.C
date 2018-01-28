@@ -66,10 +66,10 @@ class testsorting : public CBase_testsorting{
         int num_elems = atoi(m->argv[1]);
         int rand_seed = atoi(m->argv[2]);
         int probe_max = -1;
-        if(m->argc > 2)
+        if(m->argc > 3)
             probe_max = atoi(m->argv[3]);
         std::string input_dist = "UNIF";
-        if(m->argc > 3)
+        if(m->argc > 4)
             input_dist = m->argv[4];
         
 
