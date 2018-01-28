@@ -1,13 +1,6 @@
-#CHARMDIR ?= $(HOME)/work/parallel_sorting/charm-nonsmp/verbs-linux-x86_64-icc
-#CHARMDIR ?= $(HOME)/software/parsort/charm/pamilrts-bluegeneq-smp-clang
-CHARMDIR ?= $(HOME)/software/parsort/charm/pamilrts-bluegeneq-smp-gcc
-#CHARMDIR ?= $(HOME)/work/parallel_sorting/charm-old/verbs-linux-x86_64-smp-icc
-
-#Optimizations need to be enabled
-#OPTS = -O0 -std=c++0x -g
-OPTS = -O3 -std=c++0x 
-#OPTS = -O3 -std=c++0x -tracemode projections
-CHARMC=$(CHARMDIR)/bin/charmc $(OPTS) 
+CHARMDIR ?= $(HOME)/charm
+CHARMC=$(CHARMDIR)/bin/charmc $(OPTS)
+OPTS = -O3 -std=c++0x
 
 MPI_LIBS=
 ifeq ($(TARGET),gni)
@@ -21,4 +14,3 @@ else
   CXX=mpicxx $(OPTS)
 endif
 endif
-
