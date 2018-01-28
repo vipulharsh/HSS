@@ -1,0 +1,6 @@
+charmrun
+*.a
+*.o
+*.decl.h
+*.def.h
+bin/*
