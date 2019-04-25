@@ -8,7 +8,7 @@
 
 
 
-/* DECLS: template < class key > chare Main: Chare{
+/* DECLS: template <class key> chare Main: Chare{
 Main(int num_buckets_, int probe_max, int num_partitions_);
 void Exit();
 void DataReady(CkReductionMsg* impl_msg);
@@ -17,16 +17,16 @@ void intermediate_isum(CkReductionMsg* impl_msg);
 void final_isum(CkReductionMsg* impl_msg);
 };
  */
-template < class key >  class Main;
-template < class key >  class CkIndex_Main;
-template < class key >  class CProxy_Main;
+template <class key>  class Main;
+template <class key>  class CkIndex_Main;
+template <class key>  class CProxy_Main;
 /* --------------- index object ------------------ */
-template < class key > class CkIndex_Main:public CkIndex_Chare{
+template <class key> class CkIndex_Main:public CkIndex_Chare{
   public:
-    typedef Main < key >  local_t;
-    typedef CkIndex_Main < key >  index_t;
-    typedef CProxy_Main < key >  proxy_t;
-    typedef CProxy_Main < key >  element_t;
+    typedef Main <key>  local_t;
+    typedef CkIndex_Main <key>  index_t;
+    typedef CProxy_Main <key>  proxy_t;
+    typedef CProxy_Main <key>  element_t;
 
     static int __idx;
     static void __register(const char *s, size_t size);
@@ -65,7 +65,7 @@ template < class key > class CkIndex_Main:public CkIndex_Chare{
     }
 
     
-    inline static int idx_Exit(void (Main < key > ::*)() ) {
+    inline static int idx_Exit(void (Main <key> ::*)() ) {
       return idx_Exit_void();
     }
 
@@ -89,7 +89,7 @@ template < class key > class CkIndex_Main:public CkIndex_Chare{
     }
 
     
-    inline static int idx_DataReady(void (Main < key > ::*)(CkReductionMsg* impl_msg) ) {
+    inline static int idx_DataReady(void (Main <key> ::*)(CkReductionMsg* impl_msg) ) {
       return idx_DataReady_CkReductionMsg();
     }
 
@@ -113,7 +113,7 @@ template < class key > class CkIndex_Main:public CkIndex_Chare{
     }
 
     
-    inline static int idx_init_isum(void (Main < key > ::*)(CkReductionMsg* impl_msg) ) {
+    inline static int idx_init_isum(void (Main <key> ::*)(CkReductionMsg* impl_msg) ) {
       return idx_init_isum_CkReductionMsg();
     }
 
@@ -137,7 +137,7 @@ template < class key > class CkIndex_Main:public CkIndex_Chare{
     }
 
     
-    inline static int idx_intermediate_isum(void (Main < key > ::*)(CkReductionMsg* impl_msg) ) {
+    inline static int idx_intermediate_isum(void (Main <key> ::*)(CkReductionMsg* impl_msg) ) {
       return idx_intermediate_isum_CkReductionMsg();
     }
 
@@ -161,7 +161,7 @@ template < class key > class CkIndex_Main:public CkIndex_Chare{
     }
 
     
-    inline static int idx_final_isum(void (Main < key > ::*)(CkReductionMsg* impl_msg) ) {
+    inline static int idx_final_isum(void (Main <key> ::*)(CkReductionMsg* impl_msg) ) {
       return idx_final_isum_CkReductionMsg();
     }
 
@@ -174,12 +174,12 @@ template < class key > class CkIndex_Main:public CkIndex_Chare{
     static void _call_sdag_final_isum_CkReductionMsg(void* impl_msg, void* impl_obj);
 };
 /* --------------- element proxy ------------------ */
-template < class key > class CProxy_Main:public CProxy_Chare{
+template <class key> class CProxy_Main:public CProxy_Chare{
   public:
-    typedef Main < key >  local_t;
-    typedef CkIndex_Main < key >  index_t;
-    typedef CProxy_Main < key >  proxy_t;
-    typedef CProxy_Main < key >  element_t;
+    typedef Main <key>  local_t;
+    typedef CkIndex_Main <key>  index_t;
+    typedef CProxy_Main <key>  proxy_t;
+    typedef CProxy_Main <key>  element_t;
 
     CProxy_Main(void) {};
     CProxy_Main(CkChareID __cid) : CProxy_Chare(__cid){  }
@@ -211,8 +211,8 @@ template < class key > class CProxy_Main:public CProxy_Chare{
 
     void ckSetChareID(const CkChareID &c)
     {      CProxy_Chare::ckSetChareID(c); }
-    Main < key >  *ckLocal(void) const
-    { return (Main < key >  *)CkLocalChare(&ckGetChareID()); }
+    Main <key>  *ckLocal(void) const
+    { return (Main <key>  *)CkLocalChare(&ckGetChareID()); }
 /* DECLS: Main(int num_buckets_, int probe_max, int num_partitions_);
  */
     static CkChareID ckNew(int num_buckets_, int probe_max, int num_partitions_, int onPE=CK_PE_ANY, const CkEntryOptions *impl_e_opts=NULL);
@@ -246,141 +246,180 @@ template < class key > class CProxy_Main:public CProxy_Chare{
 
 };
 #define Main_SDAG_CODE 
-template < class key > 
+template <class key> 
 struct CBase_Main;
 
-/* DECLS: template < class key > message sampleMessage{
-tagged_key<key > lb[];
-tagged_key<key > ub[];
-tagged_key<key > newachv_key[];
+#ifndef GROUPDEPNUM_DECLARED
+# define GROUPDEPNUM_DECLARED
+struct GroupDepNum
+{
+  int groupDepNum;
+  explicit GroupDepNum(int g = 0) : groupDepNum{g} { }
+  operator int() const { return groupDepNum; }
+};
+#endif
+/* DECLS: template <class key> message sampleMessage{
+tagged_key<key> lb[];
+tagged_key<key> ub[];
+tagged_key<key> newachv_key[];
 int newachv_id[];
 uint64_t newachv_count[];
 }
 ;
  */
-template < class key > class sampleMessage;
-template < class key > class CMessage_sampleMessage:public CkMessage{
+template <class key> class sampleMessage;
+template <class key> class CMessage_sampleMessage:public CkMessage{
   public:
     static int __idx;
     void* operator new(size_t, void*p) { return p; }
     void* operator new(size_t);
     void* operator new(size_t, int*, const int);
+    void* operator new(size_t, int*, const int, const GroupDepNum);
     void* operator new(size_t, int*);
 #if CMK_MULTIPLE_DELETE
     void operator delete(void*p, void*){dealloc(p);}
     void operator delete(void*p){dealloc(p);}
     void operator delete(void*p, int*, const int){dealloc(p);}
+    void operator delete(void*p, int*, const int, const GroupDepNum){dealloc(p);}
     void operator delete(void*p, int*){dealloc(p);}
 #endif
     void operator delete(void*p, size_t){dealloc(p);}
-    static void* alloc(int,size_t, int*, int);
+    static void* alloc(int,size_t, int*, int, GroupDepNum);
     static void dealloc(void *p);
-    CMessage_sampleMessage < key > ();
-    static void *pack(sampleMessage < key >  *p);
-    static sampleMessage < key > * unpack(void* p);
+    CMessage_sampleMessage <key> ();
+    static void *pack(sampleMessage <key>  *p);
+    static sampleMessage <key> * unpack(void* p);
     void *operator new(size_t, int, int, int, int, int);
     void *operator new(size_t, int, int, int, int, int, const int);
+    void *operator new(size_t, int, int, int, int, int, const int, const GroupDepNum);
 #if CMK_MULTIPLE_DELETE
     void operator delete(void *p, int, int, int, int, int){dealloc(p);}
     void operator delete(void *p, int, int, int, int, int, const int){dealloc(p);}
+    void operator delete(void *p, int, int, int, int, int, const int, const GroupDepNum){dealloc(p);}
 #endif
     static void __register(const char *s, size_t size, CkPackFnPtr pack, CkUnpackFnPtr unpack) {
       __idx = CkRegisterMsg(s, pack, unpack, dealloc, size);
     }
 };
 
-/* DECLS: template < class key > message data_msg{
+#ifndef GROUPDEPNUM_DECLARED
+# define GROUPDEPNUM_DECLARED
+struct GroupDepNum
+{
+  int groupDepNum;
+  explicit GroupDepNum(int g = 0) : groupDepNum{g} { }
+  operator int() const { return groupDepNum; }
+};
+#endif
+/* DECLS: template <class key> message data_msg{
 key data[];
 }
 ;
  */
-template < class key > class data_msg;
-template < class key > class CMessage_data_msg:public CkMessage{
+template <class key> class data_msg;
+template <class key> class CMessage_data_msg:public CkMessage{
   public:
     static int __idx;
     void* operator new(size_t, void*p) { return p; }
     void* operator new(size_t);
     void* operator new(size_t, int*, const int);
+    void* operator new(size_t, int*, const int, const GroupDepNum);
     void* operator new(size_t, int*);
 #if CMK_MULTIPLE_DELETE
     void operator delete(void*p, void*){dealloc(p);}
     void operator delete(void*p){dealloc(p);}
     void operator delete(void*p, int*, const int){dealloc(p);}
+    void operator delete(void*p, int*, const int, const GroupDepNum){dealloc(p);}
     void operator delete(void*p, int*){dealloc(p);}
 #endif
     void operator delete(void*p, size_t){dealloc(p);}
-    static void* alloc(int,size_t, int*, int);
+    static void* alloc(int,size_t, int*, int, GroupDepNum);
     static void dealloc(void *p);
-    CMessage_data_msg < key > ();
-    static void *pack(data_msg < key >  *p);
-    static data_msg < key > * unpack(void* p);
+    CMessage_data_msg <key> ();
+    static void *pack(data_msg <key>  *p);
+    static data_msg <key> * unpack(void* p);
     void *operator new(size_t, int);
     void *operator new(size_t, int, const int);
+    void *operator new(size_t, int, const int, const GroupDepNum);
 #if CMK_MULTIPLE_DELETE
     void operator delete(void *p, int){dealloc(p);}
     void operator delete(void *p, int, const int){dealloc(p);}
+    void operator delete(void *p, int, const int, const GroupDepNum){dealloc(p);}
 #endif
     static void __register(const char *s, size_t size, CkPackFnPtr pack, CkUnpackFnPtr unpack) {
       __idx = CkRegisterMsg(s, pack, unpack, dealloc, size);
     }
 };
 
-/* DECLS: template < class key > message array_msg{
-tagged_key<key > data[];
+#ifndef GROUPDEPNUM_DECLARED
+# define GROUPDEPNUM_DECLARED
+struct GroupDepNum
+{
+  int groupDepNum;
+  explicit GroupDepNum(int g = 0) : groupDepNum{g} { }
+  operator int() const { return groupDepNum; }
+};
+#endif
+/* DECLS: template <class key> message array_msg{
+tagged_key<key> data[];
 }
 ;
  */
-template < class key > class array_msg;
-template < class key > class CMessage_array_msg:public CkMessage{
+template <class key> class array_msg;
+template <class key> class CMessage_array_msg:public CkMessage{
   public:
     static int __idx;
     void* operator new(size_t, void*p) { return p; }
     void* operator new(size_t);
     void* operator new(size_t, int*, const int);
+    void* operator new(size_t, int*, const int, const GroupDepNum);
     void* operator new(size_t, int*);
 #if CMK_MULTIPLE_DELETE
     void operator delete(void*p, void*){dealloc(p);}
     void operator delete(void*p){dealloc(p);}
     void operator delete(void*p, int*, const int){dealloc(p);}
+    void operator delete(void*p, int*, const int, const GroupDepNum){dealloc(p);}
     void operator delete(void*p, int*){dealloc(p);}
 #endif
     void operator delete(void*p, size_t){dealloc(p);}
-    static void* alloc(int,size_t, int*, int);
+    static void* alloc(int,size_t, int*, int, GroupDepNum);
     static void dealloc(void *p);
-    CMessage_array_msg < key > ();
-    static void *pack(array_msg < key >  *p);
-    static array_msg < key > * unpack(void* p);
+    CMessage_array_msg <key> ();
+    static void *pack(array_msg <key>  *p);
+    static array_msg <key> * unpack(void* p);
     void *operator new(size_t, int);
     void *operator new(size_t, int, const int);
+    void *operator new(size_t, int, const int, const GroupDepNum);
 #if CMK_MULTIPLE_DELETE
     void operator delete(void *p, int){dealloc(p);}
     void operator delete(void *p, int, const int){dealloc(p);}
+    void operator delete(void *p, int, const int, const GroupDepNum){dealloc(p);}
 #endif
     static void __register(const char *s, size_t size, CkPackFnPtr pack, CkUnpackFnPtr unpack) {
       __idx = CkRegisterMsg(s, pack, unpack, dealloc, size);
     }
 };
 
-/* DECLS: template < class key > chare Sorter: Chare{
+/* DECLS: template <class key> chare Sorter: Chare{
 Sorter();
-Sorter(const CkArrayID &bucketArr, int num_chares, const key &min, const key &max, const tuning_params &par, const CProxy_Main<key > &mainproxy, const CkNodeGroupID &_nodeMgrID);
+Sorter(const CkArrayID &bucketArr, int num_chares, const key &min, const key &max, const tuning_params &par, const CProxy_Main<key> &mainproxy, const CkNodeGroupID &_nodeMgrID);
 void finishBarrier(CkReductionMsg* impl_msg);
 void Histogram(CkReductionMsg* impl_msg);
 void Done(CkReductionMsg* impl_msg);
 void SanityCheck(CkReductionMsg* impl_msg);
-void recvSample(array_msg<key >* impl_msg);
+void recvSample(array_msg<key>* impl_msg);
 };
  */
-template < class key >  class Sorter;
-template < class key >  class CkIndex_Sorter;
-template < class key >  class CProxy_Sorter;
+template <class key>  class Sorter;
+template <class key>  class CkIndex_Sorter;
+template <class key>  class CProxy_Sorter;
 /* --------------- index object ------------------ */
-template < class key > class CkIndex_Sorter:public CkIndex_Chare{
+template <class key> class CkIndex_Sorter:public CkIndex_Chare{
   public:
-    typedef Sorter < key >  local_t;
-    typedef CkIndex_Sorter < key >  index_t;
-    typedef CProxy_Sorter < key >  proxy_t;
-    typedef CProxy_Sorter < key >  element_t;
+    typedef Sorter <key>  local_t;
+    typedef CkIndex_Sorter <key>  index_t;
+    typedef CProxy_Sorter <key>  proxy_t;
+    typedef CProxy_Sorter <key>  element_t;
 
     static int __idx;
     static void __register(const char *s, size_t size);
@@ -402,7 +441,7 @@ template < class key > class CkIndex_Sorter:public CkIndex_Chare{
     static void _call_Sorter_void(void* impl_msg, void* impl_obj);
     
     static void _call_sdag_Sorter_void(void* impl_msg, void* impl_obj);
-    /* DECLS: Sorter(const CkArrayID &bucketArr, int num_chares, const key &min, const key &max, const tuning_params &par, const CProxy_Main<key > &mainproxy, const CkNodeGroupID &_nodeMgrID);
+    /* DECLS: Sorter(const CkArrayID &bucketArr, int num_chares, const key &min, const key &max, const tuning_params &par, const CProxy_Main<key> &mainproxy, const CkNodeGroupID &_nodeMgrID);
      */
     // Entry point registration at startup
     
@@ -415,7 +454,7 @@ template < class key > class CkIndex_Sorter:public CkIndex_Chare{
     }
 
     
-    static int ckNew(const CkArrayID &bucketArr, int num_chares, const key &min, const key &max, const tuning_params &par, const CProxy_Main<key > &mainproxy, const CkNodeGroupID &_nodeMgrID) { return idx_Sorter_marshall2(); }
+    static int ckNew(const CkArrayID &bucketArr, int num_chares, const key &min, const key &max, const tuning_params &par, const CProxy_Main<key> &mainproxy, const CkNodeGroupID &_nodeMgrID) { return idx_Sorter_marshall2(); }
     
     static void _call_Sorter_marshall2(void* impl_msg, void* impl_obj);
     
@@ -437,7 +476,7 @@ template < class key > class CkIndex_Sorter:public CkIndex_Chare{
     }
 
     
-    inline static int idx_finishBarrier(void (Sorter < key > ::*)(CkReductionMsg* impl_msg) ) {
+    inline static int idx_finishBarrier(void (Sorter <key> ::*)(CkReductionMsg* impl_msg) ) {
       return idx_finishBarrier_CkReductionMsg();
     }
 
@@ -461,7 +500,7 @@ template < class key > class CkIndex_Sorter:public CkIndex_Chare{
     }
 
     
-    inline static int idx_Histogram(void (Sorter < key > ::*)(CkReductionMsg* impl_msg) ) {
+    inline static int idx_Histogram(void (Sorter <key> ::*)(CkReductionMsg* impl_msg) ) {
       return idx_Histogram_CkReductionMsg();
     }
 
@@ -485,7 +524,7 @@ template < class key > class CkIndex_Sorter:public CkIndex_Chare{
     }
 
     
-    inline static int idx_Done(void (Sorter < key > ::*)(CkReductionMsg* impl_msg) ) {
+    inline static int idx_Done(void (Sorter <key> ::*)(CkReductionMsg* impl_msg) ) {
       return idx_Done_CkReductionMsg();
     }
 
@@ -509,7 +548,7 @@ template < class key > class CkIndex_Sorter:public CkIndex_Chare{
     }
 
     
-    inline static int idx_SanityCheck(void (Sorter < key > ::*)(CkReductionMsg* impl_msg) ) {
+    inline static int idx_SanityCheck(void (Sorter <key> ::*)(CkReductionMsg* impl_msg) ) {
       return idx_SanityCheck_CkReductionMsg();
     }
 
@@ -520,7 +559,7 @@ template < class key > class CkIndex_Sorter:public CkIndex_Chare{
     static void _call_SanityCheck_CkReductionMsg(void* impl_msg, void* impl_obj);
     
     static void _call_sdag_SanityCheck_CkReductionMsg(void* impl_msg, void* impl_obj);
-    /* DECLS: void recvSample(array_msg<key >* impl_msg);
+    /* DECLS: void recvSample(array_msg<key>* impl_msg);
      */
     // Entry point registration at startup
     
@@ -533,25 +572,25 @@ template < class key > class CkIndex_Sorter:public CkIndex_Chare{
     }
 
     
-    inline static int idx_recvSample(void (Sorter < key > ::*)(array_msg<key >* impl_msg) ) {
+    inline static int idx_recvSample(void (Sorter <key> ::*)(array_msg<key>* impl_msg) ) {
       return idx_recvSample_array_msg();
     }
 
 
     
-    static int recvSample(array_msg<key >* impl_msg) { return idx_recvSample_array_msg(); }
+    static int recvSample(array_msg<key>* impl_msg) { return idx_recvSample_array_msg(); }
     
     static void _call_recvSample_array_msg(void* impl_msg, void* impl_obj);
     
     static void _call_sdag_recvSample_array_msg(void* impl_msg, void* impl_obj);
 };
 /* --------------- element proxy ------------------ */
-template < class key > class CProxy_Sorter:public CProxy_Chare{
+template <class key> class CProxy_Sorter:public CProxy_Chare{
   public:
-    typedef Sorter < key >  local_t;
-    typedef CkIndex_Sorter < key >  index_t;
-    typedef CProxy_Sorter < key >  proxy_t;
-    typedef CProxy_Sorter < key >  element_t;
+    typedef Sorter <key>  local_t;
+    typedef CkIndex_Sorter <key>  index_t;
+    typedef CProxy_Sorter <key>  proxy_t;
+    typedef CProxy_Sorter <key>  element_t;
 
     CProxy_Sorter(void) {};
     CProxy_Sorter(CkChareID __cid) : CProxy_Chare(__cid){  }
@@ -583,18 +622,18 @@ template < class key > class CProxy_Sorter:public CProxy_Chare{
 
     void ckSetChareID(const CkChareID &c)
     {      CProxy_Chare::ckSetChareID(c); }
-    Sorter < key >  *ckLocal(void) const
-    { return (Sorter < key >  *)CkLocalChare(&ckGetChareID()); }
+    Sorter <key>  *ckLocal(void) const
+    { return (Sorter <key>  *)CkLocalChare(&ckGetChareID()); }
 /* DECLS: Sorter();
  */
     static CkChareID ckNew(int onPE=CK_PE_ANY, const CkEntryOptions *impl_e_opts=NULL);
     static void ckNew(CkChareID* pcid, int onPE=CK_PE_ANY, const CkEntryOptions *impl_e_opts=NULL);
 
-/* DECLS: Sorter(const CkArrayID &bucketArr, int num_chares, const key &min, const key &max, const tuning_params &par, const CProxy_Main<key > &mainproxy, const CkNodeGroupID &_nodeMgrID);
+/* DECLS: Sorter(const CkArrayID &bucketArr, int num_chares, const key &min, const key &max, const tuning_params &par, const CProxy_Main<key> &mainproxy, const CkNodeGroupID &_nodeMgrID);
  */
-    static CkChareID ckNew(const CkArrayID &bucketArr, int num_chares, const key &min, const key &max, const tuning_params &par, const CProxy_Main<key > &mainproxy, const CkNodeGroupID &_nodeMgrID, int onPE=CK_PE_ANY, const CkEntryOptions *impl_e_opts=NULL);
-    static void ckNew(const CkArrayID &bucketArr, int num_chares, const key &min, const key &max, const tuning_params &par, const CProxy_Main<key > &mainproxy, const CkNodeGroupID &_nodeMgrID, CkChareID* pcid, int onPE=CK_PE_ANY, const CkEntryOptions *impl_e_opts=NULL);
-    CProxy_Sorter(const CkArrayID &bucketArr, int num_chares, const key &min, const key &max, const tuning_params &par, const CProxy_Main<key > &mainproxy, const CkNodeGroupID &_nodeMgrID, int onPE=CK_PE_ANY, const CkEntryOptions *impl_e_opts=NULL);
+    static CkChareID ckNew(const CkArrayID &bucketArr, int num_chares, const key &min, const key &max, const tuning_params &par, const CProxy_Main<key> &mainproxy, const CkNodeGroupID &_nodeMgrID, int onPE=CK_PE_ANY, const CkEntryOptions *impl_e_opts=NULL);
+    static void ckNew(const CkArrayID &bucketArr, int num_chares, const key &min, const key &max, const tuning_params &par, const CProxy_Main<key> &mainproxy, const CkNodeGroupID &_nodeMgrID, CkChareID* pcid, int onPE=CK_PE_ANY, const CkEntryOptions *impl_e_opts=NULL);
+    CProxy_Sorter(const CkArrayID &bucketArr, int num_chares, const key &min, const key &max, const tuning_params &par, const CProxy_Main<key> &mainproxy, const CkNodeGroupID &_nodeMgrID, int onPE=CK_PE_ANY, const CkEntryOptions *impl_e_opts=NULL);
 
 /* DECLS: void finishBarrier(CkReductionMsg* impl_msg);
  */
@@ -616,52 +655,52 @@ template < class key > class CProxy_Sorter:public CProxy_Chare{
     
     void SanityCheck(CkReductionMsg* impl_msg);
 
-/* DECLS: void recvSample(array_msg<key >* impl_msg);
+/* DECLS: void recvSample(array_msg<key>* impl_msg);
  */
     
-    void recvSample(array_msg<key >* impl_msg);
+    void recvSample(array_msg<key>* impl_msg);
 
 };
 #define Sorter_SDAG_CODE 
-template < class key > 
+template <class key> 
 struct CBase_Sorter;
 
 class sampleInfo;
 
 class sendInfo;
 
-/* DECLS: template < class key > array Bucket: ArrayElement{
+/* DECLS: template <class key> array Bucket: ArrayElement{
 Bucket(const tuning_params &par, const key &_min, const key &_max, int nBuckets_, const CkNodeGroupID &_nodeMgrID);
-void startBarrier(const CProxy_Sorter<key > &_sorter_proxy, const CProxy_Main<key > &_main_proxy);
+void startBarrier(const CProxy_Sorter<key> &_sorter_proxy, const CProxy_Main<key> &_main_proxy);
 void SetData();
 void genSample(const sampleInfo &sI);
 void firstProbe(const key &firstkey, const key &lastkey, const key &stepSize, int probeSize);
 void firstLocalProbe(int lastProbeSize);
-void genNextSamples(sampleMessage<key >* impl_msg);
+void genNextSamples(sampleMessage<key>* impl_msg);
 void sortAll();
 void stepSort();
-void Load(data_msg<key >* impl_msg);
+void Load(data_msg<key>* impl_msg);
 void recvFinalKeys(int srcnode, const sendInfo &s);
 void MergingWork();
 void partialSendOne();
-void finalProbes(array_msg<key >* impl_msg);
+void finalProbes(array_msg<key>* impl_msg);
 void finish();
 Bucket(CkMigrateMessage* impl_msg);
 };
  */
-template < class key >  class Bucket;
-template < class key >  class CkIndex_Bucket;
-template < class key >  class CProxy_Bucket;
-template < class key >  class CProxyElement_Bucket;
-template < class key >  class CProxySection_Bucket;
+template <class key>  class Bucket;
+template <class key>  class CkIndex_Bucket;
+template <class key>  class CProxy_Bucket;
+template <class key>  class CProxyElement_Bucket;
+template <class key>  class CProxySection_Bucket;
 /* --------------- index object ------------------ */
-template < class key > class CkIndex_Bucket:public CkIndex_ArrayElement{
+template <class key> class CkIndex_Bucket:public CkIndex_ArrayElement{
   public:
-    typedef Bucket < key >  local_t;
-    typedef CkIndex_Bucket < key >  index_t;
-    typedef CProxy_Bucket < key >  proxy_t;
-    typedef CProxyElement_Bucket < key >  element_t;
-    typedef CProxySection_Bucket < key >  section_t;
+    typedef Bucket <key>  local_t;
+    typedef CkIndex_Bucket <key>  index_t;
+    typedef CProxy_Bucket <key>  proxy_t;
+    typedef CProxyElement_Bucket <key>  element_t;
+    typedef CProxySection_Bucket <key>  section_t;
 
     static int __idx;
     static void __register(const char *s, size_t size);
@@ -687,7 +726,7 @@ template < class key > class CkIndex_Bucket:public CkIndex_ArrayElement{
     static int _callmarshall_Bucket_marshall1(char* impl_buf, void* impl_obj_void);
     
     static void _marshallmessagepup_Bucket_marshall1(PUP::er &p,void *msg);
-    /* DECLS: void startBarrier(const CProxy_Sorter<key > &_sorter_proxy, const CProxy_Main<key > &_main_proxy);
+    /* DECLS: void startBarrier(const CProxy_Sorter<key> &_sorter_proxy, const CProxy_Main<key> &_main_proxy);
      */
     // Entry point registration at startup
     
@@ -700,13 +739,13 @@ template < class key > class CkIndex_Bucket:public CkIndex_ArrayElement{
     }
 
     
-    inline static int idx_startBarrier(void (Bucket < key > ::*)(const CProxy_Sorter<key > &_sorter_proxy, const CProxy_Main<key > &_main_proxy) ) {
+    inline static int idx_startBarrier(void (Bucket <key> ::*)(const CProxy_Sorter<key> &_sorter_proxy, const CProxy_Main<key> &_main_proxy) ) {
       return idx_startBarrier_marshall2();
     }
 
 
     
-    static int startBarrier(const CProxy_Sorter<key > &_sorter_proxy, const CProxy_Main<key > &_main_proxy) { return idx_startBarrier_marshall2(); }
+    static int startBarrier(const CProxy_Sorter<key> &_sorter_proxy, const CProxy_Main<key> &_main_proxy) { return idx_startBarrier_marshall2(); }
     
     static void _call_startBarrier_marshall2(void* impl_msg, void* impl_obj);
     
@@ -728,7 +767,7 @@ template < class key > class CkIndex_Bucket:public CkIndex_ArrayElement{
     }
 
     
-    inline static int idx_SetData(void (Bucket < key > ::*)() ) {
+    inline static int idx_SetData(void (Bucket <key> ::*)() ) {
       return idx_SetData_void();
     }
 
@@ -752,7 +791,7 @@ template < class key > class CkIndex_Bucket:public CkIndex_ArrayElement{
     }
 
     
-    inline static int idx_genSample(void (Bucket < key > ::*)(const sampleInfo &sI) ) {
+    inline static int idx_genSample(void (Bucket <key> ::*)(const sampleInfo &sI) ) {
       return idx_genSample_marshall4();
     }
 
@@ -780,7 +819,7 @@ template < class key > class CkIndex_Bucket:public CkIndex_ArrayElement{
     }
 
     
-    inline static int idx_firstProbe(void (Bucket < key > ::*)(const key &firstkey, const key &lastkey, const key &stepSize, int probeSize) ) {
+    inline static int idx_firstProbe(void (Bucket <key> ::*)(const key &firstkey, const key &lastkey, const key &stepSize, int probeSize) ) {
       return idx_firstProbe_marshall5();
     }
 
@@ -808,7 +847,7 @@ template < class key > class CkIndex_Bucket:public CkIndex_ArrayElement{
     }
 
     
-    inline static int idx_firstLocalProbe(void (Bucket < key > ::*)(int lastProbeSize) ) {
+    inline static int idx_firstLocalProbe(void (Bucket <key> ::*)(int lastProbeSize) ) {
       return idx_firstLocalProbe_marshall6();
     }
 
@@ -823,7 +862,7 @@ template < class key > class CkIndex_Bucket:public CkIndex_ArrayElement{
     static int _callmarshall_firstLocalProbe_marshall6(char* impl_buf, void* impl_obj_void);
     
     static void _marshallmessagepup_firstLocalProbe_marshall6(PUP::er &p,void *msg);
-    /* DECLS: void genNextSamples(sampleMessage<key >* impl_msg);
+    /* DECLS: void genNextSamples(sampleMessage<key>* impl_msg);
      */
     // Entry point registration at startup
     
@@ -836,13 +875,13 @@ template < class key > class CkIndex_Bucket:public CkIndex_ArrayElement{
     }
 
     
-    inline static int idx_genNextSamples(void (Bucket < key > ::*)(sampleMessage<key >* impl_msg) ) {
+    inline static int idx_genNextSamples(void (Bucket <key> ::*)(sampleMessage<key>* impl_msg) ) {
       return idx_genNextSamples_sampleMessage();
     }
 
 
     
-    static int genNextSamples(sampleMessage<key >* impl_msg) { return idx_genNextSamples_sampleMessage(); }
+    static int genNextSamples(sampleMessage<key>* impl_msg) { return idx_genNextSamples_sampleMessage(); }
     
     static void _call_genNextSamples_sampleMessage(void* impl_msg, void* impl_obj);
     
@@ -860,7 +899,7 @@ template < class key > class CkIndex_Bucket:public CkIndex_ArrayElement{
     }
 
     
-    inline static int idx_sortAll(void (Bucket < key > ::*)() ) {
+    inline static int idx_sortAll(void (Bucket <key> ::*)() ) {
       return idx_sortAll_void();
     }
 
@@ -884,7 +923,7 @@ template < class key > class CkIndex_Bucket:public CkIndex_ArrayElement{
     }
 
     
-    inline static int idx_stepSort(void (Bucket < key > ::*)() ) {
+    inline static int idx_stepSort(void (Bucket <key> ::*)() ) {
       return idx_stepSort_void();
     }
 
@@ -895,7 +934,7 @@ template < class key > class CkIndex_Bucket:public CkIndex_ArrayElement{
     static void _call_stepSort_void(void* impl_msg, void* impl_obj);
     
     static void _call_sdag_stepSort_void(void* impl_msg, void* impl_obj);
-    /* DECLS: void Load(data_msg<key >* impl_msg);
+    /* DECLS: void Load(data_msg<key>* impl_msg);
      */
     // Entry point registration at startup
     
@@ -908,13 +947,13 @@ template < class key > class CkIndex_Bucket:public CkIndex_ArrayElement{
     }
 
     
-    inline static int idx_Load(void (Bucket < key > ::*)(data_msg<key >* impl_msg) ) {
+    inline static int idx_Load(void (Bucket <key> ::*)(data_msg<key>* impl_msg) ) {
       return idx_Load_data_msg();
     }
 
 
     
-    static int Load(data_msg<key >* impl_msg) { return idx_Load_data_msg(); }
+    static int Load(data_msg<key>* impl_msg) { return idx_Load_data_msg(); }
     
     static void _call_Load_data_msg(void* impl_msg, void* impl_obj);
     
@@ -932,7 +971,7 @@ template < class key > class CkIndex_Bucket:public CkIndex_ArrayElement{
     }
 
     
-    inline static int idx_recvFinalKeys(void (Bucket < key > ::*)(int srcnode, const sendInfo &s) ) {
+    inline static int idx_recvFinalKeys(void (Bucket <key> ::*)(int srcnode, const sendInfo &s) ) {
       return idx_recvFinalKeys_marshall11();
     }
 
@@ -960,7 +999,7 @@ template < class key > class CkIndex_Bucket:public CkIndex_ArrayElement{
     }
 
     
-    inline static int idx_MergingWork(void (Bucket < key > ::*)() ) {
+    inline static int idx_MergingWork(void (Bucket <key> ::*)() ) {
       return idx_MergingWork_void();
     }
 
@@ -984,7 +1023,7 @@ template < class key > class CkIndex_Bucket:public CkIndex_ArrayElement{
     }
 
     
-    inline static int idx_partialSendOne(void (Bucket < key > ::*)() ) {
+    inline static int idx_partialSendOne(void (Bucket <key> ::*)() ) {
       return idx_partialSendOne_void();
     }
 
@@ -995,7 +1034,7 @@ template < class key > class CkIndex_Bucket:public CkIndex_ArrayElement{
     static void _call_partialSendOne_void(void* impl_msg, void* impl_obj);
     
     static void _call_sdag_partialSendOne_void(void* impl_msg, void* impl_obj);
-    /* DECLS: void finalProbes(array_msg<key >* impl_msg);
+    /* DECLS: void finalProbes(array_msg<key>* impl_msg);
      */
     // Entry point registration at startup
     
@@ -1008,13 +1047,13 @@ template < class key > class CkIndex_Bucket:public CkIndex_ArrayElement{
     }
 
     
-    inline static int idx_finalProbes(void (Bucket < key > ::*)(array_msg<key >* impl_msg) ) {
+    inline static int idx_finalProbes(void (Bucket <key> ::*)(array_msg<key>* impl_msg) ) {
       return idx_finalProbes_array_msg();
     }
 
 
     
-    static int finalProbes(array_msg<key >* impl_msg) { return idx_finalProbes_array_msg(); }
+    static int finalProbes(array_msg<key>* impl_msg) { return idx_finalProbes_array_msg(); }
     
     static void _call_finalProbes_array_msg(void* impl_msg, void* impl_obj);
     
@@ -1032,7 +1071,7 @@ template < class key > class CkIndex_Bucket:public CkIndex_ArrayElement{
     }
 
     
-    inline static int idx_finish(void (Bucket < key > ::*)() ) {
+    inline static int idx_finish(void (Bucket <key> ::*)() ) {
       return idx_finish_void();
     }
 
@@ -1063,14 +1102,15 @@ template < class key > class CkIndex_Bucket:public CkIndex_ArrayElement{
     static void _call_sdag_Bucket_CkMigrateMessage(void* impl_msg, void* impl_obj);
 };
 /* --------------- element proxy ------------------ */
-template < class key >  class CProxyElement_Bucket : public CProxyElement_ArrayElement{
+template <class key>  class CProxyElement_Bucket : public CProxyElement_ArrayElement{
   public:
-    typedef Bucket < key >  local_t;
-    typedef CkIndex_Bucket < key >  index_t;
-    typedef CProxy_Bucket < key >  proxy_t;
-    typedef CProxyElement_Bucket < key >  element_t;
-    typedef CProxySection_Bucket < key >  section_t;
+    typedef Bucket <key>  local_t;
+    typedef CkIndex_Bucket <key>  index_t;
+    typedef CProxy_Bucket <key>  proxy_t;
+    typedef CProxyElement_Bucket <key>  element_t;
+    typedef CProxySection_Bucket <key>  section_t;
 
+    using array_index_t = CkArrayIndex1D;
 
     /* TRAM aggregators */
 
@@ -1136,8 +1176,8 @@ template < class key >  class CProxyElement_Bucket : public CProxyElement_ArrayE
     inline const CkArrayIndex &ckGetIndex() const
     { return CProxyElement_ArrayElement::ckGetIndex(); }
 
-    Bucket < key >  *ckLocal(void) const
-    { return (Bucket < key >  *)CProxyElement_ArrayElement::ckLocal(); }
+    Bucket <key>  *ckLocal(void) const
+    { return (Bucket <key>  *)CProxyElement_ArrayElement::ckLocal(); }
 
     CProxyElement_Bucket(const CkArrayID &aid,const CkArrayIndex1D &idx,CK_DELCTOR_PARAM)
         :CProxyElement_ArrayElement(aid,idx,CK_DELCTOR_ARGS)
@@ -1160,10 +1200,10 @@ template < class key >  class CProxyElement_Bucket : public CProxyElement_ArrayE
  */
     
     void insert(const tuning_params &par, const key &_min, const key &_max, int nBuckets_, const CkNodeGroupID &_nodeMgrID, int onPE=-1, const CkEntryOptions *impl_e_opts=NULL);
-/* DECLS: void startBarrier(const CProxy_Sorter<key > &_sorter_proxy, const CProxy_Main<key > &_main_proxy);
+/* DECLS: void startBarrier(const CProxy_Sorter<key> &_sorter_proxy, const CProxy_Main<key> &_main_proxy);
  */
     
-    void startBarrier(const CProxy_Sorter<key > &_sorter_proxy, const CProxy_Main<key > &_main_proxy, const CkEntryOptions *impl_e_opts=NULL) ;
+    void startBarrier(const CProxy_Sorter<key> &_sorter_proxy, const CProxy_Main<key> &_main_proxy, const CkEntryOptions *impl_e_opts=NULL) ;
 
 /* DECLS: void SetData();
  */
@@ -1185,10 +1225,10 @@ template < class key >  class CProxyElement_Bucket : public CProxyElement_ArrayE
     
     void firstLocalProbe(int lastProbeSize, const CkEntryOptions *impl_e_opts=NULL) ;
 
-/* DECLS: void genNextSamples(sampleMessage<key >* impl_msg);
+/* DECLS: void genNextSamples(sampleMessage<key>* impl_msg);
  */
     
-    void genNextSamples(sampleMessage<key >* impl_msg) ;
+    void genNextSamples(sampleMessage<key>* impl_msg) ;
 
 /* DECLS: void sortAll();
  */
@@ -1200,10 +1240,10 @@ template < class key >  class CProxyElement_Bucket : public CProxyElement_ArrayE
     
     void stepSort(const CkEntryOptions *impl_e_opts=NULL) ;
 
-/* DECLS: void Load(data_msg<key >* impl_msg);
+/* DECLS: void Load(data_msg<key>* impl_msg);
  */
     
-    void Load(data_msg<key >* impl_msg) ;
+    void Load(data_msg<key>* impl_msg) ;
 
 /* DECLS: void recvFinalKeys(int srcnode, const sendInfo &s);
  */
@@ -1220,10 +1260,10 @@ template < class key >  class CProxyElement_Bucket : public CProxyElement_ArrayE
     
     void partialSendOne(const CkEntryOptions *impl_e_opts=NULL) ;
 
-/* DECLS: void finalProbes(array_msg<key >* impl_msg);
+/* DECLS: void finalProbes(array_msg<key>* impl_msg);
  */
     
-    void finalProbes(array_msg<key >* impl_msg) ;
+    void finalProbes(array_msg<key>* impl_msg) ;
 
 /* DECLS: void finish();
  */
@@ -1235,14 +1275,15 @@ template < class key >  class CProxyElement_Bucket : public CProxyElement_ArrayE
 
 };
 /* ---------------- collective proxy -------------- */
-template < class key >  class CProxy_Bucket : public CProxy_ArrayElement{
+template <class key>  class CProxy_Bucket : public CProxy_ArrayElement{
   public:
-    typedef Bucket < key >  local_t;
-    typedef CkIndex_Bucket < key >  index_t;
-    typedef CProxy_Bucket < key >  proxy_t;
-    typedef CProxyElement_Bucket < key >  element_t;
-    typedef CProxySection_Bucket < key >  section_t;
+    typedef Bucket <key>  local_t;
+    typedef CkIndex_Bucket <key>  index_t;
+    typedef CProxy_Bucket <key>  proxy_t;
+    typedef CProxyElement_Bucket <key>  element_t;
+    typedef CProxySection_Bucket <key>  section_t;
 
+    using array_index_t = CkArrayIndex1D;
     CProxy_Bucket(void) {
     }
     CProxy_Bucket(const ArrayElement *e) : CProxy_ArrayElement(e){
@@ -1301,14 +1342,14 @@ template < class key >  class CProxy_Bucket : public CProxy_ArrayElement{
     static void      ckNew(CkCallback cb, CkArrayOptions opts = CkArrayOptions()) { ckCreateEmptyArrayAsync(cb, opts); }
 
     // Generalized array indexing:
-    CProxyElement_Bucket < key >  operator [] (const CkArrayIndex1D &idx) const
-    { return CProxyElement_Bucket < key > (ckGetArrayID(), idx, CK_DELCTOR_CALL); }
-    CProxyElement_Bucket < key >  operator() (const CkArrayIndex1D &idx) const
-    { return CProxyElement_Bucket < key > (ckGetArrayID(), idx, CK_DELCTOR_CALL); }
-    CProxyElement_Bucket < key >  operator [] (int idx) const 
-        {return CProxyElement_Bucket < key > (ckGetArrayID(), CkArrayIndex1D(idx), CK_DELCTOR_CALL);}
-    CProxyElement_Bucket < key >  operator () (int idx) const 
-        {return CProxyElement_Bucket < key > (ckGetArrayID(), CkArrayIndex1D(idx), CK_DELCTOR_CALL);}
+    CProxyElement_Bucket <key>  operator [] (const CkArrayIndex1D &idx) const
+    { return CProxyElement_Bucket <key> (ckGetArrayID(), idx, CK_DELCTOR_CALL); }
+    CProxyElement_Bucket <key>  operator() (const CkArrayIndex1D &idx) const
+    { return CProxyElement_Bucket <key> (ckGetArrayID(), idx, CK_DELCTOR_CALL); }
+    CProxyElement_Bucket <key>  operator [] (int idx) const 
+        {return CProxyElement_Bucket <key> (ckGetArrayID(), CkArrayIndex1D(idx), CK_DELCTOR_CALL);}
+    CProxyElement_Bucket <key>  operator () (int idx) const 
+        {return CProxyElement_Bucket <key> (ckGetArrayID(), CkArrayIndex1D(idx), CK_DELCTOR_CALL);}
     CProxy_Bucket(const CkArrayID &aid,CK_DELCTOR_PARAM) 
         :CProxy_ArrayElement(aid,CK_DELCTOR_ARGS) {}
     CProxy_Bucket(const CkArrayID &aid) 
@@ -1321,10 +1362,10 @@ template < class key >  class CProxy_Bucket : public CProxy_ArrayElement{
     static CkArrayID ckNew(const tuning_params &par, const key &_min, const key &_max, int nBuckets_, const CkNodeGroupID &_nodeMgrID, const int s1, const CkEntryOptions *impl_e_opts=NULL);
     static void ckNew(const tuning_params &par, const key &_min, const key &_max, int nBuckets_, const CkNodeGroupID &_nodeMgrID, const int s1, CkCallback _ck_array_creation_cb, const CkEntryOptions *impl_e_opts=NULL);
 
-/* DECLS: void startBarrier(const CProxy_Sorter<key > &_sorter_proxy, const CProxy_Main<key > &_main_proxy);
+/* DECLS: void startBarrier(const CProxy_Sorter<key> &_sorter_proxy, const CProxy_Main<key> &_main_proxy);
  */
     
-    void startBarrier(const CProxy_Sorter<key > &_sorter_proxy, const CProxy_Main<key > &_main_proxy, const CkEntryOptions *impl_e_opts=NULL) ;
+    void startBarrier(const CProxy_Sorter<key> &_sorter_proxy, const CProxy_Main<key> &_main_proxy, const CkEntryOptions *impl_e_opts=NULL) ;
 
 /* DECLS: void SetData();
  */
@@ -1346,10 +1387,10 @@ template < class key >  class CProxy_Bucket : public CProxy_ArrayElement{
     
     void firstLocalProbe(int lastProbeSize, const CkEntryOptions *impl_e_opts=NULL) ;
 
-/* DECLS: void genNextSamples(sampleMessage<key >* impl_msg);
+/* DECLS: void genNextSamples(sampleMessage<key>* impl_msg);
  */
     
-    void genNextSamples(sampleMessage<key >* impl_msg) ;
+    void genNextSamples(sampleMessage<key>* impl_msg) ;
 
 /* DECLS: void sortAll();
  */
@@ -1361,10 +1402,10 @@ template < class key >  class CProxy_Bucket : public CProxy_ArrayElement{
     
     void stepSort(const CkEntryOptions *impl_e_opts=NULL) ;
 
-/* DECLS: void Load(data_msg<key >* impl_msg);
+/* DECLS: void Load(data_msg<key>* impl_msg);
  */
     
-    void Load(data_msg<key >* impl_msg) ;
+    void Load(data_msg<key>* impl_msg) ;
 
 /* DECLS: void recvFinalKeys(int srcnode, const sendInfo &s);
  */
@@ -1381,10 +1422,10 @@ template < class key >  class CProxy_Bucket : public CProxy_ArrayElement{
     
     void partialSendOne(const CkEntryOptions *impl_e_opts=NULL) ;
 
-/* DECLS: void finalProbes(array_msg<key >* impl_msg);
+/* DECLS: void finalProbes(array_msg<key>* impl_msg);
  */
     
-    void finalProbes(array_msg<key >* impl_msg) ;
+    void finalProbes(array_msg<key>* impl_msg) ;
 
 /* DECLS: void finish();
  */
@@ -1396,14 +1437,15 @@ template < class key >  class CProxy_Bucket : public CProxy_ArrayElement{
 
 };
 /* ---------------- section proxy -------------- */
-template < class key >  class CProxySection_Bucket : public CProxySection_ArrayElement{
+template <class key>  class CProxySection_Bucket : public CProxySection_ArrayElement{
   public:
-    typedef Bucket < key >  local_t;
-    typedef CkIndex_Bucket < key >  index_t;
-    typedef CProxy_Bucket < key >  proxy_t;
-    typedef CProxyElement_Bucket < key >  element_t;
-    typedef CProxySection_Bucket < key >  section_t;
+    typedef Bucket <key>  local_t;
+    typedef CkIndex_Bucket <key>  index_t;
+    typedef CProxy_Bucket <key>  proxy_t;
+    typedef CProxyElement_Bucket <key>  element_t;
+    typedef CProxySection_Bucket <key>  section_t;
 
+    using array_index_t = CkArrayIndex1D;
     CProxySection_Bucket(void) {
     }
 
@@ -1475,39 +1517,58 @@ template < class key >  class CProxySection_Bucket : public CProxySection_ArrayE
     { return CProxySection_ArrayElement::ckGetNumElements(); } 
     inline int ckGetNumElements(int i) const
     { return CProxySection_ArrayElement::ckGetNumElements(i); }    // Generalized array indexing:
-    CProxyElement_Bucket < key >  operator [] (const CkArrayIndex1D &idx) const
-        {return CProxyElement_Bucket < key > (ckGetArrayID(), idx, CK_DELCTOR_CALL);}
-    CProxyElement_Bucket < key >  operator() (const CkArrayIndex1D &idx) const
-        {return CProxyElement_Bucket < key > (ckGetArrayID(), idx, CK_DELCTOR_CALL);}
-    CProxyElement_Bucket < key >  operator [] (int idx) const 
-        {return CProxyElement_Bucket < key > (ckGetArrayID(), *(CkArrayIndex1D*)&ckGetArrayElements()[idx], CK_DELCTOR_CALL);}
-    CProxyElement_Bucket < key >  operator () (int idx) const 
-        {return CProxyElement_Bucket < key > (ckGetArrayID(), *(CkArrayIndex1D*)&ckGetArrayElements()[idx], CK_DELCTOR_CALL);}
+    CProxyElement_Bucket <key>  operator [] (const CkArrayIndex1D &idx) const
+        {return CProxyElement_Bucket <key> (ckGetArrayID(), idx, CK_DELCTOR_CALL);}
+    CProxyElement_Bucket <key>  operator() (const CkArrayIndex1D &idx) const
+        {return CProxyElement_Bucket <key> (ckGetArrayID(), idx, CK_DELCTOR_CALL);}
+    CProxyElement_Bucket <key>  operator [] (int idx) const 
+        {return CProxyElement_Bucket <key> (ckGetArrayID(), *(CkArrayIndex1D*)&ckGetArrayElements()[idx], CK_DELCTOR_CALL);}
+    CProxyElement_Bucket <key>  operator () (int idx) const 
+        {return CProxyElement_Bucket <key> (ckGetArrayID(), *(CkArrayIndex1D*)&ckGetArrayElements()[idx], CK_DELCTOR_CALL);}
     static CkSectionID ckNew(const CkArrayID &aid, CkArrayIndex1D *elems, int nElems, int factor=USE_DEFAULT_BRANCH_FACTOR) {
       return CkSectionID(aid, elems, nElems, factor);
     } 
+    static CkSectionID ckNew(const CkArrayID &aid, const std::vector<CkArrayIndex1D> &elems, int factor=USE_DEFAULT_BRANCH_FACTOR) {
+      return CkSectionID(aid, elems, factor);
+    } 
     static CkSectionID ckNew(const CkArrayID &aid, int l, int u, int s, int factor=USE_DEFAULT_BRANCH_FACTOR) {
-      CkVec<CkArrayIndex1D> al;
-      for (int i=l; i<=u; i+=s) al.push_back(CkArrayIndex1D(i));
-      return CkSectionID(aid, al.getVec(), al.size(), factor);
+      std::vector<CkArrayIndex1D> al;
+      for (int i=l; i<=u; i+=s) al.emplace_back(i);
+      return CkSectionID(aid, al, factor);
     } 
     CProxySection_Bucket(const CkArrayID &aid, CkArrayIndex *elems, int nElems, CK_DELCTOR_PARAM) 
         :CProxySection_ArrayElement(aid,elems,nElems,CK_DELCTOR_ARGS) {}
+    CProxySection_Bucket(const CkArrayID &aid, const std::vector<CkArrayIndex> &elems, CK_DELCTOR_PARAM) 
+        :CProxySection_ArrayElement(aid,elems,CK_DELCTOR_ARGS) {}
     CProxySection_Bucket(const CkArrayID &aid, CkArrayIndex *elems, int nElems, int factor=USE_DEFAULT_BRANCH_FACTOR) 
-        :CProxySection_ArrayElement(aid,elems,nElems, factor) { ckAutoDelegate(); }
+        :CProxySection_ArrayElement(aid,elems,nElems, factor) {}
+    CProxySection_Bucket(const CkArrayID &aid, const std::vector<CkArrayIndex> &elems, int factor=USE_DEFAULT_BRANCH_FACTOR) 
+        :CProxySection_ArrayElement(aid,elems, factor) { ckAutoDelegate(); }
     CProxySection_Bucket(const CkSectionID &sid)  
         :CProxySection_ArrayElement(sid) { ckAutoDelegate(); }
     CProxySection_Bucket(int n, const CkArrayID *aid, CkArrayIndex const * const *elems, const int *nElems, CK_DELCTOR_PARAM) 
         :CProxySection_ArrayElement(n,aid,elems,nElems,CK_DELCTOR_ARGS) {}
+    CProxySection_Bucket(const std::vector<CkArrayID> &aid, const std::vector<std::vector<CkArrayIndex> > &elems, CK_DELCTOR_PARAM) 
+        :CProxySection_ArrayElement(aid,elems,CK_DELCTOR_ARGS) {}
     CProxySection_Bucket(int n, const CkArrayID *aid, CkArrayIndex const * const *elems, const int *nElems) 
         :CProxySection_ArrayElement(n,aid,elems,nElems) { ckAutoDelegate(); }
+    CProxySection_Bucket(const std::vector<CkArrayID> &aid, const std::vector<std::vector<CkArrayIndex> > &elems) 
+        :CProxySection_ArrayElement(aid,elems) { ckAutoDelegate(); }
     CProxySection_Bucket(int n, const CkArrayID *aid, CkArrayIndex const * const *elems, const int *nElems, int factor) 
         :CProxySection_ArrayElement(n,aid,elems,nElems, factor) { ckAutoDelegate(); }
+    CProxySection_Bucket(const std::vector<CkArrayID> &aid, const std::vector<std::vector<CkArrayIndex> > &elems, int factor) 
+        :CProxySection_ArrayElement(aid,elems, factor) { ckAutoDelegate(); }
     static CkSectionID ckNew(const CkArrayID &aid, CkArrayIndex *elems, int nElems) {
       return CkSectionID(aid, elems, nElems);
     } 
+    static CkSectionID ckNew(const CkArrayID &aid, const std::vector<CkArrayIndex> &elems) {
+       return CkSectionID(aid, elems);
+    } 
     static CkSectionID ckNew(const CkArrayID &aid, CkArrayIndex *elems, int nElems, int factor) {
       return CkSectionID(aid, elems, nElems, factor);
+    } 
+    static CkSectionID ckNew(const CkArrayID &aid, const std::vector<CkArrayIndex> &elems, int factor) {
+      return CkSectionID(aid, elems, factor);
     } 
     void ckAutoDelegate(int opts=1) {
       if(ckIsDelegated()) return;
@@ -1519,16 +1580,22 @@ template < class key >  class CProxySection_Bucket : public CProxySection_ArrayE
     void resetSection() {
       CProxySection_ArrayElement::resetSection();
     } 
+    static void contribute(CkSectionInfo &sid, int userData=-1, int fragSize=-1);
     static void contribute(int dataSize,void *data,CkReduction::reducerType type, CkSectionInfo &sid, int userData=-1, int fragSize=-1);
-    static void contribute(int dataSize,void *data,CkReduction::reducerType type, CkSectionInfo &sid, CkCallback &cb, int userData=-1, int fragSize=-1);
+    template <typename T>
+    static void contribute(std::vector<T> &data, CkReduction::reducerType type, CkSectionInfo &sid, int userData=-1, int fragSize=-1);
+    static void contribute(CkSectionInfo &sid, const CkCallback &cb, int userData=-1, int fragSize=-1);
+    static void contribute(int dataSize,void *data,CkReduction::reducerType type, CkSectionInfo &sid, const CkCallback &cb, int userData=-1, int fragSize=-1);
+    template <typename T>
+    static void contribute(std::vector<T> &data, CkReduction::reducerType type, CkSectionInfo &sid, const CkCallback &cb, int userData=-1, int fragSize=-1);
 /* DECLS: Bucket(const tuning_params &par, const key &_min, const key &_max, int nBuckets_, const CkNodeGroupID &_nodeMgrID);
  */
     
 
-/* DECLS: void startBarrier(const CProxy_Sorter<key > &_sorter_proxy, const CProxy_Main<key > &_main_proxy);
+/* DECLS: void startBarrier(const CProxy_Sorter<key> &_sorter_proxy, const CProxy_Main<key> &_main_proxy);
  */
     
-    void startBarrier(const CProxy_Sorter<key > &_sorter_proxy, const CProxy_Main<key > &_main_proxy, const CkEntryOptions *impl_e_opts=NULL) ;
+    void startBarrier(const CProxy_Sorter<key> &_sorter_proxy, const CProxy_Main<key> &_main_proxy, const CkEntryOptions *impl_e_opts=NULL) ;
 
 /* DECLS: void SetData();
  */
@@ -1550,10 +1617,10 @@ template < class key >  class CProxySection_Bucket : public CProxySection_ArrayE
     
     void firstLocalProbe(int lastProbeSize, const CkEntryOptions *impl_e_opts=NULL) ;
 
-/* DECLS: void genNextSamples(sampleMessage<key >* impl_msg);
+/* DECLS: void genNextSamples(sampleMessage<key>* impl_msg);
  */
     
-    void genNextSamples(sampleMessage<key >* impl_msg) ;
+    void genNextSamples(sampleMessage<key>* impl_msg) ;
 
 /* DECLS: void sortAll();
  */
@@ -1565,10 +1632,10 @@ template < class key >  class CProxySection_Bucket : public CProxySection_ArrayE
     
     void stepSort(const CkEntryOptions *impl_e_opts=NULL) ;
 
-/* DECLS: void Load(data_msg<key >* impl_msg);
+/* DECLS: void Load(data_msg<key>* impl_msg);
  */
     
-    void Load(data_msg<key >* impl_msg) ;
+    void Load(data_msg<key>* impl_msg) ;
 
 /* DECLS: void recvFinalKeys(int srcnode, const sendInfo &s);
  */
@@ -1585,10 +1652,10 @@ template < class key >  class CProxySection_Bucket : public CProxySection_ArrayE
     
     void partialSendOne(const CkEntryOptions *impl_e_opts=NULL) ;
 
-/* DECLS: void finalProbes(array_msg<key >* impl_msg);
+/* DECLS: void finalProbes(array_msg<key>* impl_msg);
  */
     
-    void finalProbes(array_msg<key >* impl_msg) ;
+    void finalProbes(array_msg<key>* impl_msg) ;
 
 /* DECLS: void finish();
  */
@@ -1600,20 +1667,20 @@ template < class key >  class CProxySection_Bucket : public CProxySection_ArrayE
 
 };
 #define Bucket_SDAG_CODE 
-template < class key > 
+template <class key> 
 struct CBase_Bucket;
 
 class wrap_ptr;
 
-/* DECLS: template < class key > nodegroup NodeManager: NodeGroup{
+/* DECLS: template <class key> nodegroup NodeManager: NodeGroup{
 NodeManager(const key &_minkey, const key &_maxkey);
-void registerLocalChare(int nElem, int pe, const CProxy_Bucket<key > &_bucket_arr, const CProxy_Sorter<key > &_sorter);
+void registerLocalChare(int nElem, int pe, const CProxy_Bucket<key> &_bucket_arr, const CProxy_Sorter<key> &_sorter);
 void collectSamples(const sampleInfo &sI);
-void assembleSamples(const std::vector<tagged_key<key > > &proc_sample);
+void assembleSamples(const std::vector<tagged_key<key>> &proc_sample);
 void loadkeys(int dest, const sendInfo &inf);
 void sendOne(int dest);
 void releaseBufMsgs();
-void recvOne(data_msg<key >* impl_msg);
+void recvOne(data_msg<key>* impl_msg);
 void handleOne(const wrap_ptr &msg, int sampleInd, int numsamples, int msgnum);
 void finishOne();
 void localhist(int i);
@@ -1621,19 +1688,19 @@ void depositHist();
 void sendToBuckets(int msg_num);
 };
  */
-template < class key >  class NodeManager;
-template < class key >  class CkIndex_NodeManager;
-template < class key >  class CProxy_NodeManager;
-template < class key >  class CProxyElement_NodeManager;
-template < class key >  class CProxySection_NodeManager;
+template <class key>  class NodeManager;
+template <class key>  class CkIndex_NodeManager;
+template <class key>  class CProxy_NodeManager;
+template <class key>  class CProxyElement_NodeManager;
+template <class key>  class CProxySection_NodeManager;
 /* --------------- index object ------------------ */
-template < class key > class CkIndex_NodeManager:public CkIndex_NodeGroup{
+template <class key> class CkIndex_NodeManager:public CkIndex_NodeGroup{
   public:
-    typedef NodeManager < key >  local_t;
-    typedef CkIndex_NodeManager < key >  index_t;
-    typedef CProxy_NodeManager < key >  proxy_t;
-    typedef CProxyElement_NodeManager < key >  element_t;
-    typedef CProxySection_NodeManager < key >  section_t;
+    typedef NodeManager <key>  local_t;
+    typedef CkIndex_NodeManager <key>  index_t;
+    typedef CProxy_NodeManager <key>  proxy_t;
+    typedef CProxyElement_NodeManager <key>  element_t;
+    typedef CProxySection_NodeManager <key>  section_t;
 
     static int __idx;
     static void __register(const char *s, size_t size);
@@ -1659,7 +1726,7 @@ template < class key > class CkIndex_NodeManager:public CkIndex_NodeGroup{
     static int _callmarshall_NodeManager_marshall1(char* impl_buf, void* impl_obj_void);
     
     static void _marshallmessagepup_NodeManager_marshall1(PUP::er &p,void *msg);
-    /* DECLS: void registerLocalChare(int nElem, int pe, const CProxy_Bucket<key > &_bucket_arr, const CProxy_Sorter<key > &_sorter);
+    /* DECLS: void registerLocalChare(int nElem, int pe, const CProxy_Bucket<key> &_bucket_arr, const CProxy_Sorter<key> &_sorter);
      */
     // Entry point registration at startup
     
@@ -1672,13 +1739,13 @@ template < class key > class CkIndex_NodeManager:public CkIndex_NodeGroup{
     }
 
     
-    inline static int idx_registerLocalChare(void (NodeManager < key > ::*)(int nElem, int pe, const CProxy_Bucket<key > &_bucket_arr, const CProxy_Sorter<key > &_sorter) ) {
+    inline static int idx_registerLocalChare(void (NodeManager <key> ::*)(int nElem, int pe, const CProxy_Bucket<key> &_bucket_arr, const CProxy_Sorter<key> &_sorter) ) {
       return idx_registerLocalChare_marshall2();
     }
 
 
     
-    static int registerLocalChare(int nElem, int pe, const CProxy_Bucket<key > &_bucket_arr, const CProxy_Sorter<key > &_sorter) { return idx_registerLocalChare_marshall2(); }
+    static int registerLocalChare(int nElem, int pe, const CProxy_Bucket<key> &_bucket_arr, const CProxy_Sorter<key> &_sorter) { return idx_registerLocalChare_marshall2(); }
     
     static void _call_registerLocalChare_marshall2(void* impl_msg, void* impl_obj);
     
@@ -1698,7 +1765,7 @@ template < class key > class CkIndex_NodeManager:public CkIndex_NodeGroup{
     }
 
     
-    inline static int idx_collectSamples(void (NodeManager < key > ::*)(const sampleInfo &sI) ) {
+    inline static int idx_collectSamples(void (NodeManager <key> ::*)(const sampleInfo &sI) ) {
       return idx_collectSamples_marshall3();
     }
 
@@ -1711,7 +1778,7 @@ template < class key > class CkIndex_NodeManager:public CkIndex_NodeGroup{
     static void _call_sdag_collectSamples_marshall3(void* impl_msg, void* impl_obj);
     
     static void _marshallmessagepup_collectSamples_marshall3(PUP::er &p,void *msg);
-    /* DECLS: void assembleSamples(const std::vector<tagged_key<key > > &proc_sample);
+    /* DECLS: void assembleSamples(const std::vector<tagged_key<key>> &proc_sample);
      */
     // Entry point registration at startup
     
@@ -1724,13 +1791,13 @@ template < class key > class CkIndex_NodeManager:public CkIndex_NodeGroup{
     }
 
     
-    inline static int idx_assembleSamples(void (NodeManager < key > ::*)(const std::vector<tagged_key<key > > &proc_sample) ) {
+    inline static int idx_assembleSamples(void (NodeManager <key> ::*)(const std::vector<tagged_key<key>> &proc_sample) ) {
       return idx_assembleSamples_marshall4();
     }
 
 
     
-    static int assembleSamples(const std::vector<tagged_key<key > > &proc_sample) { return idx_assembleSamples_marshall4(); }
+    static int assembleSamples(const std::vector<tagged_key<key>> &proc_sample) { return idx_assembleSamples_marshall4(); }
     
     static void _call_assembleSamples_marshall4(void* impl_msg, void* impl_obj);
     
@@ -1750,7 +1817,7 @@ template < class key > class CkIndex_NodeManager:public CkIndex_NodeGroup{
     }
 
     
-    inline static int idx_loadkeys(void (NodeManager < key > ::*)(int dest, const sendInfo &inf) ) {
+    inline static int idx_loadkeys(void (NodeManager <key> ::*)(int dest, const sendInfo &inf) ) {
       return idx_loadkeys_marshall5();
     }
 
@@ -1776,7 +1843,7 @@ template < class key > class CkIndex_NodeManager:public CkIndex_NodeGroup{
     }
 
     
-    inline static int idx_sendOne(void (NodeManager < key > ::*)(int dest) ) {
+    inline static int idx_sendOne(void (NodeManager <key> ::*)(int dest) ) {
       return idx_sendOne_marshall6();
     }
 
@@ -1804,7 +1871,7 @@ template < class key > class CkIndex_NodeManager:public CkIndex_NodeGroup{
     }
 
     
-    inline static int idx_releaseBufMsgs(void (NodeManager < key > ::*)() ) {
+    inline static int idx_releaseBufMsgs(void (NodeManager <key> ::*)() ) {
       return idx_releaseBufMsgs_void();
     }
 
@@ -1815,7 +1882,7 @@ template < class key > class CkIndex_NodeManager:public CkIndex_NodeGroup{
     static void _call_releaseBufMsgs_void(void* impl_msg, void* impl_obj);
     
     static void _call_sdag_releaseBufMsgs_void(void* impl_msg, void* impl_obj);
-    /* DECLS: void recvOne(data_msg<key >* impl_msg);
+    /* DECLS: void recvOne(data_msg<key>* impl_msg);
      */
     // Entry point registration at startup
     
@@ -1828,13 +1895,13 @@ template < class key > class CkIndex_NodeManager:public CkIndex_NodeGroup{
     }
 
     
-    inline static int idx_recvOne(void (NodeManager < key > ::*)(data_msg<key >* impl_msg) ) {
+    inline static int idx_recvOne(void (NodeManager <key> ::*)(data_msg<key>* impl_msg) ) {
       return idx_recvOne_data_msg();
     }
 
 
     
-    static int recvOne(data_msg<key >* impl_msg) { return idx_recvOne_data_msg(); }
+    static int recvOne(data_msg<key>* impl_msg) { return idx_recvOne_data_msg(); }
     
     static void _call_recvOne_data_msg(void* impl_msg, void* impl_obj);
     
@@ -1852,7 +1919,7 @@ template < class key > class CkIndex_NodeManager:public CkIndex_NodeGroup{
     }
 
     
-    inline static int idx_handleOne(void (NodeManager < key > ::*)(const wrap_ptr &msg, int sampleInd, int numsamples, int msgnum) ) {
+    inline static int idx_handleOne(void (NodeManager <key> ::*)(const wrap_ptr &msg, int sampleInd, int numsamples, int msgnum) ) {
       return idx_handleOne_marshall9();
     }
 
@@ -1880,7 +1947,7 @@ template < class key > class CkIndex_NodeManager:public CkIndex_NodeGroup{
     }
 
     
-    inline static int idx_finishOne(void (NodeManager < key > ::*)() ) {
+    inline static int idx_finishOne(void (NodeManager <key> ::*)() ) {
       return idx_finishOne_void();
     }
 
@@ -1904,7 +1971,7 @@ template < class key > class CkIndex_NodeManager:public CkIndex_NodeGroup{
     }
 
     
-    inline static int idx_localhist(void (NodeManager < key > ::*)(int i) ) {
+    inline static int idx_localhist(void (NodeManager <key> ::*)(int i) ) {
       return idx_localhist_marshall11();
     }
 
@@ -1932,7 +1999,7 @@ template < class key > class CkIndex_NodeManager:public CkIndex_NodeGroup{
     }
 
     
-    inline static int idx_depositHist(void (NodeManager < key > ::*)() ) {
+    inline static int idx_depositHist(void (NodeManager <key> ::*)() ) {
       return idx_depositHist_void();
     }
 
@@ -1956,7 +2023,7 @@ template < class key > class CkIndex_NodeManager:public CkIndex_NodeGroup{
     }
 
     
-    inline static int idx_sendToBuckets(void (NodeManager < key > ::*)(int msg_num) ) {
+    inline static int idx_sendToBuckets(void (NodeManager <key> ::*)(int msg_num) ) {
       return idx_sendToBuckets_marshall13();
     }
 
@@ -1973,13 +2040,13 @@ template < class key > class CkIndex_NodeManager:public CkIndex_NodeGroup{
     static void _marshallmessagepup_sendToBuckets_marshall13(PUP::er &p,void *msg);
 };
 /* --------------- element proxy ------------------ */
-template < class key > class CProxyElement_NodeManager: public CProxyElement_NodeGroup{
+template <class key> class CProxyElement_NodeManager: public CProxyElement_NodeGroup{
   public:
-    typedef NodeManager < key >  local_t;
-    typedef CkIndex_NodeManager < key >  index_t;
-    typedef CProxy_NodeManager < key >  proxy_t;
-    typedef CProxyElement_NodeManager < key >  element_t;
-    typedef CProxySection_NodeManager < key >  section_t;
+    typedef NodeManager <key>  local_t;
+    typedef CkIndex_NodeManager <key>  index_t;
+    typedef CProxy_NodeManager <key>  proxy_t;
+    typedef CProxyElement_NodeManager <key>  element_t;
+    typedef CProxySection_NodeManager <key>  section_t;
 
 
     /* TRAM aggregators */
@@ -2027,30 +2094,30 @@ int ckGetGroupPe(void) const
     void ckSetGroupID(CkGroupID g) {
       CProxyElement_NodeGroup::ckSetGroupID(g);
     }
-    NodeManager < key > * ckLocalBranch(void) const {
+    NodeManager <key> * ckLocalBranch(void) const {
       return ckLocalBranch(ckGetGroupID());
     }
-    static NodeManager < key > * ckLocalBranch(CkGroupID gID) {
-      return (NodeManager < key > *)CkLocalNodeBranch(gID);
+    static NodeManager <key> * ckLocalBranch(CkGroupID gID) {
+      return (NodeManager <key> *)CkLocalNodeBranch(gID);
     }
 /* DECLS: NodeManager(const key &_minkey, const key &_maxkey);
  */
     
 
-/* DECLS: void registerLocalChare(int nElem, int pe, const CProxy_Bucket<key > &_bucket_arr, const CProxy_Sorter<key > &_sorter);
+/* DECLS: void registerLocalChare(int nElem, int pe, const CProxy_Bucket<key> &_bucket_arr, const CProxy_Sorter<key> &_sorter);
  */
     
-    void registerLocalChare(int nElem, int pe, const CProxy_Bucket<key > &_bucket_arr, const CProxy_Sorter<key > &_sorter, const CkEntryOptions *impl_e_opts=NULL);
+    void registerLocalChare(int nElem, int pe, const CProxy_Bucket<key> &_bucket_arr, const CProxy_Sorter<key> &_sorter, const CkEntryOptions *impl_e_opts=NULL);
 
 /* DECLS: void collectSamples(const sampleInfo &sI);
  */
     
     void collectSamples(const sampleInfo &sI, const CkEntryOptions *impl_e_opts=NULL);
 
-/* DECLS: void assembleSamples(const std::vector<tagged_key<key > > &proc_sample);
+/* DECLS: void assembleSamples(const std::vector<tagged_key<key>> &proc_sample);
  */
     
-    void assembleSamples(const std::vector<tagged_key<key > > &proc_sample, const CkEntryOptions *impl_e_opts=NULL);
+    void assembleSamples(const std::vector<tagged_key<key>> &proc_sample, const CkEntryOptions *impl_e_opts=NULL);
 
 /* DECLS: void loadkeys(int dest, const sendInfo &inf);
  */
@@ -2067,10 +2134,10 @@ int ckGetGroupPe(void) const
     
     void releaseBufMsgs(const CkEntryOptions *impl_e_opts=NULL);
 
-/* DECLS: void recvOne(data_msg<key >* impl_msg);
+/* DECLS: void recvOne(data_msg<key>* impl_msg);
  */
     
-    void recvOne(data_msg<key >* impl_msg);
+    void recvOne(data_msg<key>* impl_msg);
 
 /* DECLS: void handleOne(const wrap_ptr &msg, int sampleInd, int numsamples, int msgnum);
  */
@@ -2099,13 +2166,13 @@ int ckGetGroupPe(void) const
 
 };
 /* ---------------- collective proxy -------------- */
-template < class key > class CProxy_NodeManager: public CProxy_NodeGroup{
+template <class key> class CProxy_NodeManager: public CProxy_NodeGroup{
   public:
-    typedef NodeManager < key >  local_t;
-    typedef CkIndex_NodeManager < key >  index_t;
-    typedef CProxy_NodeManager < key >  proxy_t;
-    typedef CProxyElement_NodeManager < key >  element_t;
-    typedef CProxySection_NodeManager < key >  section_t;
+    typedef NodeManager <key>  local_t;
+    typedef CkIndex_NodeManager <key>  index_t;
+    typedef CProxy_NodeManager <key>  proxy_t;
+    typedef CProxyElement_NodeManager <key>  element_t;
+    typedef CProxySection_NodeManager <key>  section_t;
 
     CProxy_NodeManager(void) {
     }
@@ -2113,8 +2180,8 @@ template < class key > class CProxy_NodeManager: public CProxy_NodeGroup{
     }
     CProxy_NodeManager(CkGroupID _gid,CK_DELCTOR_PARAM) : CProxy_NodeGroup(_gid,CK_DELCTOR_ARGS){  }
     CProxy_NodeManager(CkGroupID _gid) : CProxy_NodeGroup(_gid){  }
-    CProxyElement_NodeManager < key >  operator[](int onPE) const
-      {return CProxyElement_NodeManager < key > (ckGetGroupID(),onPE,CK_DELCTOR_CALL);}
+    CProxyElement_NodeManager <key>  operator[](int onPE) const
+      {return CProxyElement_NodeManager <key> (ckGetGroupID(),onPE,CK_DELCTOR_CALL);}
 
     int ckIsDelegated(void) const
     { return CProxy_NodeGroup::ckIsDelegated(); }
@@ -2148,11 +2215,11 @@ operator CkGroupID () const { return ckGetGroupID(); }
     void ckSetGroupID(CkGroupID g) {
       CProxy_NodeGroup::ckSetGroupID(g);
     }
-    NodeManager < key > * ckLocalBranch(void) const {
+    NodeManager <key> * ckLocalBranch(void) const {
       return ckLocalBranch(ckGetGroupID());
     }
-    static NodeManager < key > * ckLocalBranch(CkGroupID gID) {
-      return (NodeManager < key > *)CkLocalNodeBranch(gID);
+    static NodeManager <key> * ckLocalBranch(CkGroupID gID) {
+      return (NodeManager <key> *)CkLocalNodeBranch(gID);
     }
 /* DECLS: NodeManager(const key &_minkey, const key &_maxkey);
  */
@@ -2160,20 +2227,20 @@ operator CkGroupID () const { return ckGetGroupID(); }
     static CkGroupID ckNew(const key &_minkey, const key &_maxkey, const CkEntryOptions *impl_e_opts=NULL);
     CProxy_NodeManager(const key &_minkey, const key &_maxkey, const CkEntryOptions *impl_e_opts=NULL);
 
-/* DECLS: void registerLocalChare(int nElem, int pe, const CProxy_Bucket<key > &_bucket_arr, const CProxy_Sorter<key > &_sorter);
+/* DECLS: void registerLocalChare(int nElem, int pe, const CProxy_Bucket<key> &_bucket_arr, const CProxy_Sorter<key> &_sorter);
  */
     
-    void registerLocalChare(int nElem, int pe, const CProxy_Bucket<key > &_bucket_arr, const CProxy_Sorter<key > &_sorter, const CkEntryOptions *impl_e_opts=NULL);
+    void registerLocalChare(int nElem, int pe, const CProxy_Bucket<key> &_bucket_arr, const CProxy_Sorter<key> &_sorter, const CkEntryOptions *impl_e_opts=NULL);
 
 /* DECLS: void collectSamples(const sampleInfo &sI);
  */
     
     void collectSamples(const sampleInfo &sI, const CkEntryOptions *impl_e_opts=NULL);
 
-/* DECLS: void assembleSamples(const std::vector<tagged_key<key > > &proc_sample);
+/* DECLS: void assembleSamples(const std::vector<tagged_key<key>> &proc_sample);
  */
     
-    void assembleSamples(const std::vector<tagged_key<key > > &proc_sample, const CkEntryOptions *impl_e_opts=NULL);
+    void assembleSamples(const std::vector<tagged_key<key>> &proc_sample, const CkEntryOptions *impl_e_opts=NULL);
 
 /* DECLS: void loadkeys(int dest, const sendInfo &inf);
  */
@@ -2190,10 +2257,10 @@ operator CkGroupID () const { return ckGetGroupID(); }
     
     void releaseBufMsgs(const CkEntryOptions *impl_e_opts=NULL);
 
-/* DECLS: void recvOne(data_msg<key >* impl_msg);
+/* DECLS: void recvOne(data_msg<key>* impl_msg);
  */
     
-    void recvOne(data_msg<key >* impl_msg);
+    void recvOne(data_msg<key>* impl_msg);
 
 /* DECLS: void handleOne(const wrap_ptr &msg, int sampleInd, int numsamples, int msgnum);
  */
@@ -2222,13 +2289,13 @@ operator CkGroupID () const { return ckGetGroupID(); }
 
 };
 /* ---------------- section proxy -------------- */
-template < class key > class CProxySection_NodeManager: public CProxySection_NodeGroup{
+template <class key> class CProxySection_NodeManager: public CProxySection_NodeGroup{
   public:
-    typedef NodeManager < key >  local_t;
-    typedef CkIndex_NodeManager < key >  index_t;
-    typedef CProxy_NodeManager < key >  proxy_t;
-    typedef CProxyElement_NodeManager < key >  element_t;
-    typedef CProxySection_NodeManager < key >  section_t;
+    typedef NodeManager <key>  local_t;
+    typedef CkIndex_NodeManager <key>  index_t;
+    typedef CProxy_NodeManager <key>  proxy_t;
+    typedef CProxyElement_NodeManager <key>  element_t;
+    typedef CProxySection_NodeManager <key>  section_t;
 
     CProxySection_NodeManager(void) {
     }
@@ -2291,30 +2358,30 @@ inline int ckGetNumElements(int i) const
     void ckSetGroupID(CkGroupID g) {
       CProxySection_NodeGroup::ckSetGroupID(g);
     }
-    NodeManager < key > * ckLocalBranch(void) const {
+    NodeManager <key> * ckLocalBranch(void) const {
       return ckLocalBranch(ckGetGroupID());
     }
-    static NodeManager < key > * ckLocalBranch(CkGroupID gID) {
-      return (NodeManager < key > *)CkLocalNodeBranch(gID);
+    static NodeManager <key> * ckLocalBranch(CkGroupID gID) {
+      return (NodeManager <key> *)CkLocalNodeBranch(gID);
     }
 /* DECLS: NodeManager(const key &_minkey, const key &_maxkey);
  */
     
 
-/* DECLS: void registerLocalChare(int nElem, int pe, const CProxy_Bucket<key > &_bucket_arr, const CProxy_Sorter<key > &_sorter);
+/* DECLS: void registerLocalChare(int nElem, int pe, const CProxy_Bucket<key> &_bucket_arr, const CProxy_Sorter<key> &_sorter);
  */
     
-    void registerLocalChare(int nElem, int pe, const CProxy_Bucket<key > &_bucket_arr, const CProxy_Sorter<key > &_sorter, const CkEntryOptions *impl_e_opts=NULL);
+    void registerLocalChare(int nElem, int pe, const CProxy_Bucket<key> &_bucket_arr, const CProxy_Sorter<key> &_sorter, const CkEntryOptions *impl_e_opts=NULL);
 
 /* DECLS: void collectSamples(const sampleInfo &sI);
  */
     
     void collectSamples(const sampleInfo &sI, const CkEntryOptions *impl_e_opts=NULL);
 
-/* DECLS: void assembleSamples(const std::vector<tagged_key<key > > &proc_sample);
+/* DECLS: void assembleSamples(const std::vector<tagged_key<key>> &proc_sample);
  */
     
-    void assembleSamples(const std::vector<tagged_key<key > > &proc_sample, const CkEntryOptions *impl_e_opts=NULL);
+    void assembleSamples(const std::vector<tagged_key<key>> &proc_sample, const CkEntryOptions *impl_e_opts=NULL);
 
 /* DECLS: void loadkeys(int dest, const sendInfo &inf);
  */
@@ -2331,10 +2398,10 @@ inline int ckGetNumElements(int i) const
     
     void releaseBufMsgs(const CkEntryOptions *impl_e_opts=NULL);
 
-/* DECLS: void recvOne(data_msg<key >* impl_msg);
+/* DECLS: void recvOne(data_msg<key>* impl_msg);
  */
     
-    void recvOne(data_msg<key >* impl_msg);
+    void recvOne(data_msg<key>* impl_msg);
 
 /* DECLS: void handleOne(const wrap_ptr &msg, int sampleInd, int numsamples, int msgnum);
  */
@@ -2363,14 +2430,14 @@ inline int ckGetNumElements(int i) const
 
 };
 #define NodeManager_SDAG_CODE 
-template < class key > 
+template <class key> 
 struct CBase_NodeManager;
 
 
 
 
 /* ---------------- method closures -------------- */
-template < class key > class Closure_Main {
+template <class key> class Closure_Main {
   public:
 
 
@@ -2386,7 +2453,7 @@ template < class key > class Closure_Main {
 
 
 /* ---------------- method closures -------------- */
-template < class key > class Closure_Sorter {
+template <class key> class Closure_Sorter {
   public:
 
 
@@ -2400,7 +2467,7 @@ template < class key > class Closure_Sorter {
 
 
 /* ---------------- method closures -------------- */
-template < class key > class Closure_Bucket {
+template <class key> class Closure_Bucket {
   public:
 
 
@@ -2444,7 +2511,7 @@ template < class key > class Closure_Bucket {
 
 
 /* ---------------- method closures -------------- */
-template < class key > class Closure_NodeManager {
+template <class key> class Closure_NodeManager {
   public:
 
 

@@ -1,7 +1,13 @@
-An interoperable (Charm++ with MPI) version of sorting library based on
-histogram sorting. The sorting library was originally written by Edgar
-Solomonik. Interoperability in Charm++ and related libraries are 
-developed and maintained by Nikhil Jain.
+A version of parallel sorting library based on the following paper
+
+"Histogram Sort with Sampling", SPAA 2019
+Vipul Harsh, Laxmikant Kale, Edgar Solomonik
+
+
+Acknowledgements
+
+- Nikhil Jain for providing the interface for the sorting library.
+
 
 *********************Contents in this directory*********************************
 

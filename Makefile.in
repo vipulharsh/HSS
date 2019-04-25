@@ -1,24 +1,6 @@
-#CHARMDIR ?= $(HOME)/work/parallel_sorting/charm-nonsmp/verbs-linux-x86_64-icc
-#CHARMDIR ?= $(HOME)/software/parsort/charm/pamilrts-bluegeneq-smp-clang
-CHARMDIR ?= $(HOME)/software/parsort/charm/pamilrts-bluegeneq-smp-gcc
-#CHARMDIR ?= $(HOME)/work/parallel_sorting/charm-old/verbs-linux-x86_64-smp-icc
+CHARMDIR ?= $(HOME)/Desktop/psortingV/code_release/charm/multicore-darwin-x86_64
 
 #Optimizations need to be enabled
-#OPTS = -O0 -std=c++0x -g
 OPTS = -O3 -std=c++0x 
-#OPTS = -O3 -std=c++0x -tracemode projections
 CHARMC=$(CHARMDIR)/bin/charmc $(OPTS) 
-
-MPI_LIBS=
-ifeq ($(TARGET),gni)
-  CXX=CC $(OPTS)
-else
-ifeq ($(TARGET),bgq)
-  CXX=mpicxx $(OPTS)
-  BGQ_INSTALL=/bgsys/drivers/ppcfloor
-  MPI_LIBS=-L$(BGQ_INSTALL)/comm/gcc/lib -lmpich -lopa -lmpl -ldl -L$(BGQ_INSTALL)/comm/sys-fast/lib -lpami -L$(BGQ_INSTALL)/spi/lib -lSPI -lSPI_cnk -lpthread -lrt
-else
-  CXX=mpicxx $(OPTS)
-endif
-endif
 

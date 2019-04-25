@@ -71,6 +71,8 @@ class testsorting : public CBase_testsorting{
         std::string input_dist = "UNIF";
         if(m->argc > 3)
             input_dist = m->argv[4];
+
+        ckout<<"Number of elements: "<<num_elems<<". Rand seed "<<rand_seed<<" Max probes: "<<probe_max<<endl;
         
 
   	//Create this Node Mgr
