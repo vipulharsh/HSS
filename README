@@ -18,7 +18,7 @@ Compiling
   "git clone http://charm.cs.illinois.edu/gerrit/charm.git" 
 
 - Build and install charm++. A possible installation command for 64 bit linux could be 
-  ./build charm++ netlrts-linux-x86_64 smp --with-production -j8
+  ./build charm++ netlrts-linux-x86_64 smp --with-production -j8.
   "smp" argument can be skipped if not building a shared memory version.
   For installation instructions, see: https://charm.cs.illinois.edu/manuals/html/charm++/A.html
 
@@ -38,7 +38,7 @@ Running locally
   size used for initial memory allocations as an optimization (This only needs to be an estimate.
   If underestimated, the program would automatically allocate a higher amount of memory). Specifying
   GAUSS will generate random keys according to a Gaussian distribution. See testsorting.C for 
-  other types of distribution; you can also add your own.
+  other distributions.
 
 
 Running on a cluster
