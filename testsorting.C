@@ -44,7 +44,7 @@ class testsorting : public CBase_testsorting{
         std::string input_dist = "UNIF";
         if(m->argc > 3)
             input_dist = m->argv[4];
-        ckout<<"Number of elements: "<<num_elems<<". Rand seed "<<rand_seed<<" Max probes: "<<probe_max<<endl;
+        ckout<<"Number of elements per PE: "<<num_elems<<". Random seed "<<rand_seed<<endl;
         CProxy_dataManager dMProxy = CProxy_dataManager::ckNew(CkNumPes() ,num_elems, probe_max, getDistCode(input_dist));
     }
 };

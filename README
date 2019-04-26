@@ -4,48 +4,59 @@ A version of parallel sorting library based on the following paper
 Vipul Harsh, Laxmikant Kale, Edgar Solomonik
 
 
+
+Contents in this directory
+
+- sortinglib - directory that contains the sorting library in Charm++.
+
+- testsorting.C - an example charm program that uses the sorting library
+
+
+Compiling
+
+- Download charm++ from http://charmplusplus.org/download/ or by typing
+  "git clone http://charm.cs.illinois.edu/gerrit/charm.git" 
+
+- Build and install charm++. A possible installation command for 64 bit linux could be 
+  ./build charm++ netlrts-linux-x86_64 smp --with-production -j8
+  "smp" argument can be skipped if not building a shared memory version.
+  For installation instructions, see: https://charm.cs.illinois.edu/manuals/html/charm++/A.html
+
+- Once charm++ is built, set the variable CHARMDIR in Makefile.in to the full path of the 
+  build directory of charm++. The name of the build directory depends on the build used 
+  for charm++. If you used the build command mentioned above, the name of the directory would 
+  be "netlrts-darwin-x86_64-smp".
+
+- Execute make from the top level HSS directory
+
+
+Running locally
+
+- "./charmrun +p16 ++ppn 4 ./bin/testsorting 500000 42 100 GAUSS" will run parallel sorting 
+  on 16 PEs with 4 PEs per node (all PEs in a node share the same memory); so total of 4 nodes.
+  500000 is the number of keys per PE, 42 is a random seed and 100 is the estimated max probe
+  size used for initial memory allocations as an optimization (This only needs to be an estimate.
+  If underestimated, the program would automatically allocate a higher amount of memory). Specifying
+  GAUSS will generate random keys according to a Gaussian distribution. See testsorting.C for 
+  other types of distribution; you can also add your own.
+
+
+Running on a cluster
+
+- You might have to build charm++ according to the architecture of the cluster. See 
+  https://charm.cs.illinois.edu/manuals/html/charm++/A.html for instructions.
+
+- On some clusters, mpiexec could be used to launch the charm processes. E.g. 
+  ./charmrun ./bin/testsorting +p16384 ++ppn 16 100000 1 100000 GAUSS ++mpiexec
+  For running instructions, see: https://charm.cs.illinois.edu/manuals/html/charm++/C.html 
+
+Contact
+
+- vipulharsh93@gmail.com
+
+- For Charm++ related queries- charm@cs.illinois.edu
+
 Acknowledgements
 
 - Nikhil Jain for providing the interface for the sorting library.
-
-
-*********************Contents in this directory*********************************
-
-sortinglib - directory that contains the sorting library in Charm++. Ideally,
-user should only have to view sortinglib/sortinglib.h that contains the
-interface to the library.
-
-testsorting.cpp - an example MPI code demonstrating how to use the sorting library.
-
-Makefile - to compile the test code and the library. Key things to note-
-
-Charm++ has to be built on top of MPI (specified in Makefile.in).
-The sorting lib has to be compiled using charmc (automatically done as part of make).
-MPI code can be compiled as per user's choice.
-Final linking has to be performed using charmc.
-
-*********************Interface to sorting library*******************************
-
-Declaration of the interface function (in sortinglib/sortinglib.h) is:
-
-void HistSorting(int input_elems, kv_pair<uint64_t, data_value>* dataIn, 
-                int * output_elems, kv_pair<uint64_t, data_value>** dataOut);
-
-kv_pair is a simple templated struct that contains a 64 bit unsigned key for sorting, 
-and associated data (if any) in template parameter class data_value. By default, as
-defined in sortinglib/sortinglib.h, it is empty.
-
-Four parameters are passed to HistSorting call - 
-
-1. int input_elems - local number of elements on an MPI rank.
-2. kv_pair * dataIn - array of local elements to be sorted.
-3. int * output_elems - pointer to local number of elements after sorting on
-this rank.
-4. kv_pair ** dataIn - pointer to array of local elements after sorting (library
-allocates this memory).
-
-
-
-
-
 
