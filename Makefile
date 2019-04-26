@@ -2,12 +2,7 @@ include Makefile.in
 
 #Charm++ libraries
 LIBS=libmoduleHistSort.a
-ifeq ("$(CHARM_ARCH)","")
-  DEST=bin
-else
-  DEST=bin-$(CHARM_ARCH)
-endif
-
+DEST=bin
 all: clean $(DEST)/testsorting
 
 $(DEST)/testsorting: $(LIBS) testsorting.ci testsorting.C  
@@ -24,7 +19,7 @@ $(LIBS):
 
 clean: clear
 	cd sortinglib;make clean;cd ..;
-	rm -f testsorting *.o *.a charmrun libmoduleHistSort.a libcharm.a charm_all_libs.sh
+	rm -f $(DEST)/testsorting *.o *.a charmrun $(DEST)/libmoduleHistSort.a $(DEST)/libcharm.a charm_all_libs.sh
 
 clear:
 	rm -f PI*

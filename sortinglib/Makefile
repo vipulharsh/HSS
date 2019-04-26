@@ -13,4 +13,4 @@ HistSort.decl.h HistSort.def.h : HistSort.ci
 
 clean:
 	rm -f libmoduleHistSort.a *.decl.h *.def.h *.o empty.C
-	rm -f charmrun                        
+	rm -f charmrun bin/libcharm.a                       
