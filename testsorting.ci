@@ -1,17 +1,12 @@
 mainmodule testsorting {
 
-
-    readonly uint64_t m_w;
-    readonly uint64_t m_z;
-
     mainchare testsorting {
-      entry testsorting(CkArgMsg *m);
+        entry testsorting(CkArgMsg *m);
     };
 
     group dataManager{
     	entry dataManager(int numBuckets, int numElem, int probe_max, int input_dist);
-	entry void SortingDone();
-	//entry void foo(int x);
+	    entry void SortingDone();
     };
 
    chare Main<uint64_t>; 

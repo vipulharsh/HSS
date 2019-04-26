@@ -19,8 +19,6 @@ class sampleMessage : public CMessage_sampleMessage<key> {
 };
 
 
-
-
 template <class key>
 class Sorter : public CBase_Sorter<key>  {
   private:

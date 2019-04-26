@@ -5,12 +5,12 @@ module HistSort{
   //readonly CkNodeGroupID nodeMgrID;
 
   template <class key> chare Main {
-    entry Main(int num_buckets_, int probe_max, int num_partitions_);
-    entry void Exit();
-    entry void DataReady(CkReductionMsg*);
-    entry void init_isum(CkReductionMsg*);
-    entry void intermediate_isum(CkReductionMsg*);
-    entry void final_isum(CkReductionMsg*);
+      entry Main(int num_buckets_, int probe_max, int num_partitions_);
+      entry void Exit();
+      entry void DataReady(CkReductionMsg*);
+      entry void init_isum(CkReductionMsg*);
+      entry void intermediate_isum(CkReductionMsg*);
+      entry void final_isum(CkReductionMsg*);
   };
 
   template <class key>
@@ -33,44 +33,40 @@ module HistSort{
       tagged_key<key> data[];
     };
 
-
- 
   template <class key> chare Sorter {
-    entry Sorter();
-    entry Sorter(const CkArrayID &bucketArr, int num_chares, key min, key max,  
-                 tuning_params par, CProxy_Main<key> mainproxy, CkNodeGroupID _nodeMgrID);
-    entry void finishBarrier(CkReductionMsg *msg);
-    //entry void Begin();
-    entry [expedited] void Histogram(CkReductionMsg *msg);
-    //entry [expedited] void globalMinMax(CkReductionMsg *msg);
-    entry void Done(CkReductionMsg *msg);
-    entry void SanityCheck(CkReductionMsg *msg);
-    entry void recvSample(array_msg<key> *am);
+      entry Sorter();
+      entry Sorter(const CkArrayID &bucketArr, int num_chares, key min, key max,  
+              tuning_params par, CProxy_Main<key> mainproxy, CkNodeGroupID _nodeMgrID);
+      entry void finishBarrier(CkReductionMsg *msg);
+      //entry void Begin();
+      entry [expedited] void Histogram(CkReductionMsg *msg);
+      //entry [expedited] void globalMinMax(CkReductionMsg *msg);
+      entry void Done(CkReductionMsg *msg);
+      entry void SanityCheck(CkReductionMsg *msg);
+      entry void recvSample(array_msg<key> *am);
   };
-
 
   class sampleInfo;  
   class sendInfo;
 
   template <class key> array [1D] Bucket {
-    entry Bucket(tuning_params par, key _min, key _max, int nBuckets_, CkNodeGroupID _nodeMgrID);	  
-    //entry void SetCallback(const CkCallback &cb);
-    entry void startBarrier(CProxy_Sorter<key> _sorter_proxy, CProxy_Main<key> _main_proxy);
-    entry void SetData();
-    entry void genSample(sampleInfo sI);
-    entry void firstProbe(key firstkey, key lastkey, key stepSize, int probeSize);
-    entry [expedited] void firstLocalProbe(int lastProbeSize);
-    entry [expedited] void genNextSamples(sampleMessage<key> *sm);
-    entry void sortAll();
-    entry void stepSort();
-    entry void Load(data_msg<key>* msg);
-    entry void recvFinalKeys(int srcnode, sendInfo s);
-    entry void MergingWork();
-    entry void partialSendOne();
-    entry void finalProbes(array_msg<key>* finalprb);
-    entry void finish();
-    //entry void Load();
-
+      entry Bucket(tuning_params par, key _min, key _max, int nBuckets_, CkNodeGroupID _nodeMgrID);	  
+      //entry void SetCallback(const CkCallback &cb);
+      entry void startBarrier(CProxy_Sorter<key> _sorter_proxy, CProxy_Main<key> _main_proxy);
+      entry void SetData();
+      entry void genSample(sampleInfo sI);
+      entry void firstProbe(key firstkey, key lastkey, key stepSize, int probeSize);
+      entry [expedited] void firstLocalProbe(int lastProbeSize);
+      entry [expedited] void genNextSamples(sampleMessage<key> *sm);
+      entry void sortAll();
+      entry void stepSort();
+      entry void Load(data_msg<key>* msg);
+      entry void recvFinalKeys(int srcnode, sendInfo s);
+      entry void MergingWork();
+      entry void partialSendOne();
+      entry void finalProbes(array_msg<key>* finalprb);
+      entry void finish();
+      //entry void Load();
   };
 
 

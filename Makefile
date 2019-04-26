@@ -8,7 +8,6 @@ else
   DEST=bin-$(CHARM_ARCH)
 endif
 
-
 all: clean $(DEST)/testsorting
 
 $(DEST)/testsorting: $(LIBS) testsorting.ci testsorting.C  
@@ -29,9 +28,6 @@ clean: clear
 
 clear:
 	rm -f PI*
-
-test: all
-	mpirun -np 16 ./testsorting 100 7
 
 
 

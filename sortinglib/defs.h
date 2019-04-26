@@ -14,7 +14,7 @@
 #endif
 
 //prints basic executing information
-//#define VERBOSE 1
+#define VERBOSE 1
 
 #ifdef VERBOSE
 #define VERBOSEPRINTF(format, ...) CkPrintf(format, ## __VA_ARGS__)
@@ -50,7 +50,7 @@ class tuning_params{
 
 }; 
 
-  template <class key>
+template <class key>
     class tagged_key;
 
 #endif

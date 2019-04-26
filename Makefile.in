@@ -1,6 +1,5 @@
-CHARMDIR ?= $(HOME)/Desktop/psortingV/code_release/charm/multicore-darwin-x86_64
+CHARMDIR ?= $(HOME)/Desktop/psortingV/code_release/charm/netlrts-darwin-x86_64
 
-#Optimizations need to be enabled
 OPTS = -O3 -std=c++0x 
 CHARMC=$(CHARMDIR)/bin/charmc $(OPTS) 
 
